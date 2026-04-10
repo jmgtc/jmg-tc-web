@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 interface Message {
   role: "user" | "assistant";
@@ -13,6 +14,11 @@ const WELCOME: Message = {
 };
 
 export default function AIConcierge() {
+  const pathname = usePathname();
+
+  // No mostrar el asistente en el panel de administración
+  if (pathname?.startsWith("/admin")) return null;
+
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([WELCOME]);
   const [input, setInput] = useState("");

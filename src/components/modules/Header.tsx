@@ -23,6 +23,9 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Ocultar header en el panel de administración para evitar solapamientos visuales
+  if (pathname?.startsWith("/admin")) return null;
+
   return (
     <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 w-[95%] max-w-6xl">
       <div
