@@ -28,15 +28,17 @@ export default function Header() {
   if (pathname?.startsWith("/admin")) return null;
 
   return (
-    <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 w-[95%] max-w-6xl">
-      {/* Botón Secreto Admin */}
+    <>
+      {/* Botón Secreto Admin - Fuera del header para libertad total */}
       <Link 
         href="/admin" 
-        className="fixed top-24 md:top-6 right-2 md:right-4 z-[70] text-gold/60 hover:text-gold transition-all duration-500 p-2"
+        className="fixed top-24 md:top-6 right-2 md:right-4 z-[100] text-gold/60 hover:text-gold transition-all duration-500 p-2"
         title="Admin Access"
       >
         <Fingerprint size={24} strokeWidth={1.5} />
       </Link>
+
+      <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 w-[95%] max-w-6xl">
 
       <div
         className={`glass rounded-[50px] px-6 py-2 flex items-center justify-between transition-all duration-500 ${
@@ -138,5 +140,6 @@ export default function Header() {
         </div>
       )}
     </header>
+    </>
   );
 }
