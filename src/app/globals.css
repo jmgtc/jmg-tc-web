@@ -5,12 +5,12 @@
   --brand-gold: #F2CC52;
   --brand-black: #000000;
   --brand-white-offset: #F8F7F7;
-  --brand-gray-title: #54595F;
-  --brand-gray-body: #7A7A7A;
+  --brand-gray-title: #A1A1AA; /* Gris Cinc claro */
+  --brand-gray-body: #D4D4D8;  /* Gris Plata muy claro para lectura */
 
   /* Theme Variables */
-  --background: var(--brand-white-offset);
-  --foreground: var(--brand-gray-body);
+  --background: var(--brand-black);
+  --foreground: #FFFFFF;
   --primary: var(--brand-gold);
   --secondary: var(--brand-gray-title);
   

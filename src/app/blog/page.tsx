@@ -42,7 +42,7 @@ export default function BlogPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-white pt-40 pb-24 relative overflow-hidden">
+    <main className="min-h-screen bg-black text-white pt-40 pb-24 relative overflow-hidden">
       {/* Background Orbs */}
       <div className="absolute top-0 -left-20 w-96 h-96 bg-gold/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-40 -right-20 w-80 h-80 bg-blue-500/5 rounded-full blur-[100px] pointer-events-none" />
@@ -52,12 +52,12 @@ export default function BlogPage() {
         <div className="max-w-3xl mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 backdrop-blur-md mb-6">
             <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
-            <span className="text-[10px] font-mono uppercase tracking-widest text-white/50">Insights & Tech</span>
+            <span className="text-[10px] font-mono uppercase tracking-widest text-white/70">Insights & Tech</span>
           </div>
           <h1 className="text-6xl font-bold tracking-tight mb-4">
             {language === 'es' ? 'Nuestras Crónicas' : 'Our Chronicles'}
           </h1>
-          <p className="text-lg text-white/60 leading-relaxed font-light">
+          <p className="text-lg text-white/80 leading-relaxed font-light">
             {language === 'es' 
               ? 'Exploramos la vanguardia de la IA, el desarrollo y la transformación digital.' 
               : 'Exploring the forefront of AI, development, and digital transformation.'}
@@ -87,7 +87,7 @@ export default function BlogPage() {
                   <div className="absolute inset-0 bg-gradient-to-br from-gold/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl" />
 
                   <div className="relative p-6 pt-8 flex flex-col h-full">
-                    <div className="text-[10px] font-mono text-white/40 uppercase tracking-widest mb-4">
+                    <div className="text-[10px] font-mono text-white/60 uppercase tracking-widest mb-4">
                       {new Date(post.publishedAt).toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US', {
                         day: '2-digit',
                         month: 'short',
@@ -99,7 +99,7 @@ export default function BlogPage() {
                       {displayTitle}
                     </h2>
                     
-                    <p className="text-sm text-white/40 leading-relaxed line-clamp-3 font-light mb-8 flex-grow">
+                    <p className="text-sm text-white/70 leading-relaxed line-clamp-3 font-light mb-8 flex-grow">
                       {displayBody || "..."}
                     </p>
 
