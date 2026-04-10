@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { Fingerprint } from "lucide-react";
 
 // Eliminamos navLinks estático y lo manejamos dentro del componente con el diccionario
 
@@ -28,6 +29,15 @@ export default function Header() {
 
   return (
     <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 w-[95%] max-w-6xl">
+      {/* Botón Secreto Admin */}
+      <Link 
+        href="/admin" 
+        className="fixed top-6 right-6 z-[70] text-gold/30 hover:text-gold transition-all duration-500 p-2"
+        title="Admin Access"
+      >
+        <Fingerprint size={24} strokeWidth={1.5} />
+      </Link>
+
       <div
         className={`glass rounded-[50px] px-6 py-2 flex items-center justify-between transition-all duration-500 ${
           isScrolled ? "scale-[0.97] shadow-2xl" : "scale-100"
