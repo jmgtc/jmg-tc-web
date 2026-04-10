@@ -1,3 +1,5 @@
+"use client";
+
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import posts from "../../../contents/blog/posts.json";
 import Link from "next/link";
