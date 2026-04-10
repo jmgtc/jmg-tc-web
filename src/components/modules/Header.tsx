@@ -5,16 +5,17 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 
-const navLinks = [
-  { label: "Nosotros", href: "/nosotros" },
-  { label: "Servicios", href: "/servicios" },
-  { label: "Blog", href: "/blog" },
-];
+// Eliminamos navLinks estático y lo manejamos dentro del componente con el diccionario
+
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export default function Header() {
+  const { language, setLanguage, dict } = useLanguage();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
+
+  const h = dict.header;
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -44,22 +45,34 @@ export default function Header() {
 
         {/* Nav escritorio */}
         <nav className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`text-sm font-medium transition-colors ${
-                pathname === link.href ? "text-gold" : "hover:text-gold"
-              }`}
-            >
-              {link.label}
-            </Link>
-          ))}
+          <Link href="/nosotros" className={`text-sm font-medium transition-colors ${pathname === "/nosotros" ? "text-gold" : "hover:text-gold"}`}>
+            {h.about}
+          </Link>
+          <Link href="/servicios" className={`text-sm font-medium transition-colors ${pathname === "/servicios" ? "text-gold" : "hover:text-gold"}`}>
+            {h.services}
+          </Link>
+          <Link href="/blog" className={`text-sm font-medium transition-colors ${pathname === "/blog" ? "text-gold" : "hover:text-gold"}`}>
+            {h.blog}
+          </Link>
+
+          {/* Selector de idioma */}
+          <div className="flex items-center gap-2 mr-4 text-xs font-bold border-r border-white/10 pr-4">
+            <button 
+              onClick={() => setLanguage("es")}
+              className={language === "es" ? "text-gold" : "text-white/40 hover:text-white"}
+            >ES</button>
+            <span className="text-white/20">|</span>
+            <button 
+              onClick={() => setLanguage("en")}
+              className={language === "en" ? "text-gold" : "text-white/40 hover:text-white"}
+            >EN</button>
+          </div>
+
           <Link
             href="/contacto"
             className="bg-gold text-black px-5 py-2 rounded-full text-sm font-bold hover:bg-white transition-all transform hover:scale-105"
           >
-            Agendar Cita
+            {h.cta}
           </Link>
         </nav>
 
@@ -81,22 +94,33 @@ export default function Header() {
       {/* Menú móvil desplegable */}
       {mobileOpen && (
         <div className="mt-2 glass rounded-3xl p-6 flex flex-col gap-4 md:hidden">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setMobileOpen(false)}
-              className={`text-sm font-medium transition-colors ${pathname === link.href ? "text-gold" : "hover:text-gold"}`}
-            >
-              {link.label}
-            </Link>
-          ))}
+          <Link href="/nosotros" onClick={() => setMobileOpen(false)} className={`text-sm font-medium ${pathname === "/nosotros" ? "text-gold" : ""}`}>
+            {h.about}
+          </Link>
+          <Link href="/servicios" onClick={() => setMobileOpen(false)} className={`text-sm font-medium ${pathname === "/servicios" ? "text-gold" : ""}`}>
+            {h.services}
+          </Link>
+          <Link href="/blog" onClick={() => setMobileOpen(false)} className={`text-sm font-medium ${pathname === "/blog" ? "text-gold" : ""}`}>
+            {h.blog}
+          </Link>
+          
+          <div className="flex justify-center gap-4 py-2 border-y border-white/5 my-2">
+            <button 
+              onClick={() => setLanguage("es")}
+              className={`text-sm font-bold ${language === "es" ? "text-gold" : "text-white/40"}`}
+            >Español</button>
+            <span className="text-white/20">|</span>
+            <button 
+              onClick={() => setLanguage("en")}
+              className={`text-sm font-bold ${language === "en" ? "text-gold" : "text-white/40"}`}
+            >English</button>
+          </div>
           <Link
             href="/contacto"
             onClick={() => setMobileOpen(false)}
             className="bg-gold text-black px-5 py-3 rounded-full text-sm font-bold text-center hover:bg-white transition-all"
           >
-            Agendar Cita
+            {h.cta}
           </Link>
         </div>
       )}

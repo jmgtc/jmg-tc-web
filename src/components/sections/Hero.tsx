@@ -1,8 +1,11 @@
 "use client";
 
-import React from "react";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export default function Hero() {
+  const { language, dict } = useLanguage();
+  const t = dict.hero;
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-brand-black pt-24">
       {/* Dynamic Background Elements */}
@@ -17,27 +20,26 @@ export default function Hero() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-gold"></span>
           </span>
-          <span className="text-xs font-bold uppercase tracking-widest text-gold">JMG Tech Consulting</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-gold">{t.badge}</span>
         </div>
 
         <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-          Diseña, mejora y <br />
+          {t.title} <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold to-white">
-            protege tu entorno digital
+            {language === "es" ? "tu entorno digital" : "your digital environment"}
           </span>
         </h1>
 
         <p className="max-w-2xl mx-auto text-brand-gray-body text-lg md:text-xl mb-10">
-          Socio tecnológico especializado en desarrollo web premium, 
-          automatización con IA y consultoría IT estratégica.
+          {t.subtitle}
         </p>
 
         <div className="flex flex-col md:flex-row items-center justify-center gap-4">
           <button className="px-8 py-4 bg-gold text-black font-bold rounded-full hover:bg-white transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(242,204,82,0.3)]">
-            Empieza tu Transformación
+            {t.cta}
           </button>
           <button className="px-8 py-4 glass text-white font-bold rounded-full hover:bg-white/10 transition-all">
-            Nuestros Servicios
+            {dict.header.services}
           </button>
         </div>
       </div>

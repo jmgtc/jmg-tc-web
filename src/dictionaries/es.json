@@ -1,0 +1,14 @@
+{
+  "header": {
+    "about": "Nosotros",
+    "services": "Servicios",
+    "blog": "Blog",
+    "cta": "Agendar Cita"
+  },
+  "hero": {
+    "badge": "Consultoría IT y Desarrollo AI",
+    "title": "Potenciamos tu negocio con",
+    "subtitle": "Estrategias personalizadas para llevar tu empresa al siguiente nivel tecnológico.",
+    "cta": "Empezar ahora"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "header": {
+    "about": "About Us",
+    "services": "Services",
+    "blog": "Blog",
+    "cta": "Book a Meeting"
+  },
+  "hero": {
+    "badge": "IT Consulting & AI Development",
+    "title": "Empower your business with",
+    "subtitle": "Tailored strategies to take your company to the next technological level.",
+    "cta": "Get Started"
+  }
+}

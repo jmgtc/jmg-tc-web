@@ -19,6 +19,8 @@ export const metadata: Metadata = {
   description: "Socio tecnológico especializado en desarrollo web, automatización con IA y consultoría IT.",
 };
 
+import { LanguageProvider } from "@/components/providers/LanguageProvider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,9 +29,11 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Header />
-        {children}
-        <AIConcierge />
+        <LanguageProvider>
+          <Header />
+          {children}
+          <AIConcierge />
+        </LanguageProvider>
       </body>
     </html>
   );
