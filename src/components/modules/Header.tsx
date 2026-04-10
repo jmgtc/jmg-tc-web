@@ -32,7 +32,7 @@ export default function Header() {
       {/* Botón Secreto Admin */}
       <Link 
         href="/admin" 
-        className="fixed top-6 right-6 z-[70] text-gold/60 hover:text-gold transition-all duration-500 p-2"
+        className="fixed top-24 md:top-6 right-2 md:right-4 z-[70] text-gold/60 hover:text-gold transition-all duration-500 p-2"
         title="Admin Access"
       >
         <Fingerprint size={24} strokeWidth={1.5} />
