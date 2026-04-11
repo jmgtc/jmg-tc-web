@@ -43,7 +43,7 @@ export default function Header() {
       <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 w-[95%] max-w-6xl">
 
       <div
-        className={`glass rounded-[50px] px-6 py-2 flex items-center justify-between transition-all duration-500 ${
+        className={`glass bg-black/70 backdrop-blur-[60px] saturate-[200%] rounded-[50px] px-6 py-3 flex items-center justify-between border border-white/20 shadow-2xl transition-all duration-300 ${
           isScrolled ? "scale-[0.97] shadow-2xl" : "scale-100"
         }`}
       >
