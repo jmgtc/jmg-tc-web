@@ -15,6 +15,8 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
+  const isMaintenance = pathname === "/maintenance";
+
 
   const h = dict.header;
 
@@ -32,10 +34,10 @@ export default function Header() {
       {/* Botón Secreto Admin - Fuera del header para libertad total */}
       <Link 
         href="/admin" 
-        className="fixed top-24 md:top-6 right-2 md:right-4 z-[100] text-gold/60 hover:text-gold transition-all duration-500 p-2"
+        className="fixed top-1 right-1 z-[100] text-gold/40 hover:text-gold transition-all duration-500 p-1"
         title="Admin Access"
       >
-        <Fingerprint size={24} strokeWidth={1.5} />
+        <Fingerprint size={20} strokeWidth={1.5} />
       </Link>
 
       <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 w-[95%] max-w-6xl">
@@ -58,52 +60,56 @@ export default function Header() {
           </span>
         </Link>
 
-        {/* Nav escritorio */}
-        <nav className="hidden md:flex items-center gap-8">
-          <Link href="/nosotros" className={`text-sm font-medium transition-colors ${pathname === "/nosotros" ? "text-gold" : "hover:text-gold"}`}>
-            {h.about}
-          </Link>
-          <Link href="/servicios" className={`text-sm font-medium transition-colors ${pathname === "/servicios" ? "text-gold" : "hover:text-gold"}`}>
-            {h.services}
-          </Link>
-          <Link href="/blog" className={`text-sm font-medium transition-colors ${pathname === "/blog" ? "text-gold" : "hover:text-gold"}`}>
-            {h.blog}
-          </Link>
+        {/* Nav escritorio - Oculto en mantenimiento */}
+        {!isMaintenance && (
+          <nav className="hidden md:flex items-center gap-8">
+            <Link href="/nosotros" className={`text-sm font-medium transition-colors ${pathname === "/nosotros" ? "text-gold" : "hover:text-gold"}`}>
+              {h.about}
+            </Link>
+            <Link href="/servicios" className={`text-sm font-medium transition-colors ${pathname === "/servicios" ? "text-gold" : "hover:text-gold"}`}>
+              {h.services}
+            </Link>
+            <Link href="/blog" className={`text-sm font-medium transition-colors ${pathname === "/blog" ? "text-gold" : "hover:text-gold"}`}>
+              {h.blog}
+            </Link>
+  
+            {/* Selector de idioma */}
+            <div className="flex items-center gap-2 mr-4 text-xs font-bold border-r border-white/10 pr-4">
+              <button 
+                onClick={() => setLanguage("es")}
+                className={language === "es" ? "text-gold" : "text-white/40 hover:text-white"}
+              >ES</button>
+              <span className="text-white/20">|</span>
+              <button 
+                onClick={() => setLanguage("en")}
+                className={language === "en" ? "text-gold" : "text-white/40 hover:text-white"}
+              >EN</button>
+            </div>
+  
+            <Link
+              href="/contacto"
+              className="bg-gold text-black px-5 py-2 rounded-full text-sm font-bold hover:bg-white transition-all transform hover:scale-105"
+            >
+              {h.cta}
+            </Link>
+          </nav>
+        )}
 
-          {/* Selector de idioma */}
-          <div className="flex items-center gap-2 mr-4 text-xs font-bold border-r border-white/10 pr-4">
-            <button 
-              onClick={() => setLanguage("es")}
-              className={language === "es" ? "text-gold" : "text-white/40 hover:text-white"}
-            >ES</button>
-            <span className="text-white/20">|</span>
-            <button 
-              onClick={() => setLanguage("en")}
-              className={language === "en" ? "text-gold" : "text-white/40 hover:text-white"}
-            >EN</button>
-          </div>
-
-          <Link
-            href="/contacto"
-            className="bg-gold text-black px-5 py-2 rounded-full text-sm font-bold hover:bg-white transition-all transform hover:scale-105"
+        {/* Botón móvil - Oculto en mantenimiento */}
+        {!isMaintenance && (
+          <button
+            className="md:hidden p-2 rounded-full hover:bg-white/10 transition-colors"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label="Menú"
           >
-            {h.cta}
-          </Link>
-        </nav>
-
-        {/* Botón móvil */}
-        <button
-          className="md:hidden p-2 rounded-full hover:bg-white/10 transition-colors"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Menú"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-            {mobileOpen
-              ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              : <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            }
-          </svg>
-        </button>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+              {mobileOpen
+                ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                : <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+              }
+            </svg>
+          </button>
+        )}
       </div>
 
       {/* Menú móvil desplegable */}
