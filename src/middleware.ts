@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const maintenanceMode = process.env.MAINTENANCE_MODE === 'true';
   const hasAccessCookie = request.cookies.has('admin_access');
 
@@ -35,4 +35,4 @@ export const config = {
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 };
-export default proxy;
+export default middleware;
