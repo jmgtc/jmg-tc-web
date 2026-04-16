@@ -5,17 +5,7 @@ import { urlFor } from "@/lib/sanity";
 import Image from "next/image";
 
 interface NosotrosContentProps {
-  data?: {
-    intro?: string;
-    intro_en?: string;
-    profile?: {
-      role?: string;
-      role_en?: string;
-      bio?: string;
-      bio_en?: string;
-      photo?: any;
-    }
-  };
+  data?: any;
 }
 
 export default function NosotrosContent({ data }: NosotrosContentProps) {

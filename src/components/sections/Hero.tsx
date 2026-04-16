@@ -5,19 +5,7 @@ import { urlFor } from "@/lib/sanity";
 import Image from "next/image";
 
 interface HeroProps {
-  data?: {
-    badge?: string;
-    badge_en?: string;
-    title?: string;
-    title_en?: string;
-    title_highlight?: string;
-    title_highlight_en?: string;
-    subtitle?: string;
-    subtitle_en?: string;
-    cta?: string;
-    cta_en?: string;
-    image?: any;
-  };
+  data?: any;
 }
 
 export default function Hero({ data }: HeroProps) {

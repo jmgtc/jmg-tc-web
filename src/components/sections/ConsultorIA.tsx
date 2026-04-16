@@ -3,15 +3,7 @@
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
 interface ConsultorIAProps {
-  data?: {
-    tag?: string;
-    title?: string;
-    title_en?: string;
-    highlight?: string;
-    highlight_en?: string;
-    description?: string;
-    description_en?: string;
-  };
+  data?: any;
 }
 
 export default function ConsultorIA({ data }: ConsultorIAProps) {
