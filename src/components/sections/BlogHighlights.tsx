@@ -8,9 +8,15 @@ function stripHtml(html: string) {
   return html.replace(/<[^>]*>/g, "").trim();
 }
 
-export default function BlogHighlights() {
+export default function BlogHighlights({ data }: { data?: any }) {
   const { language, dict } = useLanguage();
   const featured = posts.slice(0, 3);
+
+  const labels = {
+    tag: data?.tag || "Section_04 // Blog",
+    title: (language === 'es' ? data?.title : data?.title_en) || (language === 'es' ? 'Últimas publicaciones' : 'Latest posts'),
+    view_all: (language === 'es' ? data?.view_all : data?.view_all_en) || (language === 'es' ? 'Ver todas →' : 'View all →')
+  };
 
   return (
     <section className="bg-black py-24 relative">
@@ -22,14 +28,14 @@ export default function BlogHighlights() {
         <div className="flex items-end justify-between mb-12">
           <div>
             <span className="text-[10px] font-mono text-white/40 uppercase tracking-[0.4em] block mb-3">
-              Section_04 // Blog
+              {labels.tag}
             </span>
             <h2 className="text-4xl font-bold text-white">
-              {language === 'es' ? 'Últimas publicaciones' : 'Latest posts'}
+              {labels.title}
             </h2>
           </div>
           <Link href="/blog" className="text-sm font-bold text-gold hover:text-white transition-colors hidden md:block">
-            {language === 'es' ? 'Ver todas →' : 'View all →'}
+            {labels.view_all}
           </Link>
         </div>
 
@@ -75,7 +81,7 @@ export default function BlogHighlights() {
 
         <div className="mt-10 text-center md:hidden">
           <Link href="/blog" className="text-sm font-bold text-gold hover:underline">
-             {language === 'es' ? 'Ver todas las publicaciones →' : 'View all posts →'}
+             {labels.view_all}
           </Link>
         </div>
       </div>

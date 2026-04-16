@@ -52,15 +52,13 @@ export default function BlogPage() {
         <div className="max-w-3xl mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 backdrop-blur-md mb-6">
             <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
-            <span className="text-[10px] font-mono uppercase tracking-widest text-white/70">Insights & Tech</span>
+            <span className="text-[10px] font-mono uppercase tracking-widest text-white/70">{t('blog.insights_tag')}</span>
           </div>
           <h1 className="text-6xl font-bold tracking-tight mb-4">
-            {language === 'es' ? 'Nuestras Crónicas' : 'Our Chronicles'}
+            {t('blog.title')}
           </h1>
           <p className="text-lg text-white/80 leading-relaxed font-light">
-            {language === 'es' 
-              ? 'Exploramos la vanguardia de la IA, el desarrollo y la transformación digital.' 
-              : 'Exploring the forefront of AI, development, and digital transformation.'}
+            {t('blog.description')}
           </p>
         </div>
 
@@ -105,7 +103,7 @@ export default function BlogPage() {
 
                     <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-gold/80">
-                        {language === 'es' ? 'Leer más' : 'Read more'}
+                        {t('blog.read_more')}
                       </span>
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="stroke-white/30 group-hover:stroke-gold group-hover:translate-x-1 transition-all">
                         <path d="M5 12h14M12 5l7 7-7 7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

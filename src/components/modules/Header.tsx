@@ -4,21 +4,35 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Fingerprint } from "lucide-react";
+import { Fingerprint, User } from "lucide-react";
+import { SignInButton, UserButton, useAuth } from '@clerk/nextjs';
 
 // Eliminamos navLinks estático y lo manejamos dentro del componente con el diccionario
 
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
-export default function Header() {
+export default function Header({ cmsData }: { cmsData?: any }) {
   const { language, setLanguage, dict } = useLanguage();
+  
+  const h = cmsData?.header;
+  const site = cmsData;
+
+  const labels = {
+    about: (language === "en" ? h?.about_en : h?.about) || dict.header.about,
+    services: (language === "en" ? h?.services_en : h?.services) || dict.header.services,
+    blog: (language === "en" ? h?.blog_en : h?.blog) || dict.header.blog,
+    login: (language === "en" ? h?.login_en : h?.login) || dict.header.login,
+    panel: (language === "en" ? h?.panel_en : h?.panel) || dict.header.panel,
+    cta: (language === "en" ? h?.cta_en : h?.cta) || dict.header.cta,
+    brand_main: site?.logoText?.replace(site?.logoAccent || "Consulting", "") || "JMG Tech ",
+    brand_accent: site?.logoAccent || "Consulting"
+  };
+
+  const { isLoaded, isSignedIn } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
   const isMaintenance = pathname === "/maintenance";
-
-
-  const h = dict.header;
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -56,7 +70,7 @@ export default function Header() {
             className="h-10 w-10 object-contain rounded-full"
           />
           <span className="hidden md:block text-sm font-bold text-white/80">
-            JMG Tech <span className="text-gold">Consulting</span>
+            {labels.brand_main} <span className="text-gold">{labels.brand_accent}</span>
           </span>
         </Link>
 
@@ -64,13 +78,13 @@ export default function Header() {
         {!isMaintenance && (
           <nav className="hidden md:flex items-center gap-8">
             <Link href="/nosotros" className={`text-sm font-medium transition-colors ${pathname === "/nosotros" ? "text-gold" : "hover:text-gold"}`}>
-              {h.about}
+              {labels.about}
             </Link>
             <Link href="/servicios" className={`text-sm font-medium transition-colors ${pathname === "/servicios" ? "text-gold" : "hover:text-gold"}`}>
-              {h.services}
+              {labels.services}
             </Link>
             <Link href="/blog" className={`text-sm font-medium transition-colors ${pathname === "/blog" ? "text-gold" : "hover:text-gold"}`}>
-              {h.blog}
+              {labels.blog}
             </Link>
   
             {/* Selector de idioma */}
@@ -85,12 +99,33 @@ export default function Header() {
                 className={language === "en" ? "text-gold" : "text-white/40 hover:text-white"}
               >EN</button>
             </div>
+ 
+            {/* Acceso de Usuario */}
+            <div className="flex items-center gap-4 mr-2">
+              {!isLoaded ? (
+                <div className="w-8 h-8 rounded-full bg-white/5 animate-pulse" />
+              ) : !isSignedIn ? (
+                <SignInButton mode="modal">
+                  <button className="text-sm font-medium hover:text-gold transition-colors flex items-center gap-2">
+                    <User size={18} strokeWidth={1.5} />
+                    {labels.login}
+                  </button>
+                </SignInButton>
+              ) : (
+                <>
+                  <Link href="/dashboard" className={`text-sm font-medium transition-colors ${pathname === "/dashboard" ? "text-gold" : "hover:text-gold"}`}>
+                    {labels.panel}
+                  </Link>
+                  <UserButton afterSignOutUrl="/" />
+                </>
+              )}
+            </div>
   
             <Link
               href="/contacto"
               className="bg-gold text-black px-5 py-2 rounded-full text-sm font-bold hover:bg-white transition-all transform hover:scale-105"
             >
-              {h.cta}
+              {labels.cta}
             </Link>
           </nav>
         )}
@@ -116,13 +151,13 @@ export default function Header() {
       {mobileOpen && (
         <div className="mt-2 glass rounded-3xl p-6 flex flex-col gap-4 md:hidden">
           <Link href="/nosotros" onClick={() => setMobileOpen(false)} className={`text-sm font-medium ${pathname === "/nosotros" ? "text-gold" : ""}`}>
-            {h.about}
+            {labels.about}
           </Link>
           <Link href="/servicios" onClick={() => setMobileOpen(false)} className={`text-sm font-medium ${pathname === "/servicios" ? "text-gold" : ""}`}>
-            {h.services}
+            {labels.services}
           </Link>
           <Link href="/blog" onClick={() => setMobileOpen(false)} className={`text-sm font-medium ${pathname === "/blog" ? "text-gold" : ""}`}>
-            {h.blog}
+            {labels.blog}
           </Link>
           
           <div className="flex justify-center gap-4 py-2 border-y border-white/5 my-2">
@@ -141,7 +176,7 @@ export default function Header() {
             onClick={() => setMobileOpen(false)}
             className="bg-gold text-black px-5 py-3 rounded-full text-sm font-bold text-center hover:bg-white transition-all"
           >
-            {h.cta}
+            {labels.cta}
           </Link>
         </div>
       )}

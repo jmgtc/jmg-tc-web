@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  clerkId       String    @unique
+  email         String    @unique
+  name          String?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relaciones
+  orders        Order[]
+  subscriptions Subscription[]
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  userId          String
+  user            User        @relation(fields: [userId], references: [id])
+  stripeSessionId String      @unique
+  amount          Int
+  currency        String
+  status          String      // 'pending', 'completed', 'failed'
+  createdAt       DateTime    @default(now())
+  
+  // Detalles del servicio comprado
+  serviceName     String
+  serviceId       String
+}
+
+model Subscription {
+  id               String   @id @default(cuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id])
+  stripeSubId      String   @unique
+  status           String   // 'active', 'canceled', 'incomplete'
+  currentPeriodEnd DateTime
+  planId           String
+  createdAt        DateTime @default(now())
+}

@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
-export async function middleware(request: NextRequest) {
+const isProtectedRoute = createRouteMatcher(['/dashboard(.*)', '/profile(.*)', '/orders(.*)']);
+
+export default clerkMiddleware(async (auth, request) => {
   // 1. Prioridad: Variable de entorno (para apagado de emergencia)
   let maintenanceMode = process.env.MAINTENANCE_MODE === 'true';
 
@@ -17,7 +20,6 @@ export async function middleware(request: NextRequest) {
     const { result } = await response.json();
     
     if (result && typeof result.maintenanceMode === 'boolean') {
-      // Si Sanity dice true, activamos (incluso si la env var es false)
       if (result.maintenanceMode) maintenanceMode = true;
     }
   } catch (error) {
@@ -25,35 +27,37 @@ export async function middleware(request: NextRequest) {
   }
 
   const hasAccessCookie = request.cookies.has('admin_access');
-
-  // Skip middleware for maintenance page itself, assets, and api routes that might handle login
   const isMaintenancePage = request.nextUrl.pathname === '/maintenance';
   const isPublicAsset = request.nextUrl.pathname.startsWith('/_next') || 
                         request.nextUrl.pathname.startsWith('/api') ||
                         request.nextUrl.pathname.includes('.');
 
+  // Lógica de Mantenimiento
   if (maintenanceMode && !hasAccessCookie && !isMaintenancePage && !isPublicAsset) {
     return NextResponse.redirect(new URL('/maintenance', request.url));
   }
 
-  // If maintenance is OFF but user is on /maintenance, redirect to home
   if (!maintenanceMode && isMaintenancePage) {
     return NextResponse.redirect(new URL('/', request.url));
   }
 
+  // Lógica de Clerk (Protección de rutas)
+  if (isProtectedRoute(request)) {
+    await auth.protect();
+  }
+
   return NextResponse.next();
-}
+});
 
 export const config = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
-     * - api (API routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
+     * - public (static public files)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    '/((?!_next/static|_next/image|favicon.ico|public).*)',
   ],
 };
-export default middleware;

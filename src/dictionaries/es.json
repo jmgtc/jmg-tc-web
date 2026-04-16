@@ -3,12 +3,90 @@
     "about": "Nosotros",
     "services": "Servicios",
     "blog": "Blog",
-    "cta": "Agendar Cita"
+    "cta": "Agendar Cita",
+    "login": "Entrar",
+    "panel": "Panel"
   },
   "hero": {
     "badge": "Consultoría IT y Desarrollo AI",
-    "title": "Potenciamos tu negocio con",
+    "title": "A tu lado para diseñar, optimizar y proteger",
+    "title_highlight": "tu entorno digital",
     "subtitle": "Estrategias personalizadas para llevar tu empresa al siguiente nivel tecnológico.",
     "cta": "Empezar ahora"
+  },
+  "services": {
+    "title": "Nuestros Servicios",
+    "description": "Tres pilares tecnológicos. Un único socio estratégico.",
+    "it": {
+      "tag": "Sección 02 // Gestión IT",
+      "title": "Gestión Informática",
+      "subtitle": "Infraestructura robusta, siempre activa.",
+      "desc_short": "Infraestructura robusta y siempre activa. Gestionamos tus sistemas para que puedas centrarte en tu negocio.",
+      "cta": "Contratar servicio",
+      "phases": [
+        { "num": "01", "label": "Diagnóstico", "desc": "Analizamos tu infraestructura actual para detectar vulnerabilidades y oportunidades de mejora." },
+        { "num": "02", "label": "Objetivos", "desc": "Definimos metas claras y un plan de acción medible adaptado a tu negocio." },
+        { "num": "03", "label": "Solución", "desc": "Implementamos las herramientas y procesos necesarios para operar con eficiencia." },
+        { "num": "04", "label": "Seguimiento", "desc": "Monitorizamos de forma continua para garantizar el rendimiento óptimo." }
+      ]
+    },
+    "web": {
+      "tag": "Sección 02 // Desarrollo Web",
+      "title": "Desarrollo Web y Apps",
+      "subtitle": "Presencia digital que convierte visitantes en clientes.",
+      "desc_short": "Presencia digital premium que convierte visitantes en clientes. Tecnologías modernas y diseño orientado a conversión.",
+      "cta": "Contratar desarrollo",
+      "phases": [
+        { "num": "01", "label": "Requerimiento", "desc": "Escuchamos tu visión y definimos los requisitos funcionales y de diseño." },
+        { "num": "02", "label": "Diseño", "desc": "Creamos prototipos y maquetas que reflejan la identidad de tu marca." },
+        { "num": "03", "label": "Desarrollo", "desc": "Construimos con tecnologías modernas, rápidas y escalables." },
+        { "num": "04", "label": "Monitoreo", "desc": "Aseguramos el funcionamiento y rendimiento tras el lanzamiento." }
+      ]
+    },
+    "ia": {
+      "tag": "Sección 03 // ConsultorIA",
+      "title": "ConsultorIA",
+      "title_main": "Consultor",
+      "title_highlight": "IA",
+      "subtitle": "Automatización inteligente para un negocio 24/7.",
+      "desc_short": "Automatización inteligente para que tu negocio opere 24/7. Identificamos procesos, implementamos IA y medimos el impacto real.",
+      "cta": "Automatiza tu empresa",
+      "phases": [
+        { "num": "01", "label": "Identificar", "desc": "Mapeamos los procesos repetitivos de tu empresa que pueden automatizarse con IA." },
+        { "num": "02", "label": "Tecnología", "desc": "Seleccionamos las herramientas de IA más adecuadas: LLMs, agentes, APIs y workflows." },
+        { "num": "03", "label": "Diseño", "desc": "Diseñamos el flujo de automatización adaptado a tu equipo y sin interrumpir operaciones." },
+        { "num": "04", "label": "Monitoreo", "desc": "Medimos el impacto real y optimizamos continuamente el sistema inteligente." }
+      ]
+    },
+    "phase_label": "0",
+    "price_label": "desde"
+  },
+  "blog": {
+    "title": "Nuestras Crónicas",
+    "description": "Exploramos la vanguardia de la IA, el desarrollo y la transformación digital.",
+    "read_more": "Leer más",
+    "insights_tag": "Insights & Tech"
+  },
+  "about": {
+    "tag": "Sobre JMG // Quiénes somos",
+    "title_main": "Tu tecnología,",
+    "title_accent": "en manos de un experto",
+    "intro": "JMG Tech Consulting nace de la convicción de que cualquier negocio, independientemente de su tamaño, merece acceder a tecnología de élite. Simplificamos y automatizamos para que puedas crecer sin fricciones.",
+    "profile": {
+      "tag": "Perfil // Fundador",
+      "name": "Jose Gutiérrez",
+      "role": "Ingeniero Informático · Fundador",
+      "desc": "Con más de una década de trayectoria en infraestructura IT y ecosistemas IA, Jose actúa como el socio tecnológico de confianza. Entiende el ADN de cada negocio para aportar soluciones de impacto real, alejándose de propuestas genéricas."
+    },
+    "values": {
+      "tag": "Valores // Pilares",
+      "title": "Nuestros valores",
+      "items": [
+        { "icon": "⚡", "label": "Innovación", "desc": "Adoptamos las últimas tecnologías para darte ventaja competitiva real." },
+        { "icon": "🔒", "label": "Seguridad", "desc": "Tu infraestructura y datos protegidos bajo los más altos estándares." },
+        { "icon": "🤝", "label": "Cercanía", "desc": "Somos tu socio, no un proveedor. Entendemos tu negocio en profundidad." },
+        { "icon": "🔍", "label": "Transparencia", "desc": "Comunicación clara, presupuestos sin sorpresas y resultados medibles." }
+      ]
+    }
   }
 }
