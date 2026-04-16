@@ -116,7 +116,7 @@ export default function Header({ cmsData }: { cmsData?: any }) {
                   <Link href="/dashboard" className={`text-sm font-medium transition-colors ${pathname === "/dashboard" ? "text-gold" : "hover:text-gold"}`}>
                     {labels.panel}
                   </Link>
-                  <UserButton afterSignOutUrl="/" />
+                  <UserButton />
                 </>
               )}
             </div>
