@@ -76,10 +76,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: text });
   } catch (error: any) {
     console.error("AI Concierge detailed error:", error);
+    
+    // Capturamos el mensaje real de Google para diagnóstico directo
+    const googleErrorMessage = error.message || "Error desconocido en el motor de IA";
 
     return NextResponse.json({ 
       error: "Error interno",
-      debug: process.env.NODE_ENV === "development" ? error.message : "Error en el motor de IA. Revisa las cuotas de Gemini o la API Key."
+      debug: `[Google AI Error]: ${googleErrorMessage}`
     }, { status: 500 });
   }
 }
