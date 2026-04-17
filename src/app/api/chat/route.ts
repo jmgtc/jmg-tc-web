@@ -1,6 +1,8 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextRequest, NextResponse } from "next/server";
 
+export const dynamic = 'force-dynamic'
+
 const SYSTEM_PROMPT = `Eres el Asistente Virtual de JMG Tech Consulting, una consultora tecnológica especializada en:
 
 1. **Gestión Informática**: Infraestructura IT, soporte técnico, diagnóstico de sistemas, mantenimiento preventivo y correctivo.
