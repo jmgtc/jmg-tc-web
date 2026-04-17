@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
     
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash", // Esta es la versión estable actual. También existe 'gemini-2.0-flash'
+      model: "gemini-1.5-flash-latest", // Usamos el alias -latest para máxima compatibilidad
       systemInstruction: SYSTEM_PROMPT,
     });
 
