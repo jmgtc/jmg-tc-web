@@ -1,10 +1,15 @@
 import Stripe from 'stripe'
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  console.warn('⚠️ STRIPE_SECRET_KEY is missing. Stripe features will be disabled.');
+// Inicialización resiliente de Stripe
+const stripeSecretKey = (process.env.STRIPE_SECRET_KEY || '') as string
+
+if (!stripeSecretKey && process.env.NODE_ENV === 'production') {
+  console.warn('⚠️ STRIPE_SECRET_KEY no está configurada en producción.')
 }
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-12-18.acacia' as any, // Usamos la última estable
+// Forzamos la inicialización incluso si la clave está vacía para que el build no se detenga
+export const stripe = new Stripe(stripeSecretKey, {
+  // @ts-ignore - Forzamos versión compatible o dejamos que use la por defecto del SDK
+  apiVersion: '2023-10-16', 
   typescript: true,
 })
