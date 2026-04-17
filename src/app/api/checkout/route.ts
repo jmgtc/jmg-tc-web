@@ -1,5 +1,4 @@
-import { auth, currentUser } from '@clerk/nextjs/server'
-import { stripe } from '@/lib/stripe'
+import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
@@ -7,50 +6,46 @@ export const dynamic = 'force-dynamic'
 export async function POST(req: Request) {
   try {
     const { userId } = await auth()
-    const user = await currentUser()
-
-    if (!userId || !user) {
+    
+    if (!userId) {
       return new NextResponse('Unauthorized', { status: 401 })
     }
 
-    const { serviceId, serviceName, price, mode = 'payment' } = await req.json()
+    const { planId, planName, price } = await req.json()
 
-    if (!price || !serviceName) {
-      return new NextResponse('Missing parameters', { status: 400 })
-    }
+    // Importar dinámicamente el SDK de Stripe servidor
+    const { getStripeServer } = await import('@/lib/stripe')
+    const stripe = getStripeServer()
 
-    const host = process.env.NEXT_PUBLIC_SITE_URL || req.headers.get('origin') || 'http://localhost:3000'
-
-    // Crear la sesión de Stripe
+    // En un entorno de producción real, aquí obtendríamos el priceId de Stripe
+    // Para la demo, creamos una sesión genérica
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
         {
           price_data: {
-            currency: 'eur',
+            currency: 'usd',
             product_data: {
-              name: serviceName,
-              description: `Servicio técnico avanzado - JMG Tech Consulting`,
+              name: `Plan ${planName}`,
+              description: `Suscripción al plan ${planName} de JMG Tech Consulting`,
             },
-            unit_amount: price, // En céntimos
+            unit_amount: price * 100, // Stripe usa centavos
           },
           quantity: 1,
         },
       ],
-      mode: mode as any,
-      success_url: `${host}/dashboard?success=true`,
-      cancel_url: `${host}/servicios?canceled=true`,
+      mode: 'payment',
+      success_url: `${req.headers.get('origin')}/dashboard?status=success`,
+      cancel_url: `${req.headers.get('origin')}/prices?status=cancel`,
       metadata: {
         userId: userId,
-        serviceId: serviceId,
-        serviceName: serviceName,
+        planName: planName,
       },
-      customer_email: user.emailAddresses[0].emailAddress,
     })
 
     return NextResponse.json({ url: session.url })
   } catch (error: any) {
-    console.error('[STRIPE_CHECKOUT_ERROR]', error)
-    return new NextResponse('Internal Error', { status: 500 })
+    console.error('Error in checkout session creation:', error)
+    return new NextResponse(error.message || 'Internal Server Error', { status: 500 })
   }
 }

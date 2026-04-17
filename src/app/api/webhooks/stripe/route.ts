@@ -1,70 +1,55 @@
 import { headers } from 'next/headers'
-import { stripe } from '@/lib/stripe'
-import prisma from '@/lib/prisma'
 import { NextResponse } from 'next/server'
+import Stripe from 'stripe'
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(req: Request) {
+  // Importación dinámica interna para evitar fallos de build
+  const { default: prisma } = await import('@/lib/prisma')
+  const { getStripeServer } = await import('@/lib/stripe')
+  
   const body = await req.text()
-  const signature = (await headers()).get('Stripe-Signature') as string
+  const headerPayload = await headers()
+  const signature = headerPayload.get('stripe-signature') as string
 
-  let event
+  const stripe = getStripeServer()
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
+
+  if (!webhookSecret || !signature) {
+    console.warn('⚠️ STRIPE_WEBHOOK_SECRET or signature is missing.');
+    return new NextResponse('Webhook error', { status: 400 })
+  }
+
+  let event: Stripe.Event
 
   try {
-    event = stripe.webhooks.constructEvent(
-      body,
-      signature,
-      process.env.STRIPE_WEBHOOK_SECRET!
-    )
-  } catch (error: any) {
-    return new NextResponse(`Webhook Error: ${error.message}`, { status: 400 })
+    event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
+  } catch (err: any) {
+    console.error(`❌ Error verifying Stripe webhook: ${err.message}`)
+    return new NextResponse(`Webhook Error: ${err.message}`, { status: 400 })
   }
 
-  const session = event.data.object as any
-
-  // Manejar el éxito del pago
+  // Manejar el evento de Checkout completado
   if (event.type === 'checkout.session.completed') {
-    // 1. Obtener el ID de usuario y detalles desde la metadata
-    const clerkId = session.metadata.userId
-    const serviceName = session.metadata.serviceName
-    const serviceId = session.metadata.serviceId
-
-    if (!clerkId) {
-      return new NextResponse('Clerk User ID not found in metadata', { status: 400 })
-    }
-
-    // Buscar el usuario interno por su clerkId para obtener el ID real de Prisma
-    const internalUser = await prisma.user.findUnique({
-      where: { clerkId }
-    })
-
-    if (!internalUser) {
-      console.error(`Local user not found for clerkId: ${clerkId}`)
-      return new NextResponse('Local user not found', { status: 404 })
-    }
-
-    // 2. Crear el registro del pedido en Neon usando el ID interno de Prisma
-    await prisma.order.create({
-      data: {
-        userId: internalUser.id,
-        stripeSessionId: session.id,
-        amount: session.amount_total,
-        currency: session.currency,
-        status: 'completed',
-        serviceName: serviceName || 'Servicio Técnico',
-        serviceId: serviceId || 'generic',
-      },
-    })
+    const session = event.data.object as Stripe.Checkout.Session
     
-    console.log(`Order created for local user ${internalUser.id} (Clerk: ${clerkId})`)
+    const userId = session.metadata?.userId
+    const planName = session.metadata?.planName
+
+    if (userId && planName) {
+      // Actualizar el plan del usuario en la base de datos
+      await prisma.user.update({
+        where: { clerkId: userId },
+        data: { 
+          plan: planName,
+          // Guardamos el ID de cliente de Stripe para futuras gestiones
+          stripeCustomerId: session.customer as string
+        },
+      })
+      console.log(`✅ Plan ${planName} activado para el usuario ${userId}`)
+    }
   }
 
-  // Manejar suscripciones
-  if (event.type === 'customer.subscription.created' || event.type === 'customer.subscription.updated') {
-    const subscription = event.data.object as any
-    // Lógica similar para suscripciones...
-  }
-
-  return new NextResponse(null, { status: 200 })
+  return new NextResponse('Success', { status: 200 })
 }
