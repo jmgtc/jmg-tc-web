@@ -86,11 +86,31 @@ export async function POST(req: NextRequest) {
     console.error("AI Concierge detailed error:", error);
     
     // Capturamos el mensaje real de Google para diagnóstico directo
-    const googleErrorMessage = error.message || "Error desconocido en el motor de IA";
+    let googleErrorMessage = error.message || "Error desconocido en el motor de IA";
+    let debugInfo = `[Google AI Error]: ${googleErrorMessage}`;
+
+    try {
+      // Si el error es de modelo no encontrado, hacemos una consulta rápida a ver qué modelos tiene disponibles su API KEY
+      if (googleErrorMessage.includes("404 Not Found") && googleErrorMessage.includes("models/")) {
+        const apiKey = process.env.GEMINI_API_KEY;
+        const modelsRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+        const modelsData = await modelsRes.json();
+        
+        if (modelsData.models) {
+          const availableModels = modelsData.models
+            .map((m: any) => m.name.replace("models/", ""))
+            .filter((n: string) => n.includes("gemini"))
+            .join(", ");
+          debugInfo += ` | Modelos permitidos para tu API Key: ${availableModels || 'Ninguno visible'}`;
+        }
+      }
+    } catch (e) {
+      console.error("No se pudieron obtener los modelos disponibles", e);
+    }
 
     return NextResponse.json({ 
       error: "Error interno",
-      debug: `[Google AI Error]: ${googleErrorMessage}`
+      debug: debugInfo
     }, { status: 500 });
   }
 }
