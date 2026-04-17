@@ -8,7 +8,8 @@ export async function POST(req: Request) {
   const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET
 
   if (!WEBHOOK_SECRET) {
-    throw new Error('Please add CLERK_WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local')
+    console.warn('⚠️ CLERK_WEBHOOK_SECRET is missing. Webhook verification will disabled.');
+    return new Response('Webhook secret not configured', { status: 500 });
   }
 
   // 2. Obtener los headers de Svix para validación
