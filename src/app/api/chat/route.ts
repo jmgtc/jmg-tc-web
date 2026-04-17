@@ -59,8 +59,10 @@ export async function POST(req: NextRequest) {
     
     // Forzamos la versión 'v1' de la API para asegurar compatibilidad con modelos estables
     const genAI = new GoogleGenerativeAI(apiKey, { apiVersion: "v1" });
+    const modelName = process.env.NEXT_PUBLIC_GEMINI_MODEL || "gemini-3.1-flash";
+    
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash", 
+      model: modelName, 
       systemInstruction: SYSTEM_PROMPT,
     });
 
