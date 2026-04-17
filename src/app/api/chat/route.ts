@@ -63,10 +63,17 @@ export async function POST(req: NextRequest) {
       systemInstruction: SYSTEM_PROMPT,
     });
 
-    const history = messages.slice(0, -1).map((m: { role: string; content: string }) => ({
+    // Construir historial para el chat (Gemini exige que empiece con 'user')
+    const rawHistory = messages.slice(0, -1).map((m: { role: string; content: string }) => ({
       role: m.role === "assistant" ? "model" : "user",
       parts: [{ text: m.content }],
     }));
+
+    // REGLA DE ORO DE GEMINI: El historial no puede empezar con un mensaje del modelo
+    // Si el primer mensaje es el de bienvenida (model), lo filtramos.
+    const history = rawHistory.length > 0 && rawHistory[0].role === 'model' 
+      ? rawHistory.slice(1) 
+      : rawHistory;
 
     const chat = model.startChat({ history });
     const lastMessage = messages[messages.length - 1].content;
