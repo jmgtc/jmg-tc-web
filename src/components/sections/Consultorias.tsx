@@ -44,7 +44,7 @@ export default function Consultorias({ headerData, services }: ConsultoriasProps
   };
 
   // Static Fallback
-  const fallbackServices = [
+  const fallbackServices: ServiceItem[] = [
     {
       _id: "01",
       tag: srvIT.tag,
