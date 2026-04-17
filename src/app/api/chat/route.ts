@@ -78,51 +78,54 @@ export async function POST(req: NextRequest) {
 
     let chat = model.startChat({ history });
     const lastMessage = messages[messages.length - 1].content;
+    const result = await chat.sendMessage(lastMessage);
+    const text = result.response.text();
+    return NextResponse.json({ message: text });
 
-    try {
-      const result = await chat.sendMessage(lastMessage);
-      const text = result.response.text();
-      return NextResponse.json({ message: text });
-    } catch (error: any) {
-      let googleErrorMessage = error.message || "Error desconocido en el motor de IA";
-      
-      // AUTO-REPARACIÓN DE GAMA ALTA:
-      // Si recibimos un 404, la cuenta es de nueva generación o el modelo base no existe.
-      // Así que buscamos dinámicamente qué modelos *sí* existen y reintentamos con el primero que sirva para chat.
-      if (googleErrorMessage.includes("404 Not Found") && googleErrorMessage.includes("models/")) {
-        try {
-          const modelsRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
-          const modelsData = await modelsRes.json();
-          
-          if (modelsData.models) {
-            // Filtramos basuras (embeddings, audio, tts) para quedarnos con un modelo de texto utilizable
-            const availableModels = modelsData.models
-              .map((m: any) => m.name.replace("models/", ""))
-              .filter((n: string) => n.includes("gemini") && !n.includes("embedding") && !n.includes("tts") && !n.includes("audio") && !n.includes("robotics") && n.includes("flash"));
+  } catch (error: any) {
+    let googleErrorMessage = error.message || "Error desconocido en el motor de IA";
+    
+    // AUTO-REPARACIÓN DE GAMA ALTA:
+    if (googleErrorMessage.includes("404 Not Found") && googleErrorMessage.includes("models/")) {
+      try {
+        const modelsRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${process.env.GEMINI_API_KEY}`);
+        const modelsData = await modelsRes.json();
+        
+        if (modelsData.models) {
+          const availableModels = modelsData.models
+            .map((m: any) => m.name.replace("models/", ""))
+            .filter((n: string) => n.includes("gemini") && !n.includes("embedding") && !n.includes("tts") && !n.includes("audio") && !n.includes("robotics") && n.includes("flash"));
 
-            if (availableModels.length > 0) {
-              const fallbackModel = availableModels[0]; // Usaremos el primer modelo válido encontrado (ej. gemini-3-flash-lite-preview)
-              
-              // Reinstanciamos y reintentamos!
-              model = genAI.getGenerativeModel({ model: fallbackModel, systemInstruction: SYSTEM_PROMPT });
-              chat = model.startChat({ history });
-              const retryResult = await chat.sendMessage(lastMessage);
-              
-              return NextResponse.json({ 
-                message: retryResult.response.text() 
-                // Ya no mostramos mensajes de debug, porque el sistema se ha autoreparado correctamente en fondo.
-              });
-            }
+          if (availableModels.length > 0) {
+            const fallbackModel = availableModels[0]; 
+            
+            const { GoogleGenerativeAI } = await import("@google/generative-ai");
+            const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+            const model = genAI.getGenerativeModel({ model: fallbackModel, systemInstruction: SYSTEM_PROMPT });
+            
+            const { messages } = await req.clone().json();
+            const rawHistory = messages.slice(0, -1).map((m: { role: string; content: string }) => ({
+              role: m.role === "assistant" ? "model" : "user",
+              parts: [{ text: m.content }],
+            }));
+            const history = rawHistory.length > 0 && rawHistory[0].role === 'model' ? rawHistory.slice(1) : rawHistory;
+            const chat = model.startChat({ history });
+            const lastMessage = messages[messages.length - 1].content;
+
+            const retryResult = await chat.sendMessage(lastMessage);
+            
+            return NextResponse.json({ message: retryResult.response.text() });
           }
-        } catch (e) {
-          console.error("Fallo al intentar auto-recuperación de modelo", e);
         }
+      } catch (e) {
+        console.error("Fallo al intentar auto-recuperación de modelo", e);
       }
-
-      console.error("AI Concierge detailed error:", error);
-      return NextResponse.json({ 
-        error: "Error interno",
-        debug: `[Google AI Error]: ${googleErrorMessage}`
-      }, { status: 500 });
     }
+
+    console.error("AI Concierge detailed error:", error);
+    return NextResponse.json({ 
+      error: "Error interno",
+      debug: `[Google AI Error]: ${googleErrorMessage}`
+    }, { status: 500 });
+  }
 }
