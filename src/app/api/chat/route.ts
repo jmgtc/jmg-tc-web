@@ -57,62 +57,72 @@ export async function POST(req: NextRequest) {
     // Importación dinámica para consistencia y estabilidad en build
     const { GoogleGenerativeAI } = await import("@google/generative-ai");
     
-    // Forzamos la versión 'v1' de la API para asegurar compatibilidad con modelos estables
-    const genAI = new GoogleGenerativeAI(apiKey, { apiVersion: "v1" });
-    const modelName = process.env.NEXT_PUBLIC_GEMINI_MODEL || "gemini-3.1-flash";
+    // Restauramos el comportamiento por defecto (que usa v1beta internamente)
+    // Las claves de nueva generación (2025/2026) SOLO tienen modelos en estado 'preview' en v1beta.
+    const genAI = new GoogleGenerativeAI(apiKey);
+    let modelName = process.env.NEXT_PUBLIC_GEMINI_MODEL || "gemini-1.5-flash"; 
     
-    const model = genAI.getGenerativeModel({
+    let model = genAI.getGenerativeModel({
       model: modelName, 
       systemInstruction: SYSTEM_PROMPT,
     });
 
-    // Construir historial para el chat (Gemini exige que empiece con 'user')
     const rawHistory = messages.slice(0, -1).map((m: { role: string; content: string }) => ({
       role: m.role === "assistant" ? "model" : "user",
       parts: [{ text: m.content }],
     }));
 
-    // REGLA DE ORO DE GEMINI: El historial no puede empezar con un mensaje del modelo
-    // Si el primer mensaje es el de bienvenida (model), lo filtramos.
     const history = rawHistory.length > 0 && rawHistory[0].role === 'model' 
       ? rawHistory.slice(1) 
       : rawHistory;
 
-    const chat = model.startChat({ history });
+    let chat = model.startChat({ history });
     const lastMessage = messages[messages.length - 1].content;
-    const result = await chat.sendMessage(lastMessage);
-    const text = result.response.text();
-
-    return NextResponse.json({ message: text });
-  } catch (error: any) {
-    console.error("AI Concierge detailed error:", error);
-    
-    // Capturamos el mensaje real de Google para diagnóstico directo
-    let googleErrorMessage = error.message || "Error desconocido en el motor de IA";
-    let debugInfo = `[Google AI Error]: ${googleErrorMessage}`;
 
     try {
-      // Si el error es de modelo no encontrado, hacemos una consulta rápida a ver qué modelos tiene disponibles su API KEY
+      const result = await chat.sendMessage(lastMessage);
+      const text = result.response.text();
+      return NextResponse.json({ message: text });
+    } catch (error: any) {
+      let googleErrorMessage = error.message || "Error desconocido en el motor de IA";
+      
+      // AUTO-REPARACIÓN DE GAMA ALTA:
+      // Si recibimos un 404, la cuenta es de nueva generación o el modelo base no existe.
+      // Así que buscamos dinámicamente qué modelos *sí* existen y reintentamos con el primero que sirva para chat.
       if (googleErrorMessage.includes("404 Not Found") && googleErrorMessage.includes("models/")) {
-        const apiKey = process.env.GEMINI_API_KEY;
-        const modelsRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
-        const modelsData = await modelsRes.json();
-        
-        if (modelsData.models) {
-          const availableModels = modelsData.models
-            .map((m: any) => m.name.replace("models/", ""))
-            .filter((n: string) => n.includes("gemini"))
-            .join(", ");
-          debugInfo += ` | Modelos permitidos para tu API Key: ${availableModels || 'Ninguno visible'}`;
+        try {
+          const modelsRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+          const modelsData = await modelsRes.json();
+          
+          if (modelsData.models) {
+            // Filtramos basuras (embeddings, audio, tts) para quedarnos con un modelo de texto utilizable
+            const availableModels = modelsData.models
+              .map((m: any) => m.name.replace("models/", ""))
+              .filter((n: string) => n.includes("gemini") && !n.includes("embedding") && !n.includes("tts") && !n.includes("audio") && !n.includes("robotics") && n.includes("flash"));
+
+            if (availableModels.length > 0) {
+              const fallbackModel = availableModels[0]; // Usaremos el primer modelo válido encontrado (ej. gemini-3-flash-lite-preview)
+              
+              // Reinstanciamos y reintentamos!
+              model = genAI.getGenerativeModel({ model: fallbackModel, systemInstruction: SYSTEM_PROMPT });
+              chat = model.startChat({ history });
+              const retryResult = await chat.sendMessage(lastMessage);
+              
+              return NextResponse.json({ 
+                message: retryResult.response.text() 
+                // Ya no mostramos mensajes de debug, porque el sistema se ha autoreparado correctamente en fondo.
+              });
+            }
+          }
+        } catch (e) {
+          console.error("Fallo al intentar auto-recuperación de modelo", e);
         }
       }
-    } catch (e) {
-      console.error("No se pudieron obtener los modelos disponibles", e);
-    }
 
-    return NextResponse.json({ 
-      error: "Error interno",
-      debug: debugInfo
-    }, { status: 500 });
-  }
+      console.error("AI Concierge detailed error:", error);
+      return NextResponse.json({ 
+        error: "Error interno",
+        debug: `[Google AI Error]: ${googleErrorMessage}`
+      }, { status: 500 });
+    }
 }
