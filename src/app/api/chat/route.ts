@@ -27,8 +27,10 @@ Reglas:
 Empieza siempre con: "¡Hola! Soy el asistente de JMG Tech Consulting. ¿En qué puedo ayudarte hoy?"`;
 
 export async function POST(req: NextRequest) {
+  let messages: any[] = [];
   try {
-    const { messages } = await req.json();
+    const body = await req.json();
+    messages = body.messages || [];
     const demoMode = process.env.NEXT_PUBLIC_AI_DEMO_MODE === "true";
 
     if (demoMode) {
@@ -84,26 +86,30 @@ export async function POST(req: NextRequest) {
 
   } catch (error: any) {
     let googleErrorMessage = error.message || "Error desconocido en el motor de IA";
+    let fallbackLog = "";
     
     // AUTO-REPARACIÓN DE GAMA ALTA:
     if (googleErrorMessage.includes("404 Not Found") && googleErrorMessage.includes("models/")) {
       try {
-        const modelsRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${process.env.GEMINI_API_KEY}`);
+        fallbackLog += " | Iniciando auto-reparación...";
+        const apiKey = process.env.GEMINI_API_KEY!;
+        const modelsRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
         const modelsData = await modelsRes.json();
         
         if (modelsData.models) {
+          // Filtro menos estricto: buscar cualquier gemini (flash o pro) que no sea una herramienta específica
           const availableModels = modelsData.models
             .map((m: any) => m.name.replace("models/", ""))
-            .filter((n: string) => n.includes("gemini") && !n.includes("embedding") && !n.includes("tts") && !n.includes("audio") && !n.includes("robotics") && n.includes("flash"));
+            .filter((n: string) => n.includes("gemini") && !n.includes("embedding") && !n.includes("tts") && !n.includes("audio") && !n.includes("robotics") && !n.includes("image") && !n.includes("computer-use"));
 
           if (availableModels.length > 0) {
             const fallbackModel = availableModels[0]; 
+            fallbackLog += ` | Modelo elegido: ${fallbackModel}`;
             
             const { GoogleGenerativeAI } = await import("@google/generative-ai");
-            const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+            const genAI = new GoogleGenerativeAI(apiKey);
             const model = genAI.getGenerativeModel({ model: fallbackModel, systemInstruction: SYSTEM_PROMPT });
             
-            const { messages } = await req.clone().json();
             const rawHistory = messages.slice(0, -1).map((m: { role: string; content: string }) => ({
               role: m.role === "assistant" ? "model" : "user",
               parts: [{ text: m.content }],
@@ -112,20 +118,26 @@ export async function POST(req: NextRequest) {
             const chat = model.startChat({ history });
             const lastMessage = messages[messages.length - 1].content;
 
+            fallbackLog += " | Enviando mensaje...";
             const retryResult = await chat.sendMessage(lastMessage);
             
             return NextResponse.json({ message: retryResult.response.text() });
+          } else {
+             fallbackLog += ` | No se encontró ningún modelo de texto válido. Modelos detectados: ${modelsData.models.map((m:any) => m.name.replace("models/","")).join(", ")}`;
           }
+        } else {
+          fallbackLog += " | API no devolvió lista de modelos";
         }
-      } catch (e) {
+      } catch (e: any) {
         console.error("Fallo al intentar auto-recuperación de modelo", e);
+        fallbackLog += ` | Fallo crítico en fallback: ${e.message}`;
       }
     }
 
     console.error("AI Concierge detailed error:", error);
     return NextResponse.json({ 
       error: "Error interno",
-      debug: `[Google AI Error]: ${googleErrorMessage}`
+      debug: `[Google AI Error]: ${googleErrorMessage} ${fallbackLog}`
     }, { status: 500 });
   }
 }
