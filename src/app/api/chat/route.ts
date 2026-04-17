@@ -47,10 +47,10 @@ export async function POST(req: NextRequest) {
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey || apiKey === "tu_api_key_aqui") {
+    if (!apiKey || apiKey === "tu_clave_aqui_para_activar_ia" || apiKey === "tu_api_key_aqui") {
       return NextResponse.json({ 
         error: "Configuración incompleta",
-        debug: "FALTA GEMINI_API_KEY en las variables de entorno de Vercel (Production)." 
+        debug: "FALTA GEMINI_API_KEY. Ve a Vercel > Settings > Environment Variables y añade tu clave real de AI Studio." 
       }, { status: 500 });
     }
 
