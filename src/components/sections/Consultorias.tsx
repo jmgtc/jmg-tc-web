@@ -76,8 +76,8 @@ export default function Consultorias({ headerData, services }: ConsultoriasProps
         </div>
       )}
       {displayServices.map((srv, i) => {
-        const title = (language === "en" ? srv.title_en : srv.title) || srv.title;
-        const desc = (language === "en" ? srv.description_en : srv.description) || srv.description;
+        const title = (language === "en" ? srv.title_en : srv.title) || srv.title || "Servicio JMG-TC";
+        const desc = (language === "en" ? srv.description_en : srv.description) || srv.description || "";
 
         return (
           <div
