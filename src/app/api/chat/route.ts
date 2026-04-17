@@ -24,7 +24,7 @@ Reglas:
 - El email de contacto es: info@jmg-tc.com
 - La URL para agendar cita es: https://jmg-tc.com/reservar
 
-Empieza siempre con: "¡Hola! Soy el asistente de JMG Tech Consulting. ¿En qué puedo ayudarte hoy?"`;
+- Mantén la naturalidad de la conversación: no repitas saludos ni te presentes si ya lo hiciste en mensajes anteriores. Responde siempre directamente a la consulta actual.`;
 
 export async function POST(req: NextRequest) {
   let messages: any[] = [];
