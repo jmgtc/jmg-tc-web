@@ -18,7 +18,9 @@
       "Negocios",
       "Particulares",
       "Tecnología"
-    ]
+    ],
+    "title_en": "How Gemini 3 transforms your ideas into interactive experiences",
+    "excerpt_en": "<p>Gemini 3 is Google's new artificial intelligence model, designed so anyone can learn faster, create interactive experiences, and plan complex projects with a single prompt. Integrated into products like the Gemini app, AI Mode in Search, and Google AI Studio, it becomes an advanced assistant always available, for both individuals and businesses.</p>\n"
   },
   {
     "id": 4023,
@@ -39,7 +41,9 @@
       "Negocios",
       "Particulares",
       "Tecnología"
-    ]
+    ],
+    "title_en": "Adobe integrates ChatGPT into Photoshop and Acrobat",
+    "excerpt_en": "<p>Adobe has launched Adobe Photoshop, Adobe Express, and Adobe Acrobat directly within ChatGPT, allowing its 800 million weekly users to edit images, design invitations, and transform documents with simple conversational instructions. This integration combines the power of Adobe's leading tools with ChatGPT's intuitive interface.</p>\n"
   },
   {
     "id": 4014,
@@ -57,7 +61,9 @@
       "Particulares",
       "Perplexity",
       "Tecnología"
-    ]
+    ],
+    "title_en": "How Comet Assistant boosts your control over AI",
+    "excerpt_en": "<p>Comet Assistant: more control and precision in your searches</p><p>Perplexity's Comet Assistant revolutionizes the browsing experience by offering unprecedented control and precision in searches, thanks to its AI integrated directly into the browser. This tool not only allows complex queries, but also understands and acts simultaneously across multiple tabs.</p>\n"
   },
   {
     "id": 4002,
@@ -76,7 +82,9 @@
       "NotebookLM",
       "Particulares",
       "Tecnología"
-    ]
+    ],
+    "title_en": "Google supercharges NotebookLM with a 1 million token context window",
+    "excerpt_en": "<p>Google has made a significant leap by boosting NotebookLM with a 1 million token context window thanks to Gemini integration. This update enables analyzing large document collections and improves the conversational experience, offering much more coherent and useful interactions in extended projects.</p>\n"
   },
   {
     "id": 3989,
@@ -99,7 +107,9 @@
       "Sistemas Operativos",
       "Tecnología",
       "Windows"
-    ]
+    ],
+    "title_en": "How Adobe revolutionizes creativity with AI at MAX 2025",
+    "excerpt_en": "<p>AI and creativity: the latest from Adobe at MAX 2025</p><p>At Adobe MAX 2025, Adobe presented AI advancements that transform digital creativity. The event highlights Firefly's consolidation as a complete AI studio to generate and edit images, videos, and audio with just written instructions, minimizing technical barriers.</p>\n"
   },
   {
     "id": 3963,
@@ -120,7 +130,9 @@
       "Sistemas Operativos",
       "Tecnología",
       "Windows"
-    ]
+    ],
+    "title_en": "Microsoft turns every Windows 11 PC into an AI PC",
+    "excerpt_en": "<p>Microsoft turns every Windows 11 PC into an AI PC through deep Copilot integration, transforming the traditional computing experience into a conversational and natural interaction.</p><p>The new update allows natural interaction by voice or text, visual analysis of on-screen content, and automated actions with user permission.</p>\n"
   },
   {
     "id": 3944,
@@ -143,7 +155,9 @@
       "Particulares",
       "Redes sociales",
       "Tecnología"
-    ]
+    ],
+    "title_en": "OpenAI reinforces artificial intelligence innovation in Europe",
+    "excerpt_en": "<p>OpenAI accelerates AI adoption across Europe</p><p>OpenAI is intensifying its commitment to drive AI adoption in Europe through strategic initiatives. The company launched \"OpenAI for countries\" to help build AI infrastructures, including data centers, professional training, and startup ecosystem support.</p>\n"
   },
   {
     "id": 3925,
@@ -165,7 +179,9 @@
       "Particulares",
       "Redes sociales",
       "Tecnología"
-    ]
+    ],
+    "title_en": "Meta introduces Vibes AI, artificial intelligence for videos",
+    "excerpt_en": "<p>Meta takes a step forward in digital creativity with Vibes, its new AI-powered platform to create and share AI-generated short videos easily. Vibes is integrated into the Meta AI app and web, offering a dynamic feed to explore, edit, and publish fully customized visual content.</p>\n"
   },
   {
     "id": 3909,
@@ -185,7 +201,9 @@
       "Negocios",
       "Particulares",
       "Tecnología"
-    ]
+    ],
+    "title_en": "Made on YouTube 2025: creativity evolves with AI",
+    "excerpt_en": "<p>The 2025 edition of Made on YouTube revolutionizes the creative universe with new AI-based tools. YouTube Shorts is renewed with powerful AI features, like Veo 3 Fast integration and Speech to Song, transforming how short video stories are told.</p>\n"
   },
   {
     "id": 3894,
@@ -204,7 +222,9 @@
       "Negocios",
       "Particulares",
       "Tecnología"
-    ]
+    ],
+    "title_en": "Google Chrome reinvents itself with integrated artificial intelligence",
+    "excerpt_en": "<p>Google Chrome reinvents itself with integrated artificial intelligence, taking the browsing experience to a smarter and more personalized level. The browser now takes a qualitative leap with functions that transform its nature.</p>\n"
   },
   {
     "id": 3878,
@@ -221,7 +241,9 @@
       "Investigación",
       "Negocios",
       "Particulares"
-    ]
+    ],
+    "title_en": "Claude incorporates automatic file creation with advanced AI",
+    "excerpt_en": "<p>Claude, developed by Anthropic, has added automatic file creation via advanced AI, revolutionizing productivity. It's now possible to generate and edit files like Excel spreadsheets, documents, PowerPoint presentations, and PDFs directly from Claude.ai.</p>\n"
   },
   {
     "id": 3866,
@@ -238,7 +260,9 @@
       "Negocios",
       "NotebookLM",
       "Particulares"
-    ]
+    ],
+    "title_en": "Here's how Google's NotebookLM helps improve learning",
+    "excerpt_en": "<p>Google's NotebookLM revolutionizes modern learning acting as a personal AI partner for research in any subject. It recently added new features that transform passive reading into active learning for both students and professionals.</p>\n"
   },
   {
     "id": 3843,
@@ -253,7 +277,9 @@
       "Diseño Gráfico",
       "Google",
       "Redes sociales"
-    ]
+    ],
+    "title_en": "Gemini 2.5 Flash Image: create images with precision",
+    "excerpt_en": "<p>Gemini 2.5 Flash Image is Google's latest advance in AI image generation, standing out for its speed, precision, and natively multimodal architecture, capable of handling text and images together coherently.</p>\n"
   },
   {
     "id": 3834,
@@ -268,7 +294,9 @@
       "Comunicación",
       "Meta",
       "Redes sociales"
-    ]
+    ],
+    "title_en": "WhatsApp launches private writing assistant with artificial intelligence",
+    "excerpt_en": "<p>New WhatsApp feature: private help for writing messages</p><p>WhatsApp announced Writing Help, an AI writing tool designed to help users strike the perfect tone in their messages while maintaining absolute privacy thanks to Private Processing technology.</p>\n"
   },
   {
     "id": 3804,
@@ -284,7 +312,9 @@
       "Educación",
       "Negocios",
       "Particulares"
-    ]
+    ],
+    "title_en": "Anthropic boosts higher education with artificial intelligence",
+    "excerpt_en": "<p>Anthropic reinforces higher education through advanced AI</p><p>Anthropic launched initiatives aimed at transforming higher education. The company announced collaborations with universities to integrate its generative AI solutions to improve learning and teaching efficiency.</p>\n"
   },
   {
     "id": 3791,
@@ -301,7 +331,9 @@
       "Marketing digital",
       "Negocios",
       "Particulares"
-    ]
+    ],
+    "title_en": "Advanced search: Google AI Mode manages bookings for you",
+    "excerpt_en": "<p>GOOGLE transformed its search engine with AI, introducing the new AI Mode, which now includes \"agentic\" functionalities to simplify everyday tasks and bookings with a single request.</p>\n"
   },
   {
     "id": 3767,
@@ -318,7 +350,9 @@
       "Marketing digital",
       "Negocios",
       "Particulares"
-    ]
+    ],
+    "title_en": "Transform images just with your voice or text in Google Photos",
+    "excerpt_en": "<p>Edit your photos with AI just by asking in Google Photos</p><p>Image editing in Google Photos takes a revolutionary leap allowing any user to request modifications via text or voice. Simply describe changes like \"erase cars from background\" and Google Photos AI executes them instantly.</p>\n"
   },
   {
     "id": 3755,
@@ -336,7 +370,9 @@
       "Meta",
       "Negocios",
       "Particulares"
-    ]
+    ],
+    "title_en": "Avoid scams on WhatsApp with these new tools",
+    "excerpt_en": "<p>WhatsApp reinforces defense against scams in chats and groups</p><p>WhatsApp launched new tools to protect you against messaging scams, including a new safety view feature for groups when added by unknown people.</p>\n"
   },
   {
     "id": 3743,
@@ -349,7 +385,9 @@
     "categories": [
       "Blog",
       "Google"
-    ]
+    ],
+    "title_en": "Google launches MLE-STAR, advanced agents for AI engineering",
+    "excerpt_en": "<p>Google sets a new milestone in AI with MLE-Star, an advanced agent designed to revolutionize Machine Learning engineering. It acts as an autonomous ML engineer capable of addressing complex tasks.</p>\n"
   },
   {
     "id": 3720,
@@ -364,7 +402,9 @@
       "Blog",
       "Inteligencia Artificial",
       "Meta"
-    ]
+    ],
+    "title_en": "Startups accelerate their development with Llama and Amazon Web Services",
+    "excerpt_en": "<p>AWS and Meta Llama: Boost your Startup with AI Program</p><p>AWS and Meta announced a powerful collaboration to boost the AI startup ecosystem, expanding their program to integrate Llama 3 to build and scale innovative generative AI solutions.</p>\n"
   },
   {
     "id": 3701,
@@ -381,7 +421,9 @@
       "Marketing digital",
       "Negocios",
       "Particulares"
-    ]
+    ],
+    "title_en": "Google Search: Discover Web Guides. AI Boosts Your Search.",
+    "excerpt_en": "<p>Google Search: Discover Web Guides. AI Boosts Your Search.</p><p>Google is elevating the search experience with \"Web Guides\", an experimental feature offering meticulously selected web page collections to explore complex topics in depth.</p>\n"
   },
   {
     "id": 3658,
@@ -401,7 +443,9 @@
       "Negocios",
       "Particulares",
       "Publicidad"
-    ]
+    ],
+    "title_en": "What's new in YouTube Shorts: quick and creative editing",
+    "excerpt_en": "<p>YouTube is setting the course for short content creation with advanced AI tools, including \"Dream Screen\" to generate custom backgrounds via text descriptions.</p>\n"
   },
   {
     "id": 3410,
@@ -419,7 +463,9 @@
       "Sistemas Operativos",
       "Tecnología",
       "Windows"
-    ]
+    ],
+    "title_en": "Microsoft reinforces Windows 11 with advanced artificial intelligence",
+    "excerpt_en": "<p>Windows 11 consolidates as the epicenter of AI on the PC. At the heart of this evolution is Copilot, a personal AI assistant integrated into everyday tasks to optimize productivity.</p>\n"
   },
   {
     "id": 3379,
@@ -434,7 +480,9 @@
       "Ciberseguridad",
       "Google",
       "Inteligencia Artificial"
-    ]
+    ],
+    "title_en": "Google and AI: The Future of Cybersecurity in 2025",
+    "excerpt_en": "<p>Google is setting the course for cybersecurity in 2025, firmly betting on Artificial Intelligence as a fundamental pillar of its defenses against sophisticated threats.</p>\n"
   },
   {
     "id": 3366,
@@ -448,7 +496,9 @@
       "Blog",
       "Inteligencia Artificial",
       "NotebookLM"
-    ]
+    ],
+    "title_en": "NotebookLM improves with AI notebooks for faster learning",
+    "excerpt_en": "<p>NotebookLM significantly elevates the learning experience by integrating \"Featured Notebooks\", offering access to high-quality curated study materials and sources.</p>\n"
   },
   {
     "id": 3356,
@@ -462,7 +512,9 @@
       "Blog",
       "Inteligencia Artificial",
       "OpenAI"
-    ]
+    ],
+    "title_en": "OpenAI and EU: Together for Responsible and Trustworthy AI",
+    "excerpt_en": "<p>The collaboration between OpenAI and the European Union marks a crucial milestone in the pursuit of responsible AI, reaffirming the commitment to combat digital misinformation.</p>\n"
   },
   {
     "id": 3346,
@@ -477,7 +529,9 @@
       "Contenido digital",
       "Inteligencia Artificial",
       "Perplexity"
-    ]
+    ],
+    "title_en": "Comet: La IA redefine la búsqueda conversacional.",
+    "excerpt_en": "<p>Perplexity AI ha presentado «Comet», innovadora arquitectura *backend* que redefine la búsqueda conversacional. Busca superar deficiencias de LLMs actuales (altos costes, latencia y «alucinaciones»), impulsando su eficiencia y fiabilidad.</p>\n"
   },
   {
     "id": 3340,
@@ -494,7 +548,9 @@
       "Google",
       "Inteligencia Artificial",
       "Particulares"
-    ]
+    ],
+    "title_en": "Gmail simplifica gestión de suscripciones: Control total de tu bandeja.",
+    "excerpt_en": "<p>Gmail está revolucionando la forma en que los usuarios gestionan su correspondencia digital con el lanzamiento de una función muy esperada. Bajo el título «Gestionar suscripciones», este nuevo botón, estratégicamente ubicado en la parte superior de la bandeja de entrada, ofrece una visión panorámica y centralizada de todas las newsletters y correos de marketing a los que un usuario está suscrito. La novedad principal radica en la simplicidad: ya no será necesario buscar el minúsculo enlace de &#8216;cancelar suscripción&#8217; en cada email, sino que desde esta interfaz unificada se podrá poner fin a cualquier suscripción no deseada con unos pocos clics.</p>\n"
   },
   {
     "id": 3327,
@@ -506,7 +562,9 @@
     "featured_image": "https://jmg-tc.com/wp-content/uploads/2025/07/0707202503.png",
     "categories": [
       "Blog"
-    ]
+    ],
+    "title_en": "Desbloquea el Poder de Perplexity Max: IA con GPT-4 y Claude.",
+    "excerpt_en": "<p>Perplexity AI ha dado un paso audaz en la inteligencia artificial con el lanzamiento de Perplexity Max, una potente extensión disponible para sus suscriptores Pro. Esta novedad redefine la búsqueda conversacional al integrar directamente los modelos de lenguaje más avanzados del mercado, como GPT-4 de OpenAI, Claude 3 Opus y Sonnet de Anthropic, y Google [&hellip;]</p>\n"
   },
   {
     "id": 3317,
@@ -519,7 +577,9 @@
     "categories": [
       "Blog",
       "Meta"
-    ]
+    ],
+    "title_en": "WhatsApp Empresas: IA Optimiza Campañas Centralizadas de Marketing",
+    "excerpt_en": "<p>WhatsApp Business está revolucionando el marketing empresarial con la implementación de potentes herramientas basadas en inteligencia artificial, diseñadas para optimizar las campañas centralizadas. Esta evolución permite a las grandes organizaciones gestionar sus estrategias de comunicación y publicidad de forma unificada y a gran escala, aprovechando la IA para maximizar la eficiencia y el impacto.</p>\n"
   },
   {
     "id": 3304,
@@ -531,7 +591,9 @@
     "featured_image": "https://jmg-tc.com/wp-content/uploads/2025/07/Gemini_Generated_Image_n3mtuvn3mtuvn3mt.png",
     "categories": [
       "Blog"
-    ]
+    ],
+    "title_en": "Gemini, ISTE 2025: Forjando la IA Responsable en Educación.",
+    "excerpt_en": "<p>Google, en una notable sinergia con la Sociedad Internacional para la Tecnología en la Educación (ISTE), está marcando el rumbo hacia una integración de la inteligencia artificial profundamente responsable en el ecosistema educativo.</p>\n"
   },
   {
     "id": 3298,
@@ -543,7 +605,9 @@
     "featured_image": "https://jmg-tc.com/wp-content/uploads/2025/06/1751320229.png",
     "categories": [
       "Blog"
-    ]
+    ],
+    "title_en": "Veo 3: IA Potente Disponible en Google Vertex AI",
+    "excerpt_en": "<p>Google acaba de lanzar la previsualización pública de Veo 3, su revolucionario modelo de inteligencia artificial para la generación de vídeo, directamente en Google Vertex AI. Esta IA marca un hito al ofrecer capacidades de creación de vídeo de alta definición (1080p) con una fidelidad y control cinematográficos que asombran. Veo 3 se distingue por [&hellip;]</p>\n"
   },
   {
     "id": 3286,
@@ -555,7 +619,9 @@
     "featured_image": "https://jmg-tc.com/wp-content/uploads/2025/06/1751117688.png",
     "categories": [
       "Blog"
-    ]
+    ],
+    "title_en": "YouTube IA: Revoluciona tu contenido con herramientas innovadoras.",
+    "excerpt_en": "<p>YouTube está marcando un hito en la creación de contenido con la integración de la inteligencia artificial, prometiendo herramientas innovadoras que transformarán la forma en que los creadores interactúan con su audiencia y producen vídeos. Entre las novedades más destacadas, «Dream Screen» permitirá a los creadores de Shorts generar fondos con IA simplemente describiendo una [&hellip;]</p>\n"
   },
   {
     "id": 3278,
@@ -567,7 +633,9 @@
     "featured_image": "https://jmg-tc.com/wp-content/uploads/2025/06/1750926060.png",
     "categories": [
       "Blog"
-    ]
+    ],
+    "title_en": "Claude Artefactos: Crea y Gestiona Tus Proyectos IA.",
+    "excerpt_en": "<p>«Claude Artefactos» representa un avance clave en la interacción con la IA, transformando la colaboración humano-máquina. Anthropic ha introducido una función donde Claude no solo responde en chat, sino que genera y gestiona «artefactos»: fragmentos de código, textos o diseños que aparecen en una ventana persistente. Este entorno permite a la IA ver y modificar [&hellip;]</p>\n"
   },
   {
     "id": 3272,
@@ -579,7 +647,9 @@
     "featured_image": "https://jmg-tc.com/wp-content/uploads/2025/06/1750853185.png",
     "categories": [
       "Blog"
-    ]
+    ],
+    "title_en": "Adobe Firefly: IA Revoluciona la Creatividad en Móvil",
+    "excerpt_en": "<p>Adobe ha lanzado su esperada aplicación móvil de Firefly, un avance significativo que lleva la inteligencia artificial generativa directamente a las manos de los creativos. Esta innovadora herramienta redefine la ideación y la producción visual, permitiendo a los usuarios generar contenido impactante de forma intuitiva desde sus dispositivos móviles. La app integra potentes capacidades como [&hellip;]</p>\n"
   },
   {
     "id": 3266,
@@ -591,7 +661,9 @@
     "featured_image": "https://jmg-tc.com/wp-content/uploads/2025/06/1750692011.png",
     "categories": [
       "Blog"
-    ]
+    ],
+    "title_en": "Google Search Live AI Mode: Revoluciona tus Búsquedas Online",
+    "excerpt_en": "<p>Google Búsqueda: Modo IA en Vivo. Respuestas en Tiempo Real.</p>\n<p>Google da un paso audaz en la evolución de su motor de búsqueda con la introducción del «Modo IA en Vivo», una funcionalidad diseñada para ofrecer respuestas instantáneas y dinámicas sobre temas que evolucionan rápidamente. Esta innovadora característica permite que las visiones generales generadas por inteligencia artificial se actualicen en tiempo real, garantizando que los usuarios siempre accedan a la información más reciente.</p>\n"
   },
   {
     "id": 3260,
@@ -604,7 +676,9 @@
     "categories": [
       "Blog",
       "Meta"
-    ]
+    ],
+    "title_en": "Facebook lanza Passkeys para iniciar sesión sin contraseñas",
+    "excerpt_en": "<p>Facebook ha comenzado a implementar el inicio de sesión con “passkeys” o claves de acceso, eliminando la necesidad de contraseñas tradicionales. Esta nueva función, diseñada para ofrecer una experiencia más segura y sencilla, está disponible ya para los usuarios de iPhone, iPad y Mac, y se está ampliando gradualmente a dispositivos Android y navegadores web. [&hellip;]</p>\n"
   },
   {
     "id": 3247,
@@ -616,7 +690,9 @@
     "featured_image": "https://jmg-tc.com/wp-content/uploads/2025/06/1750399922.png",
     "categories": [
       "Blog"
-    ]
+    ],
+    "title_en": "Filtración récord de contraseñas: actúa y protégete",
+    "excerpt_en": "<p>16.000 millones de contraseñas filtradas: protégete ya</p>\n<p>El mundo digital ha sido sacudido por una filtración masiva que expone más de 16.000 millones de contraseñas pertenecientes a cuentas de Apple, Facebook, Google y otros servicios populares. Esta filtración, revelada por expertos en ciberseguridad, representa uno de los mayores riesgos para la privacidad y la seguridad de los usuarios en la historia reciente. Los datos robados incluyen credenciales de acceso, direcciones de correo electrónico y, en muchos casos, información personal sensible, lo que facilita ataques de phishing y accesos no autorizados a cuentas privadas.</p>\n"
   },
   {
     "id": 3239,
@@ -628,7 +704,9 @@
     "featured_image": "https://jmg-tc.com/wp-content/uploads/2025/06/1750239304.png",
     "categories": [
       "Blog"
-    ]
+    ],
+    "title_en": "Nuevas herramientas de IA de TikTok para creadores y marcas",
+    "excerpt_en": "<p>TikTok ha anunciado una serie de nuevas herramientas impulsadas por inteligencia artificial dentro de su conjunto de soluciones llamado “TikTok Symphony”, diseñadas específicamente para ayudar tanto a creadores de contenido como a marcas a desarrollar campañas más eficientes, creativas y escalables en la plataforma. Una de las principales novedades es el “AI Creative Assistant”, un [&hellip;]</p>\n"
   },
   {
     "id": 3217,
@@ -640,7 +718,9 @@
     "featured_image": "https://jmg-tc.com/wp-content/uploads/2025/06/1750061182.png",
     "categories": [
       "Blog"
-    ]
+    ],
+    "title_en": "Apple refuerza control parental para proteger a niños online",
+    "excerpt_en": "<p>Apple ha anunciado nuevas funciones dirigidas a fortalecer la protección de niños y adolescentes en línea, ampliando las herramientas de control parental disponibles en sus dispositivos. Estas actualizaciones buscan ofrecer a madres, padres y tutores más información y control sobre cómo sus hijos interactúan con la tecnología, manteniéndolos más seguros en sus experiencias digitales.</p>\n"
   },
   {
     "id": 3183,
@@ -653,7 +733,9 @@
     "categories": [
       "Blog",
       "Meta"
-    ]
+    ],
+    "title_en": "Meta toma medidas contra apps que generan desnudos falsos",
+    "excerpt_en": "<p>Meta refuerza sus políticas para frenar el uso malicioso de aplicaciones que generan imágenes falsas de desnudos utilizando inteligencia artificial. Esta medida responde al creciente uso de herramientas conocidas como «nudify apps», que permiten crear contenido explícito no consensuado a partir de fotos cotidianas de personas, normalmente mujeres, sin su consentimiento. La compañía ha eliminado [&hellip;]</p>\n"
   },
   {
     "id": 3185,
@@ -665,7 +747,9 @@
     "featured_image": "https://jmg-tc.com/wp-content/uploads/2025/06/1749769603.png",
     "categories": [
       "Blog"
-    ]
+    ],
+    "title_en": "Relación humana con la inteligencia artificial: el futuro en debate",
+    "excerpt_en": "<p>La inteligencia artificial se ha convertido en una fuerza transformadora que redefine cómo trabajamos, nos comunicamos y convivimos. Kay Firth-Butterfield, experta en IA y ética, incide en un aspecto clave: no se trata solo de desarrollar esta tecnología, sino de decidir colectivamente qué tipo de relación queremos tener con ella.</p>\n"
   },
   {
     "id": 3174,
@@ -678,7 +762,9 @@
     "categories": [
       "Blog",
       "Meta"
-    ]
+    ],
+    "title_en": "Edita vídeos con IA: nueva función de Meta",
+    "excerpt_en": "<p>Meta ha presentado una nueva función de inteligencia artificial que permitirá a los usuarios editar vídeos de forma más rápida y creativa. La herramienta, integrada en las plataformas de Meta, utiliza modelos de generación de vídeo basados en texto y comandos simples, lo que permite transformar secuencias visuales de manera intuitiva sin necesidad de conocimientos técnicos avanzados.</p>\n"
   },
   {
     "id": 3161,
@@ -690,7 +776,9 @@
     "featured_image": "https://jmg-tc.com/wp-content/uploads/2025/06/1749565245.png",
     "categories": [
       "Blog"
-    ]
+    ],
+    "title_en": "Apple revoluciona el diseño de software con nueva interfaz elegante",
+    "excerpt_en": "<p>Apple ha presentado oficialmente su renovado diseño de software, marcando un antes y un después en la experiencia visual y funcional de sus dispositivos. Este rediseño, anunciado en junio de 2025, apuesta por una interfaz más intuitiva, elegante y coherente en todos sus sistemas operativos, incluyendo iOS, iPadOS, macOS y watchOS.</p>\n"
   },
   {
     "id": 3152,
@@ -703,7 +791,9 @@
     "categories": [
       "Blog",
       "Meta"
-    ]
+    ],
+    "title_en": "Nuevas funciones de música y stickers para WhatsApp Status",
+    "excerpt_en": "<p>WhatsApp continúa evolucionando y ahora mejora aún más la experiencia de sus usuarios con nuevas funciones para los Estados, integrando música de una forma más visual y atractiva y expandiendo las opciones de stickers personalizados. Estos cambios están diseñados para que compartir momentos con amigos y familiares sea mucho más expresivo y dinámico. La gran [&hellip;]</p>\n"
   },
   {
     "id": 3147,
@@ -715,7 +805,9 @@
     "featured_image": "https://jmg-tc.com/wp-content/uploads/2025/06/1749324072.png",
     "categories": [
       "Blog"
-    ]
+    ],
+    "title_en": "HubSpot: Plataforma CRM Todo en Uno para Crecer tu Negocio",
+    "excerpt_en": "<p>HubSpot se ha consolidado como una de las plataformas CRM más completas del mercado, ofreciendo a empresas de todos los tamaños una solución integral para gestionar sus relaciones con los clientes, ventas, marketing, atención al cliente y contenidos desde un solo lugar. Esta herramienta todo en uno ha sido diseñada especialmente para facilitar el crecimiento empresarial automatizando procesos y centralizando la información en una sola plataforma intuitiva y fácil de usar.</p>\n"
   },
   {
     "id": 3141,
@@ -727,7 +819,9 @@
     "featured_image": "https://jmg-tc.com/wp-content/uploads/2025/06/1749199659.png",
     "categories": [
       "Blog"
-    ]
+    ],
+    "title_en": "Gemini 2.5 Pro: la nueva inteligencia artificial de Google",
+    "excerpt_en": "<p>Descubre todo sobre Gemini 2.5 Pro, el nuevo y potente modelo de inteligencia artificial desarrollado por Google, que redefine los estándares del sector con capacidades avanzadas de razonamiento y comprensión multimodal. Este innovador sistema es capaz de interpretar texto, audio, imágenes, vídeos y grandes volúmenes de datos, permitiendo soluciones más precisas, rápidas y eficientes para empresas y usuarios avanzados.</p>\n<p>Con una ventana de contexto de hasta 1 millón de tokens y planes de ampliación a 2 millones, Gemini 2.5 Pro gestiona información compleja sin perder coherencia, superando en rendimiento a otros modelos líderes en tareas como codificación, matemáticas y análisis de datos. Además, ya está disponible en plataformas como Google AI Studio y Gemini Advanced, con futura integración en Vertex AI.</p>\n<p>Este avance representa una gran oportunidad para empresas que buscan optimizar procesos, automatizar tareas o desarrollar soluciones tecnológicas basadas en IA. Si quieres mantenerte a la vanguardia del cambio digital, este artículo es imprescindible para entender cómo Gemini 2.5 Pro puede transformar tu negocio.</p>\n"
   },
   {
     "id": 3132,
@@ -739,7 +833,9 @@
     "featured_image": "https://jmg-tc.com/wp-content/uploads/2025/06/1749027514.png",
     "categories": [
       "Blog"
-    ]
+    ],
+    "title_en": "Photoshop para Android: edición profesional en tu móvil",
+    "excerpt_en": "<p>Adobe ha dado un paso enorme en el mundo de la edición móvil con el lanzamiento oficial de Photoshop para Android, una esperada noticia que revoluciona la manera en que los usuarios pueden trabajar con imágenes en sus dispositivos móviles. Esta nueva versión, disponible en Google Play, ofrece una experiencia profesional completa, pensada tanto para creativos ocasionales como para diseñadores expertos.</p>\n"
   },
   {
     "id": 3113,
@@ -751,7 +847,9 @@
     "featured_image": "https://jmg-tc.com/wp-content/uploads/2025/06/1748944113.png",
     "categories": [
       "Blog"
-    ]
+    ],
+    "title_en": "Descubre la inteligencia artificial generativa en AWS paso a paso",
+    "excerpt_en": "<p>La inteligencia artificial generativa está transformando radicalmente la forma en que las empresas desarrollan productos, automatizan procesos y mejoran la experiencia del usuario. Amazon Web Services (AWS), líder en soluciones en la nube, ofrece una amplia gama de herramientas y servicios que hacen posible aprovechar esta tecnología de forma ágil, segura y escalable.</p>\n"
   },
   {
     "id": 3086,
@@ -763,7 +861,9 @@
     "featured_image": "https://jmg-tc.com/wp-content/uploads/2025/06/1748898704.png",
     "categories": [
       "Blog"
-    ]
+    ],
+    "title_en": "WordPress lanza equipo oficial de inteligencia artificial en 2025",
+    "excerpt_en": "<p>En una decisión que marca un punto de inflexión en la evolución de una de las plataformas de gestión de contenidos más populares del mundo, WordPress ha anunciado oficialmente la creación de su nuevo equipo de inteligencia artificial en 2025. Este paso refuerza el compromiso del proyecto open source con la innovación y el aprovechamiento de tecnologías emergentes para mejorar la experiencia de los usuarios y desarrolladores.</p>\n"
   },
   {
     "id": 3070,
@@ -775,7 +875,9 @@
     "featured_image": "https://jmg-tc.com/wp-content/uploads/2025/05/1748588978.png",
     "categories": [
       "Blog"
-    ]
+    ],
+    "title_en": "Cómo desplegar IA de forma segura y responsable",
+    "excerpt_en": "<p>El despliegue de la inteligencia artificial está revolucionando la forma en que operan las organizaciones, pero junto con sus beneficios surgen nuevos retos relacionados con la seguridad, la responsabilidad y la gobernanza de los sistemas. Microsoft ha compartido una guía esencial para lograr una implementación segura y responsable de la IA, fundamentada en su experiencia con herramientas como Azure AI y Copilot for Security.</p>\n"
   },
   {
     "id": 3049,
@@ -787,7 +889,9 @@
     "featured_image": "https://jmg-tc.com/wp-content/uploads/2025/05/1748343119.png",
     "categories": [
       "Blog"
-    ]
+    ],
+    "title_en": "Google impulsa anuncios creativos con IA generativa avanzada",
+    "excerpt_en": "<p>Google ha anunciado recientemente una actualización clave en su plataforma de anuncios, destacando el uso de inteligencia artificial generativa avanzada para la creación de campañas publicitarias más efectivas y personalizadas. Esta innovación amplía las capacidades de Performance Max, una herramienta que permite a los anunciantes automatizar y optimizar su estrategia multicanal.</p>\n"
   },
   {
     "id": 3039,
@@ -799,7 +903,9 @@
     "featured_image": "https://jmg-tc.com/wp-content/uploads/2025/05/1747991401.png",
     "categories": [
       "Blog"
-    ]
+    ],
+    "title_en": "Novedades de Gemini: actualizaciones clave presentadas en Google I/O",
+    "excerpt_en": "<p>Google ha aprovechado el escenario del evento Google I/O 2025 para presentar importantes novedades en torno a Gemini, su familia de modelos de inteligencia artificial. Una de las actualizaciones más destacadas es la implementación mejorada de Gemini 1.5 Pro en la app de Gemini para Android, así como su integración más natural en iOS a [&hellip;]</p>\n"
   },
   {
     "id": 3078,
@@ -811,7 +917,9 @@
     "featured_image": "https://jmg-tc.com/wp-content/uploads/2025/05/1748601059.png",
     "categories": [
       "Blog"
-    ]
+    ],
+    "title_en": "Novedades de Google I/O 2025: Todo lo que debes saber",
+    "excerpt_en": "<p>La conferencia anual Google I/O 2025 ha traído consigo un aluvión de novedades relevantes para desarrolladores y entusiastas de la tecnología. Este año, la gran protagonista ha sido Gemini, la inteligencia artificial de nueva generación creada por Google. La compañía ha reforzado su apuesta por Gemini integrándola aún más en su ecosistema de productos y [&hellip;]</p>\n"
   },
   {
     "id": 3007,
@@ -823,7 +931,9 @@
     "featured_image": "https://jmg-tc.com/wp-content/uploads/2025/05/1747784159.png",
     "categories": [
       "Blog"
-    ]
+    ],
+    "title_en": "NotebookLM nueva app de Google",
+    "excerpt_en": "<p>Google ha presentado NotebookLM, una innovadora aplicación impulsada por inteligencia artificial diseñada para transformar la manera en que tomamos notas, investigamos y organizamos información. Anteriormente conocida como Project Tailwind, esta herramienta está ahora disponible como una aplicación independiente en la web en Estados Unidos, con planes de expansión a nuevos mercados.</p>\n"
   },
   {
     "id": 2992,
@@ -835,7 +945,9 @@
     "featured_image": "https://jmg-tc.com/wp-content/uploads/2025/05/post_210525.jpeg",
     "categories": [
       "Blog"
-    ]
+    ],
+    "title_en": "Certificación oficial de Google en IA Generativa en la nube",
+    "excerpt_en": "<p>Google sigue reforzando su posición como líder en inteligencia artificial con el lanzamiento de su nueva certificación oficial en IA Generativa en la nube. Este programa está diseñado para validar los conocimientos y habilidades técnicas en el uso y la aplicación de herramientas de inteligencia artificial generativa dentro del ecosistema de Google Cloud. La iniciativa tiene como objetivo preparar a profesionales capaces de desarrollar, implementar y administrar soluciones utilizando modelos de IA avanzados, optimizando así el potencial de esta tecnología en entornos empresariales reales.</p>\n"
   },
   {
     "id": 2796,
@@ -847,7 +959,9 @@
     "featured_image": "https://jmg-tc.com/wp-content/uploads/2025/05/1747740600.webp",
     "categories": [
       "Desarrollo de Software"
-    ]
+    ],
+    "title_en": "Microsoft Store amplía oportunidades para desarrolladores de apps Windows",
+    "excerpt_en": "<p>Microsoft ha anunciado una serie de novedades para la Microsoft Store que suponen una mejora significativa para los desarrolladores de aplicaciones Windows. Estos cambios están diseñados para facilitar la distribución, mejorar la visibilidad de las aplicaciones y, en última instancia, favorecer el crecimiento de sus negocios dentro del ecosistema Windows.</p>\n"
   },
   {
     "id": 2287,
@@ -860,6 +974,8 @@
     "categories": [
       "Blog",
       "JMG-TC"
-    ]
+    ],
+    "title_en": "Experiencia, evolución y nuevas oportunidades",
+    "excerpt_en": "<p>Soy ingeniero informático con más de 20 años de experiencia en distintas áreas del sector tecnológico. He acompañado a empresas y organizaciones en su transformación digital, creando soluciones estratégicas y sostenibles. Creo en una ingeniería basada no solo en el conocimiento técnico, sino también en la creatividad, la ética y la adaptación constante. Hoy, la inteligencia artificial representa una gran oportunidad para impulsar el cambio con responsabilidad. A través de este espacio comparto conocimientos, herramientas y reflexiones para ayudarte a comprender y aprovechar las nuevas tecnologías con visión profesional, consciente y orientada al futuro.</p>\n"
   }
 ]

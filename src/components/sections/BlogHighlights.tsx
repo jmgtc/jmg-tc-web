@@ -53,7 +53,7 @@ export default function BlogHighlights({ data }: { data?: any }) {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={post.featured_image}
-                    alt={stripHtml(post.title)}
+                    alt={stripHtml(language === 'en' && post.title_en ? post.title_en : post.title)}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
                 </div>
@@ -66,10 +66,10 @@ export default function BlogHighlights({ data }: { data?: any }) {
                 )}
                 <h3
                   className="text-xl font-bold text-white mb-3 group-hover:text-gold transition-colors line-clamp-2 leading-tight"
-                  dangerouslySetInnerHTML={{ __html: post.title }}
+                  dangerouslySetInnerHTML={{ __html: language === 'en' && post.title_en ? post.title_en : post.title }}
                 />
                 <p className="text-xs text-white/60 line-clamp-3 leading-relaxed font-light mb-6">
-                  {stripHtml(post.excerpt)}
+                  {stripHtml(language === 'en' && post.excerpt_en ? post.excerpt_en : post.excerpt)}
                 </p>
                 <div className="mt-auto pt-4 border-t border-white/5 text-[10px] font-mono text-white/30 uppercase tracking-widest">
                   {new Date(post.date).toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US', { day: "2-digit", month: "short", year: "numeric" })}
