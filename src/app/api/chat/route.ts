@@ -1,4 +1,3 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = 'force-dynamic'
@@ -33,7 +32,6 @@ export async function POST(req: NextRequest) {
     const demoMode = process.env.NEXT_PUBLIC_AI_DEMO_MODE === "true";
 
     if (demoMode) {
-      // Simulación de lógica de calificación de leads para el modo demo
       const lastMsg = messages[messages.length - 1].content.toLowerCase();
       let response = "Entendido. Para poder asesorarte mejor, ¿qué tipo de empresa tienes y cuál es tu prioridad tecnológica principal ahora mismo?";
       
@@ -45,21 +43,26 @@ export async function POST(req: NextRequest) {
         response = "Excelente. Jose suele trabajar directamente con gerentes para optimizar la IT. ¿Te gustaría agendar una breve llamada para analizar tu caso?";
       }
 
-      return NextResponse.json({ message: response + " (Modo Demo Activo - Añade tu API Key para IA Real)" });
+      return NextResponse.json({ message: response + " (Modo Demo Activo)" });
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      return NextResponse.json({ error: "API key no configurada" }, { status: 500 });
+    if (!apiKey || apiKey === "tu_api_key_aqui") {
+      return NextResponse.json({ 
+        error: "Configuración incompleta",
+        debug: "FALTA GEMINI_API_KEY en las variables de entorno de Vercel (Production)." 
+      }, { status: 500 });
     }
 
+    // Importación dinámica para consistencia y estabilidad en build
+    const { GoogleGenerativeAI } = await import("@google/generative-ai");
+    
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
       model: "gemini-1.5-flash",
       systemInstruction: SYSTEM_PROMPT,
     });
 
-    // Construir historial para el chat
     const history = messages.slice(0, -1).map((m: { role: string; content: string }) => ({
       role: m.role === "assistant" ? "model" : "user",
       parts: [{ text: m.content }],
@@ -72,21 +75,11 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ message: text });
   } catch (error: any) {
-    // Registro detallado del error para diagnóstico en Vercel
-    console.error("AI Concierge detailed error:", {
-      message: error.message,
-      stack: error.stack,
-      cause: error.cause
-    });
+    console.error("AI Concierge detailed error:", error);
 
-    // Respuesta con info útil para el administrador si es un error de configuración
-    if (error.message?.includes("API_KEY_INVALID") || error.message?.includes("API key not found")) {
-      return NextResponse.json({ 
-        error: "Configuración de IA incompleta (API Key)",
-        debug: "Verificar GEMINI_API_KEY en Vercel" 
-      }, { status: 500 });
-    }
-
-    return NextResponse.json({ error: "Error procesando tu mensaje" }, { status: 500 });
+    return NextResponse.json({ 
+      error: "Error interno",
+      debug: process.env.NODE_ENV === "development" ? error.message : "Error en el motor de IA. Revisa las cuotas de Gemini o la API Key."
+    }, { status: 500 });
   }
 }
