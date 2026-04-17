@@ -57,9 +57,10 @@ export async function POST(req: NextRequest) {
     // Importación dinámica para consistencia y estabilidad en build
     const { GoogleGenerativeAI } = await import("@google/generative-ai");
     
-    const genAI = new GoogleGenerativeAI(apiKey);
+    // Forzamos la versión 'v1' de la API para asegurar compatibilidad con modelos estables
+    const genAI = new GoogleGenerativeAI(apiKey, { apiVersion: "v1" });
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash-latest", // Usamos el alias -latest para máxima compatibilidad
+      model: "gemini-1.5-flash", 
       systemInstruction: SYSTEM_PROMPT,
     });
 
