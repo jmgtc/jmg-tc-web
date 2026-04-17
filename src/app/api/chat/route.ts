@@ -69,8 +69,22 @@ export async function POST(req: NextRequest) {
     const text = result.response.text();
 
     return NextResponse.json({ message: text });
-  } catch (error) {
-    console.error("AI Concierge error:", error);
+  } catch (error: any) {
+    // Registro detallado del error para diagnóstico en Vercel
+    console.error("AI Concierge detailed error:", {
+      message: error.message,
+      stack: error.stack,
+      cause: error.cause
+    });
+
+    // Respuesta con info útil para el administrador si es un error de configuración
+    if (error.message?.includes("API_KEY_INVALID") || error.message?.includes("API key not found")) {
+      return NextResponse.json({ 
+        error: "Configuración de IA incompleta (API Key)",
+        debug: "Verificar GEMINI_API_KEY en Vercel" 
+      }, { status: 500 });
+    }
+
     return NextResponse.json({ error: "Error procesando tu mensaje" }, { status: 500 });
   }
 }

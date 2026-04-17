@@ -24,6 +24,8 @@ export const metadata: Metadata = {
 import { LanguageProvider } from "@/components/providers/LanguageProvider";
 import { client, siteSettingsQuery } from "@/lib/sanity";
 
+export const revalidate = 60;
+
 export default async function RootLayout({
   children,
 }: Readonly<{

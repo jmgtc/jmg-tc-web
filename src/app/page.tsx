@@ -5,6 +5,8 @@ import BlogHighlights from "@/components/sections/BlogHighlights";
 import Footer from "@/components/modules/Footer";
 import { client, landingPageQuery } from "@/lib/sanity";
 
+export const revalidate = 60;
+
 export default async function Home() {
   const { landing, services, settings } = await client.fetch(landingPageQuery);
 

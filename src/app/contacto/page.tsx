@@ -2,6 +2,8 @@ import { client, contactPageQuery } from "@/lib/sanity";
 import ContactContent from "@/components/sections/ContactContent";
 import Footer from "@/components/modules/Footer";
 
+export const revalidate = 60;
+
 export default async function ContactoPage() {
   const { info, settings } = await client.fetch(contactPageQuery);
 

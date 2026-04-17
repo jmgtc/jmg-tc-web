@@ -52,10 +52,21 @@ export default function AIConcierge() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: newMessages }),
       });
+      
       const data = await res.json();
-      setMessages([...newMessages, { role: "assistant", content: data.message || "Lo siento, hubo un error. Puedes contactarnos en info@jmg-tc.com" }]);
-    } catch {
-      setMessages([...newMessages, { role: "assistant", content: "Error de conexión. Contáctanos en info@jmg-tc.com" }]);
+
+      if (!res.ok) {
+        // Manejo de errores específicos (útil para el administrador)
+        const errorMsg = data.debug 
+          ? `[Admin Info]: ${data.debug}` 
+          : "Lo siento, ha habido un problema técnico. Puedes contactarnos en info@jmg-tc.com";
+        setMessages([...newMessages, { role: "assistant", content: errorMsg }]);
+      } else {
+        setMessages([...newMessages, { role: "assistant", content: data.message }]);
+      }
+    } catch (error) {
+      console.error("Chat connection error:", error);
+      setMessages([...newMessages, { role: "assistant", content: "Error de conexión. Por favor, inténtalo de nuevo más tarde." }]);
     } finally {
       setLoading(false);
     }
