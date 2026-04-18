@@ -51,13 +51,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Faltan campos obligatorios (title/content)' }, { status: 400, headers: corsHeaders });
     }
 
-    // --- PARSER DE FORMATO (Markdown a PortableText) ---
-    // Dividimos por párrafos para crear bloques individuales
+    // --- PARSER DE FORMATO ---
     const paragraphs = content.split(/\n\n+/);
     const bodyBlocks = paragraphs.map((p: string) => {
       const isShort = p.length < 100;
       const hasBoldStart = p.trim().startsWith('**') && p.trim().endsWith('**');
-      
       const block: any = {
         _type: 'block',
         _key: Math.random().toString(36).substring(2, 11),
@@ -65,8 +63,6 @@ export async function POST(req: NextRequest) {
         markDefs: [],
         children: []
       };
-
-      // Procesar negritas básicas (**texto**)
       const parts = p.split(/(\*\*.*?\*\*)/g);
       block.children = parts.map(part => {
         const isBold = part.startsWith('**') && part.endsWith('**');
@@ -77,17 +73,14 @@ export async function POST(req: NextRequest) {
           marks: isBold ? ['strong'] : []
         };
       }).filter(span => span.text !== '');
-
       if (block.children.length === 0) {
         block.children = [{ _type: 'span', _key: Math.random().toString(36).substring(2, 11), text: p, marks: [] }];
       }
-
       return block;
     });
 
-    // Generar slug único
-    const uniqueId = Math.random().toString(36).substring(2, 7);
-    const slug = generateSlug(title) + '-' + uniqueId;
+    // Slug EXACTO al título
+    const slug = generateSlug(title);
 
     // 1. Crear el objeto básico del post
     const newPost: any = {
@@ -96,35 +89,43 @@ export async function POST(req: NextRequest) {
       slug: { _type: 'slug', current: slug },
       publishedAt: new Date().toISOString(),
       excerpt: excerpt || '',
-      tags: Array.isArray(tags) ? tags : (tags ? [tags.toString().replace(/\s/g, '').split(',')] : []),
+      // Limitamos a 3 etiquetas
+      tags: (Array.isArray(tags) ? tags : (tags ? tags.toString().split(',') : []))
+            .map((t: string) => t.trim())
+            .filter((t: string) => t !== '')
+            .slice(0, 3),
       body: bodyBlocks,
     };
 
-    // 1.5 Manejar Categoría (Referencia)
-    let confirmedCategory = 'Sin categoría';
-    if (category) {
+    // 1.5 Manejar Categorías (TOP 3)
+    const catInput = Array.isArray(category) ? category : (category ? category.toString().split(',') : []);
+    const catList = catInput.map((c: string) => c.trim()).filter((c: string) => c !== '').slice(0, 3);
+    
+    if (catList.length > 0) {
       try {
-        const existingCat = await sanity.fetch(`*[_type == "category" && title match $title][0]`, { title: category });
-        let categoryId;
-        if (existingCat) {
-          categoryId = existingCat._id;
-          confirmedCategory = existingCat.title;
-        } else {
-          const newCat = await sanity.create({
-            _type: 'category',
-            title: category,
-            slug: { _type: 'slug', current: generateSlug(category) }
-          });
-          categoryId = newCat._id;
-          confirmedCategory = category + ' (Nueva)';
+        const categoryRefs = [];
+        for (const catName of catList) {
+          const existingCat = await sanity.fetch(`*[_type == "category" && title match $title][0]`, { title: catName });
+          let categoryId;
+          if (existingCat) {
+            categoryId = existingCat._id;
+          } else {
+            const newCat = await sanity.create({
+              _type: 'category',
+              title: catName,
+              slug: { _type: 'slug', current: generateSlug(catName) }
+            });
+            categoryId = newCat._id;
+          }
+          categoryRefs.push({ _type: 'reference', _ref: categoryId, _key: Math.random().toString(36).substring(2, 11) });
         }
-        newPost.categories = [{ _type: 'reference', _ref: categoryId, _key: Math.random().toString(36).substring(2, 11) }];
+        newPost.categories = categoryRefs;
       } catch (catErr) {
-        console.error('[NewsFlow] Error categoría:', catErr);
+        console.error('[NewsFlow] Error categorías:', catErr);
       }
     }
 
-    // 2. Si hay imagen, intentamos subirla
+    // 2. Imagen
     let hasImage = false;
     if (imgUrl && typeof imgUrl === 'string' && imgUrl.startsWith('http')) {
       try {
@@ -136,23 +137,21 @@ export async function POST(req: NextRequest) {
           newPost.mainImage = { _type: 'image', asset: { _type: 'reference', _ref: asset._id } };
           hasImage = true;
         }
-      } catch (imgErr) {
-        console.error('[NewsFlow] ❌ Error subiendo imagen:', imgErr);
-      }
+      } catch (imgErr) { console.error('[NewsFlow] Error imagen:', imgErr); }
     }
 
-    // 3. Crear el documento en Sanity
+    // 3. Crear en Sanity
     const result = await sanity.create(newPost);
 
     return NextResponse.json({ 
       success: true, 
       id: result._id,
       url: `https://jmg-tc.com/blog/${slug}`,
+      slug_creado: slug,
       debug: {
-        categoria: confirmedCategory,
-        tags_recibidos: newPost.tags.length,
-        imagen: hasImage ? 'OK' : 'No encontrada',
-        formato: 'Párrafos y Negritas procesados'
+        categorias_vinculadas: catList.length,
+        tags_vinculados: newPost.tags.length,
+        imagen: hasImage ? 'OK' : 'No encontrada'
       }
     }, { headers: corsHeaders });
 
