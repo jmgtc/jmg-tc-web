@@ -13,7 +13,25 @@ function generateSlug(text: string): string {
     .replace(/--+/g, '-'); // Elimina guiones dobles
 }
 
+// Manejador para pre-flight requests (CORS)
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    },
+  });
+}
+
 export async function POST(req: NextRequest) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  };
+
   try {
     const bodyData = await req.json();
     
@@ -21,7 +39,7 @@ export async function POST(req: NextRequest) {
     const { title, content, excerpt, imageUrl } = bodyData;
 
     if (!title || !content) {
-      return NextResponse.json({ error: 'Faltan campos obligatorios (title/content)' }, { status: 400 });
+      return NextResponse.json({ error: 'Faltan campos obligatorios (title/content)' }, { status: 400, headers: corsHeaders });
     }
 
     // Generar slug único
@@ -87,10 +105,10 @@ export async function POST(req: NextRequest) {
       slug: slug,
       url: `https://jmg-tc.com/blog/${slug}`,
       status: 'publicado'
-    });
+    }, { headers: corsHeaders });
 
   } catch (error: any) {
     console.error('Error NewsFlow Webhook:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: error.message }, { status: 500, headers: corsHeaders });
   }
 }
