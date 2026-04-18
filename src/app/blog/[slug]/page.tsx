@@ -1,17 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import Link from "next/link";
-import { createClient } from "@sanity/client";
+import { client, urlFor } from "@/lib/sanity";
 import { useLanguage } from "@/components/providers/LanguageProvider";
-
-const client = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-  dataset: "production",
-  useCdn: true,
-  apiVersion: "2023-01-01",
-});
 
 export default function BlogPostPage() {
   const { slug } = useParams();
@@ -74,33 +64,43 @@ export default function BlogPostPage() {
         </nav>
 
         {/* Content Section */}
-        <article className="bg-white/[0.03] backdrop-blur-2xl rounded-[40px] border border-white/10 p-8 md:p-16 shadow-2xl relative overflow-hidden">
-          {/* Decorative line */}
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
-
-          {/* Header */}
-          <header className="mb-12">
-            <div className="text-[10px] font-mono text-gold uppercase tracking-[0.3em] mb-4 block">
-              {new Date(post.publishedAt).toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US', {
-                day: '2-digit',
-                month: 'long',
-                year: 'numeric'
-              })}
+        <article className="bg-white/[0.03] backdrop-blur-2xl rounded-[40px] border border-white/10 p-2 md:p-2 shadow-2xl relative overflow-hidden">
+          {/* Main Image Banner */}
+          {post.mainImage && (
+            <div className="w-full aspect-video rounded-[36px] overflow-hidden mb-8">
+              <img 
+                src={urlFor(post.mainImage).url()} 
+                alt={displayTitle}
+                className="w-full h-full object-cover"
+              />
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-tight mb-8">
-              {displayTitle}
-            </h1>
-          </header>
+          )}
 
-          {/* Body */}
-          <div className="prose prose-invert prose-lg max-w-none">
-            <p className="text-white/70 leading-[1.8] font-light whitespace-pre-wrap">
-              {displayBody || "El contenido se está procesando..."}
-            </p>
+          <div className="px-8 md:px-16 py-8">
+            {/* Header */}
+            <header className="mb-12">
+              <div className="text-[10px] font-mono text-gold uppercase tracking-[0.3em] mb-4 block">
+                {new Date(post.publishedAt).toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US', {
+                  day: '2-digit',
+                  month: 'long',
+                  year: 'numeric'
+                })}
+              </div>
+              <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-tight mb-8">
+                {displayTitle}
+              </h1>
+            </header>
+
+            {/* Body */}
+            <div className="prose prose-invert prose-lg max-w-none">
+              <p className="text-white/70 leading-[1.8] font-light whitespace-pre-wrap">
+                {displayBody || "El contenido se está procesando..."}
+              </p>
+            </div>
           </div>
 
           {/* Footer */}
-          <footer className="mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <footer className="px-8 md:px-16 pb-16 pt-8 border-t border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <Link href="/blog" className="inline-flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-gold hover:translate-x-[-4px] transition-transform">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="rotate-180 stroke-gold">
                 <path d="M5 12h14M12 5l7 7-7 7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

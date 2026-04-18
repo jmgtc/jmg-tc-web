@@ -1,16 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { createClient } from "@sanity/client";
+import { client, urlFor } from "@/lib/sanity";
 import { useLanguage } from "@/components/providers/LanguageProvider";
-
-const client = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-  dataset: "production",
-  useCdn: true,
-  apiVersion: "2023-01-01",
-});
 
 export default function BlogPage() {
   const { language, t } = useLanguage();
@@ -28,7 +19,8 @@ export default function BlogPage() {
           publishedAt,
           "body": body[0].children[0].text,
           "body_en": body_en[0].children[0].text,
-          mainImage
+          mainImage,
+          categories
         }`;
         const data = await client.fetch(query);
         setPosts(data);
@@ -79,22 +71,33 @@ export default function BlogPage() {
                 <Link
                   key={post._id}
                   href={`/blog/${post.slug.current}`}
-                  className="group relative flex flex-col h-full rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-2 hover:bg-white/[0.08] hover:border-gold/30 transition-all duration-500"
+                  className="group relative flex flex-col h-full rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl overflow-hidden hover:bg-white/[0.08] hover:border-gold/30 transition-all duration-500"
                 >
-                  {/* Decorative Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-gold/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl" />
+                  {/* Post Image */}
+                  {post.mainImage && (
+                    <div className="h-56 w-full overflow-hidden relative">
+                      <img
+                        src={urlFor(post.mainImage).url()}
+                        alt={displayTitle}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors" />
+                    </div>
+                  )}
 
                   <div className="relative p-6 pt-8 flex flex-col h-full">
-                    <div className="text-[10px] font-mono text-white/60 uppercase tracking-widest mb-4">
-                      {new Date(post.publishedAt).toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric'
-                      })}
+                    <div className="text-[10px] font-mono text-white/60 uppercase tracking-widest mb-4 flex justify-between items-center">
+                      <span>
+                        {new Date(post.publishedAt).toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US', {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric'
+                        })}
+                      </span>
                     </div>
                     
                     <h2 className="text-2xl font-bold mb-4 group-hover:text-gold transition-colors duration-300 line-clamp-2">
-                      {displayTitle}
+                       {displayTitle}
                     </h2>
                     
                     <p className="text-sm text-white/70 leading-relaxed line-clamp-3 font-light mb-8 flex-grow">
@@ -115,6 +118,7 @@ export default function BlogPage() {
             })}
           </div>
         )}
+
       </div>
     </main>
   );
