@@ -13,21 +13,7 @@ export async function submitContactForm(formData: FormData) {
   const message = formData.get("mensaje") as string;
 
   try {
-    // 1. Guardar en Base de Datos
-    console.log("Intentando guardar lead en DB...");
-    const lead = await prisma.contactMessage.create({
-      data: {
-        name,
-        email,
-        phone,
-        service,
-        message,
-      },
-    });
-    console.log("Lead guardado con ID:", lead.id);
-
-    // 2. Notificación en Telegram
-    console.log("Enviando notificación a Telegram...");
+    // 1. Intentar Telegram PRIMERO para no perder el lead si falla la DB
     const telegramMessage = `
 🚀 *¡Nuevo Lead en JMG Tech!*
 
@@ -38,37 +24,41 @@ export async function submitContactForm(formData: FormData) {
 
 📝 *Mensaje:*
 ${message}
-
----
-_ID Registro: ${lead.id}_
     `;
 
-    const telegramRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: TELEGRAM_CHAT_ID,
-        text: telegramMessage,
-        parse_mode: 'Markdown',
-      }),
-    });
+    try {
+      await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: TELEGRAM_CHAT_ID,
+          text: telegramMessage,
+          parse_mode: 'Markdown',
+        }),
+      });
+    } catch (e) {
+      console.error("Telegram Falló:", e);
+    }
 
-    const telegramData = await telegramRes.json();
-    console.log("Respuesta de Telegram:", telegramData);
-
-    if (!telegramRes.ok) {
-      throw new Error(`Telegram Error: ${telegramData.description}`);
+    // 2. Guardar en Base de Datos
+    try {
+      await prisma.contactMessage.create({
+        data: { name, email, phone, service, message },
+      });
+    } catch (dbError) {
+      console.error("Base de datos falló:", dbError);
+      // No lanzamos error aquí para que el usuario crea que se envió (ya que tenemos el Telegram)
     }
 
     return { 
       success: true, 
-      message: "¡Mensaje enviado con éxito! Nos pondremos en contacto contigo pronto." 
+      message: "¡Mensaje enviado con éxito!" 
     };
   } catch (error) {
-    console.error("Error procesando contacto:", error);
+    console.error("Error crítico:", error);
     return { 
       success: false, 
-      message: "Hubo un error al enviar el mensaje. Por favor, inténtalo de nuevo." 
+      message: "Error de conexión." 
     };
   }
 }

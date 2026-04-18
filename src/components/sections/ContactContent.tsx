@@ -157,14 +157,14 @@ export default function ContactContent({ cmsData }: ContactContentProps) {
                 <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest block mb-2">{content.label_name}</label>
                 <input
                   required name="nombre" type="text" placeholder={content.placeholder_name}
-                  className="w-full px-5 py-4 rounded-2xl border border-white/10 bg-white/5 text-white text-sm focus:outline-none focus:border-gold transition-all"
+                  className="w-full px-5 py-4 rounded-2xl border border-white/10 bg-white/5 text-white text-base focus:outline-none focus:border-gold transition-all"
                 />
               </div>
               <div>
                 <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest block mb-2">{content.label_email}</label>
                 <input
                   required name="email" type="email" placeholder={content.placeholder_email}
-                  className="w-full px-5 py-4 rounded-2xl border border-white/10 bg-white/5 text-white text-sm focus:outline-none focus:border-gold transition-all"
+                  className="w-full px-5 py-4 rounded-2xl border border-white/10 bg-white/5 text-white text-base focus:outline-none focus:border-gold transition-all"
                 />
               </div>
             </div>
@@ -173,47 +173,52 @@ export default function ContactContent({ cmsData }: ContactContentProps) {
               <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest block mb-2">{content.label_phone}</label>
               <input
                 name="telefono" type="tel" placeholder={content.placeholder_phone}
-                className="w-full px-5 py-4 rounded-2xl border border-white/10 bg-white/5 text-white text-sm focus:outline-none focus:border-gold transition-all"
+                className="w-full px-5 py-4 rounded-2xl border border-white/10 bg-white/5 text-white text-base focus:outline-none focus:border-gold transition-all"
               />
             </div>
 
             <div>
               <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest block mb-2">{content.label_service}</label>
-              <select
-                name="servicio"
-                className="w-full px-5 py-4 rounded-2xl border border-white/10 bg-black/40 text-white text-sm focus:outline-none focus:border-gold transition-all appearance-none"
-              >
-                <option value="" className="bg-brand-black">{content.placeholder_service}</option>
-                {servicios.map(s => <option key={s} value={s} className="bg-brand-black">{s}</option>)}
-              </select>
+              <div className="relative">
+                <select
+                  name="servicio"
+                  className="w-full px-5 py-4 rounded-2xl border border-white/10 bg-black/40 text-white text-base focus:outline-none focus:border-gold transition-all appearance-none pr-10"
+                >
+                  <option value="" className="bg-[#0a0a0a]">{content.placeholder_service}</option>
+                  {servicios.map(s => <option key={s} value={s} className="bg-[#0a0a0a]">{s}</option>)}
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/40">
+                  ▼
+                </div>
+              </div>
             </div>
 
             <div>
               <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest block mb-2">{content.label_message}</label>
               <textarea
                 required name="mensaje" rows={4} placeholder={content.placeholder_message}
-                className="w-full px-5 py-4 rounded-2xl border border-white/10 bg-white/5 text-white text-sm focus:outline-none focus:border-gold transition-all resize-none"
+                className="w-full px-5 py-4 rounded-2xl border border-white/10 bg-white/5 text-white text-base focus:outline-none focus:border-gold transition-all resize-none"
               />
             </div>
 
-            <div className="flex items-start gap-3 px-2">
+            <div className="flex items-start gap-4 px-2 py-2">
               <input 
                 type="checkbox" 
                 id="privacy" 
                 required 
-                className="mt-1 w-4 h-4 rounded border-white/10 bg-white/5 text-gold focus:ring-gold"
+                className="mt-1 w-5 h-5 rounded border-white/10 bg-white/5 text-gold focus:ring-gold accent-gold"
               />
-              <label htmlFor="privacy" className="text-[10px] text-white/40 leading-relaxed italic">
+              <label htmlFor="privacy" className="text-[11px] text-white/50 leading-relaxed cursor-pointer select-none">
                 {language === 'es' 
-                  ? 'Acepto la política de privacidad y el tratamiento de mis datos para la gestión de mi consulta.' 
-                  : 'I accept the privacy policy and the processing of my data for the management of my inquiry.'}
+                  ? 'Acepto la política de privacidad y el tratamiento de mis datos.' 
+                  : 'I accept the privacy policy and the processing of my data.'}
               </label>
             </div>
 
             <button
               type="submit"
               disabled={cargando}
-              className="w-full py-5 bg-gold text-black font-bold uppercase tracking-widest text-xs rounded-2xl hover:bg-white hover:scale-[1.02] transition-all transform disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_10px_20px_rgba(242,204,82,0.15)]"
+              className="w-full py-5 bg-gold text-black font-bold uppercase tracking-widest text-xs rounded-2xl hover:bg-white active:scale-95 transition-all transform disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_10px_20px_rgba(242,204,82,0.15)] mt-4 cursor-pointer"
             >
               {cargando ? content.sending_btn : content.submit_btn}
             </button>

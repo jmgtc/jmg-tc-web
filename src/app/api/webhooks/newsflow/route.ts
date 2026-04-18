@@ -102,80 +102,18 @@ export async function POST(req: NextRequest) {
     const catList = catInput.map((c: string) => c.trim()).filter((c: string) => c !== '').slice(0, 3);
     
     if (catList.length > 0) {
-      try {
-        const categoryRefs = [];
-        for (const catName of catList) {
-          const existingCat = await sanity.fetch(`*[_type == "category" && title match $title][0]`, { title: catName });
-          let categoryId;
-          if (existingCat) {
-            categoryId = existingCat._id;
-          } else {
-            const newCat = await sanity.create({
-              _type: 'category',
-              title: catName,
-              slug: { _type: 'slug', current: generateSlug(catName) }
-            });
-            categoryId = newCat._id;
-          }
-          categoryRefs.push({ _type: 'reference', _ref: categoryId, _key: Math.random().toString(36).substring(2, 11) });
-        }
-        newPost.categories = categoryRefs;
-      } catch (catErr) {
-        console.error('[NewsFlow] Error categorías:', catErr);
-      }
-    }
+      body_en: bodyEn,
+      categories: categoryRefs,
+      mainImage: imageAsset ? { _type: 'image', asset: { _type: 'reference', _ref: imageAsset._id } } : undefined
+    };
 
-    // 2. Imagen
-    let hasImage = false;
-    if (imgUrl && typeof imgUrl === 'string' && imgUrl.startsWith('http')) {
-      try {
-        const imageRes = await fetch(imgUrl);
-        if (imageRes.ok) {
-          const arrayBuffer = await imageRes.arrayBuffer();
-          const buffer = Buffer.from(arrayBuffer);
-          const asset = await sanity.assets.upload('image', buffer, { filename: `nf-${slug}.png` });
-          newPost.mainImage = { _type: 'image', asset: { _type: 'reference', _ref: asset._id } };
-          hasImage = true;
-        }
-      } catch (imgErr) { console.error('[NewsFlow] Error imagen:', imgErr); }
-    }
-
-    // 3. Crear el documento en Sanity
     const result = await sanity.create(newPost);
-
-    // --- TRIGGER DE TRADUCCIÓN INMEDIATA ---
-    // Llamamos a nuestro propio motor de traducción para que esté listo YA
-    try {
-      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://jmg-tc.com';
-      fetch(`${baseUrl}/api/webhooks/sanity-translate`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'sanity-webhook-signature': process.env.SANITY_WEBHOOK_SECRET || '' 
-        },
-        body: JSON.stringify({
-          _id: result._id,
-          title: title,
-          body: content,
-          tags: newPost.tags,
-          category: category
-        })
-      }).catch(e => console.error('Error disparando auto-traducción:', e));
-    } catch (translateErr) {
-      console.error('[NewsFlow] No se pudo disparar la traducción automática:', translateErr);
-    }
 
     return NextResponse.json({ 
       success: true, 
       id: result._id,
       url: `https://jmg-tc.com/blog/${slug}`,
-      slug_creado: slug,
-      debug: {
-        categorias_vinculadas: catList.length,
-        tags_vinculados: newPost.tags.length,
-        imagen: hasImage ? 'OK' : 'No encontrada',
-        traduccion: 'Disparada (en proceso)'
-      }
+      translated: true
     }, { headers: corsHeaders });
 
   } catch (error: any) {

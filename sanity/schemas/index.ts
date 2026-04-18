@@ -1,4 +1,5 @@
 import post from './post';
+import category from './category';
 import landingPage from './landingPage';
 import serviceItem from './serviceItem';
 import servicesPage from './servicesPage';
@@ -10,6 +11,7 @@ import legalPage from './legalPage';
 
 export const schemaTypes = [
   post,
+  category,
   landingPage,
   serviceItem,
   servicesPage,

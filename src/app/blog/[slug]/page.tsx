@@ -23,7 +23,9 @@ export default function BlogPostPage() {
           publishedAt,
           body,
           body_en,
-          mainImage
+          mainImage,
+          tags,
+          "categories": categories[]->title
         }`;
         const data = await client.fetch(query, { slug });
         if (!data) {
