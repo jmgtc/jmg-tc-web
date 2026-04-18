@@ -1,6 +1,7 @@
 import Hero from "@/components/sections/Hero";
 import Consultorias from "@/components/sections/Consultorias";
 import ConsultorIA from "@/components/sections/ConsultorIA";
+import Podcast from "@/components/sections/Podcast";
 import BlogHighlights from "@/components/sections/BlogHighlights";
 import Footer from "@/components/modules/Footer";
 import { client, landingPageQuery } from "@/lib/sanity";
@@ -24,7 +25,10 @@ export default async function Home() {
       {/* SECCIÓN 03 — ConsultorIA (Automatización IA) */}
       <ConsultorIA data={landing?.consultoria_ia} />
       
-      {/* SECCIÓN 04 — Blog Highlights */}
+      {/* SECCIÓN 04 — Podcast */}
+      <Podcast />
+      
+      {/* SECCIÓN 05 — Blog Highlights */}
       <BlogHighlights data={landing?.blog_highlights} />
       
       {/* MÓDULO — Footer */}

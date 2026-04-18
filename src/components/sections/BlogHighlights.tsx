@@ -13,7 +13,7 @@ export default function BlogHighlights({ data }: { data?: any }) {
   const featured = posts.slice(0, 3);
 
   const labels = {
-    tag: data?.tag || "Section_04 // Blog",
+    tag: data?.tag || "Section_05 // Blog",
     title: (language === 'es' ? data?.title : data?.title_en) || (language === 'es' ? 'Últimas publicaciones' : 'Latest posts'),
     view_all: (language === 'es' ? data?.view_all : data?.view_all_en) || (language === 'es' ? 'Ver todas →' : 'View all →')
   };
