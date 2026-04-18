@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
     const bodyData = await req.json();
     
     // Extraemos los datos que envía JMG-TC NewsFlow AI
-    const { title, content, excerpt } = bodyData;
+    const { title, content, excerpt, tags, category } = bodyData;
     // Intentamos pillar la imagen de varios campos posibles
     const imgUrl = bodyData.imageUrl || bodyData.image_url || bodyData.image || bodyData.mainImage;
 
@@ -63,6 +63,7 @@ export async function POST(req: NextRequest) {
       slug: { _type: 'slug', current: slug },
       publishedAt: new Date().toISOString(),
       excerpt: excerpt || '',
+      tags: Array.isArray(tags) ? tags : (tags ? [tags] : []), // Soporta array o string único
       // Convertimos el contenido a PortableText (formato Sanity)
       body: [
         {
@@ -80,6 +81,35 @@ export async function POST(req: NextRequest) {
         },
       ],
     };
+
+    // 1.5 Manejar Categoría (Referencia)
+    if (category) {
+      try {
+        // Buscamos si la categoría existe por título
+        const existingCat = await sanity.fetch(`*[_type == "category" && title match $title][0]`, { title: category });
+        
+        let categoryId;
+        if (existingCat) {
+          categoryId = existingCat._id;
+        } else {
+          // Si no existe, la creamos (opcional, pero recomendado para NewsFlow)
+          const newCat = await sanity.create({
+            _type: 'category',
+            title: category,
+            slug: { _type: 'slug', current: generateSlug(category) }
+          });
+          categoryId = newCat._id;
+        }
+        
+        newPost.categories = [{
+          _type: 'reference',
+          _ref: categoryId,
+          _key: Math.random().toString(36).substring(2, 11)
+        }];
+      } catch (catErr) {
+        console.error('[NewsFlow] Error procesando categoría:', catErr);
+      }
+    }
 
     // 2. Si hay imagen, intentamos subirla
     if (imgUrl && typeof imgUrl === 'string' && imgUrl.startsWith('http')) {
