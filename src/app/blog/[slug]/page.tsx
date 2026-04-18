@@ -21,8 +21,8 @@ export default function BlogPostPage() {
           title,
           "title_en": title_en,
           publishedAt,
-          "body": body[0].children[0].text,
-          "body_en": body_en[0].children[0].text,
+          body,
+          body_en,
           mainImage
         }`;
         const data = await client.fetch(query, { slug });
@@ -50,6 +50,26 @@ export default function BlogPostPage() {
 
   const displayTitle = language === 'en' && post.title_en ? post.title_en : post.title;
   const displayBody = language === 'en' && post.body_en ? post.body_en : post.body;
+
+  // Simple renderer for Portable Text blocks
+  const renderContent = (blocks: any) => {
+    if (!blocks || !Array.isArray(blocks)) return null;
+    return blocks.map((block: any, i: number) => {
+      if (block._type !== 'block' || !block.children) return null;
+      
+      const text = block.children.map((child: any) => child.text).join('');
+      
+      // Basic style mapping
+      if (block.style === 'h2') return <h2 key={block._key || i} className="text-3xl font-bold text-white mt-12 mb-6">{text}</h2>;
+      if (block.style === 'h3') return <h3 key={block._key || i} className="text-2xl font-bold text-white mt-10 mb-4">{text}</h3>;
+      
+      return (
+        <p key={block._key || i} className="text-white/70 leading-[1.8] font-light mb-6 whitespace-pre-wrap">
+          {text}
+        </p>
+      );
+    });
+  };
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-white pt-40 pb-24 relative overflow-hidden">
@@ -96,11 +116,12 @@ export default function BlogPostPage() {
 
             {/* Body */}
             <div className="prose prose-invert prose-lg max-w-none">
-              <p className="text-white/70 leading-[1.8] font-light whitespace-pre-wrap">
-                {displayBody || "El contenido se está procesando..."}
-              </p>
+              {displayBody ? renderContent(displayBody) : (
+                <p className="text-white/70 italic">{language === 'es' ? 'El contenido se está procesando...' : 'Content is being processed...'}</p>
+              )}
             </div>
           </div>
+
 
           {/* Footer */}
           <footer className="px-8 md:px-16 pb-16 pt-8 border-t border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-6">
