@@ -24,8 +24,8 @@ export default function BlogHighlights({ data }: { data?: any }) {
           "title_en": title_en,
           slug,
           publishedAt,
-          "excerpt": body[0].children[0].text,
-          "excerpt_en": body_en[0].children[0].text,
+          "excerpt": pt::text(body),
+          "excerpt_en": pt::text(body_en),
           mainImage,
           categories
         }`;

@@ -19,8 +19,8 @@ export default function BlogPage() {
           "title_en": title_en,
           slug,
           publishedAt,
-          "body": body[0].children[0].text,
-          "body_en": body_en[0].children[0].text,
+          "body": pt::text(body),
+          "body_en": pt::text(body_en),
           mainImage,
           categories
         }`;
