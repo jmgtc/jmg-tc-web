@@ -1,6 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@sanity/client';
-// Función interna para generar slugs sin dependencias externas
+
+// Configuración de Sanity
+const sanity = createClient({
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+  dataset: 'production',
+  token: process.env.SANITY_WRITE_TOKEN,
+  useCdn: false,
+  apiVersion: '2023-05-03',
+});
+
+// Función interna para generar slugs
 function generateSlug(text: string): string {
   return text
     .toString()
@@ -13,13 +23,29 @@ function generateSlug(text: string): string {
     .replace(/--+/g, '-');
 }
 
-const sanity = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-  dataset: 'production',
-  token: process.env.SANITY_WRITE_TOKEN,
-  useCdn: false,
-  apiVersion: '2023-05-03',
-});
+// Función para traducir con DeepL
+async function translateWithDeepL(text: string, isHTML = false) {
+  try {
+    const response = await fetch('https://api-free.deepl.com/v2/translate', {
+      method: 'POST',
+      headers: {
+        'Authorization': `DeepL-Auth-Key ${process.env.DEEPL_API_KEY}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        text: text,
+        target_lang: 'EN',
+        tag_handling: isHTML ? 'html' : '',
+      }),
+    });
+
+    const data = await response.json();
+    return data.translations[0].text;
+  } catch (error) {
+    console.error('Error in DeepL translation:', error);
+    return null;
+  }
+}
 
 // Manejador para pre-flight requests (CORS)
 export async function OPTIONS() {
@@ -42,78 +68,85 @@ export async function POST(req: NextRequest) {
 
   try {
     const bodyData = await req.json();
-    
-    // Extraemos los datos que envía JMG-TC NewsFlow AI
     const { title, content, excerpt, tags, category } = bodyData;
     const imgUrl = bodyData.imageUrl || bodyData.image_url || bodyData.image || bodyData.mainImage;
 
     if (!title || !content) {
-      return NextResponse.json({ error: 'Faltan campos obligatorios (title/content)' }, { status: 400, headers: corsHeaders });
+      return NextResponse.json({ error: 'Faltan campos obligatorios' }, { status: 400, headers: corsHeaders });
     }
 
-    // --- PARSER DE FORMATO ---
+    // --- TRADUCCIÓN AUTOMÁTICA (DeepL) ---
+    const titleEn = await translateWithDeepL(title);
+    const bodyEnText = await translateWithDeepL(content);
+
+    // --- PARSER DE FORMATO (Markdown a PortableText) ---
     const paragraphs = content.split(/\n\n+/);
-    const bodyBlocks = paragraphs.map((p: string) => {
-      const isShort = p.length < 100;
-      const hasBoldStart = p.trim().startsWith('**') && p.trim().endsWith('**');
-      const block: any = {
-        _type: 'block',
-        _key: Math.random().toString(36).substring(2, 11),
-        style: (isShort || hasBoldStart) ? 'h3' : 'normal',
-        markDefs: [],
-        children: []
-      };
-      const parts = p.split(/(\*\*.*?\*\*)/g);
-      block.children = parts.map(part => {
-        const isBold = part.startsWith('**') && part.endsWith('**');
-        return {
-          _type: 'span',
-          _key: Math.random().toString(36).substring(2, 11),
-          text: isBold ? part.replace(/\*\*/g, '') : part,
-          marks: isBold ? ['strong'] : []
-        };
-      }).filter(span => span.text !== '');
-      if (block.children.length === 0) {
-        block.children = [{ _type: 'span', _key: Math.random().toString(36).substring(2, 11), text: p, marks: [] }];
+    const bodyBlocks = paragraphs.map((p: string) => ({
+      _type: 'block',
+      _key: Math.random().toString(36).substring(2, 11),
+      style: 'normal',
+      markDefs: [],
+      children: [{ _type: 'span', _key: Math.random().toString(36).substring(2, 11), text: p, marks: [] }]
+    }));
+
+    // PortableText para Inglés
+    const bodyEnBlocks = bodyEnText ? (bodyEnText.split(/\n\n+/).map((p: string) => ({
+      _type: 'block',
+      _key: Math.random().toString(36).substring(2, 11),
+      style: 'normal',
+      markDefs: [],
+      children: [{ _type: 'span', _key: Math.random().toString(36).substring(2, 11), text: p, marks: [] }]
+    }))) : [];
+
+    // --- MANEJO DE CATEGORÍAS (Find or Create) ---
+    const catInput = Array.isArray(category) ? category : (category ? [category] : []);
+    const categoryRefs = [];
+    for (const cName of catInput.slice(0, 3)) {
+      const existing = await sanity.fetch(`*[_type == "category" && title == $title][0]`, { title: cName });
+      if (existing) {
+        categoryRefs.push({ _type: 'reference', _ref: existing._id, _key: Math.random().toString(36).substring(2, 11) });
+      } else {
+        const created = await sanity.create({ _type: 'category', title: cName, slug: { _type: 'slug', current: generateSlug(cName) } });
+        categoryRefs.push({ _type: 'reference', _ref: created._id, _key: Math.random().toString(36).substring(2, 11) });
       }
-      return block;
-    });
+    }
 
-    // Slug EXACTO al título
-    const slug = generateSlug(title);
+    // --- SUBIDA DE IMAGEN ---
+    let mainImage = undefined;
+    if (imgUrl) {
+      try {
+        const imageRes = await fetch(imgUrl);
+        const buffer = await imageRes.arrayBuffer();
+        const asset = await sanity.assets.upload('image', Buffer.from(buffer), { filename: `newsflow-${Date.now()}` });
+        mainImage = { _type: 'image', asset: { _type: 'reference', _ref: asset._id } };
+      } catch (e) {
+        console.error('Error uploading image:', e);
+      }
+    }
 
-    // 1. Crear el objeto básico del post
-    const newPost: any = {
+    // --- CREACIÓN DEL DOCUMENTO ---
+    const slugValue = generateSlug(title);
+    const postDoc = {
       _type: 'post',
       title: title,
-      slug: { _type: 'slug', current: slug },
+      title_en: titleEn || title,
+      slug: { _type: 'slug', current: slugValue },
       publishedAt: new Date().toISOString(),
       excerpt: excerpt || '',
-      // Limitamos a 3 etiquetas
-      tags: (Array.isArray(tags) ? tags : (tags ? tags.toString().split(',') : []))
-            .map((t: string) => t.trim())
-            .filter((t: string) => t !== '')
-            .slice(0, 3),
       body: bodyBlocks,
-    };
-
-    // 1.5 Manejar Categorías (TOP 3)
-    const catInput = Array.isArray(category) ? category : (category ? category.toString().split(',') : []);
-    const catList = catInput.map((c: string) => c.trim()).filter((c: string) => c !== '').slice(0, 3);
-    
-    if (catList.length > 0) {
-      body_en: bodyEn,
+      body_en: bodyEnBlocks,
+      tags: (Array.isArray(tags) ? tags : [tags]).filter(Boolean).slice(0, 3),
       categories: categoryRefs,
-      mainImage: imageAsset ? { _type: 'image', asset: { _type: 'reference', _ref: imageAsset._id } } : undefined
+      mainImage: mainImage,
     };
 
-    const result = await sanity.create(newPost);
+    const result = await sanity.create(postDoc);
 
     return NextResponse.json({ 
       success: true, 
       id: result._id,
-      url: `https://jmg-tc.com/blog/${slug}`,
-      translated: true
+      url: `https://jmg-tc.com/blog/${slugValue}`,
+      translated: !!titleEn 
     }, { headers: corsHeaders });
 
   } catch (error: any) {
