@@ -49,5 +49,29 @@ export default defineType({
       title: 'Fecha de publicación',
       type: 'datetime',
     }),
+    defineField({
+      name: 'categories',
+      title: 'Categorías',
+      type: 'array',
+      of: [{ type: 'reference', to: { type: 'category' } }],
+    }),
+    defineField({
+      name: 'categories_en',
+      title: 'Categories (English)',
+      type: 'array',
+      of: [{ type: 'reference', to: { type: 'category' } }],
+    }),
+    defineField({
+      name: 'tags',
+      title: 'Etiquetas',
+      type: 'array',
+      of: [{ type: 'string' }],
+    }),
+    defineField({
+      name: 'tags_en',
+      title: 'Tags (English)',
+      type: 'array',
+      of: [{ type: 'string' }],
+    }),
   ],
 });

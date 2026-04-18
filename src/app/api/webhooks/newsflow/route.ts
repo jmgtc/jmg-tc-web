@@ -140,8 +140,30 @@ export async function POST(req: NextRequest) {
       } catch (imgErr) { console.error('[NewsFlow] Error imagen:', imgErr); }
     }
 
-    // 3. Crear en Sanity
+    // 3. Crear el documento en Sanity
     const result = await sanity.create(newPost);
+
+    // --- TRIGGER DE TRADUCCIÓN INMEDIATA ---
+    // Llamamos a nuestro propio motor de traducción para que esté listo YA
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://jmg-tc.com';
+      fetch(`${baseUrl}/api/webhooks/sanity-translate`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'sanity-webhook-signature': process.env.SANITY_WEBHOOK_SECRET || '' 
+        },
+        body: JSON.stringify({
+          _id: result._id,
+          title: title,
+          body: content,
+          tags: newPost.tags,
+          category: category
+        })
+      }).catch(e => console.error('Error disparando auto-traducción:', e));
+    } catch (translateErr) {
+      console.error('[NewsFlow] No se pudo disparar la traducción automática:', translateErr);
+    }
 
     return NextResponse.json({ 
       success: true, 
@@ -151,7 +173,8 @@ export async function POST(req: NextRequest) {
       debug: {
         categorias_vinculadas: catList.length,
         tags_vinculados: newPost.tags.length,
-        imagen: hasImage ? 'OK' : 'No encontrada'
+        imagen: hasImage ? 'OK' : 'No encontrada',
+        traduccion: 'Disparada (en proceso)'
       }
     }, { headers: corsHeaders });
 
