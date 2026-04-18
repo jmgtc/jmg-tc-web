@@ -47,3 +47,14 @@ model Subscription {
   planId           String
   createdAt        DateTime @default(now())
 }
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  service   String
+  message   String
+  status    String   @default("pending") // 'pending', 'read', 'contacted'
+  createdAt DateTime @default(now())
+}

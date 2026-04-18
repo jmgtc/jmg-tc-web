@@ -13,6 +13,8 @@ export default defineType({
       fields: [
         defineField({ name: 'badge', title: 'Badge (ES)', type: 'string' }),
         defineField({ name: 'badge_en', title: 'Badge (EN)', type: 'string' }),
+        defineField({ name: 'tag', title: 'Tag / Guía (ES)', type: 'string' }),
+        defineField({ name: 'tag_en', title: 'Tag / Guide (EN)', type: 'string' }),
         defineField({ name: 'title', title: 'Título Blanco (ES)', type: 'string' }),
         defineField({ name: 'title_en', title: 'White Title (EN)', type: 'string' }),
         defineField({ name: 'title_highlight', title: 'Título Gradiente (ES)', type: 'string' }),
@@ -31,6 +33,10 @@ export default defineType({
       title: 'Destacados de Servicios',
       type: 'object',
       fields: [
+        defineField({ name: 'badge', title: 'Badge (ES)', type: 'string' }),
+        defineField({ name: 'badge_en', title: 'Badge (EN)', type: 'string' }),
+        defineField({ name: 'tag', title: 'Tag / Guía (ES)', type: 'string' }),
+        defineField({ name: 'tag_en', title: 'Tag / Guide (EN)', type: 'string' }),
         defineField({ name: 'title', title: 'Título Sección (ES)', type: 'string' }),
         defineField({ name: 'title_en', title: 'Section Title (EN)', type: 'string' }),
         defineField({ name: 'description', title: 'Descripción Sección (ES)', type: 'text', rows: 2 }),
@@ -44,6 +50,8 @@ export default defineType({
       title: 'Sección ConsultorIA',
       type: 'object',
       fields: [
+        defineField({ name: 'badge', title: 'Badge (ES)', type: 'string' }),
+        defineField({ name: 'badge_en', title: 'Badge (EN)', type: 'string' }),
         defineField({ name: 'tag', title: 'Tag (ES)', type: 'string' }),
         defineField({ name: 'tag_en', title: 'Tag (EN)', type: 'string' }),
         defineField({ name: 'title', title: 'Título (ES)', type: 'string' }),
@@ -70,62 +78,22 @@ export default defineType({
       ]
     }),
 
-    // --- ABOUT/NOSOTROS SECTION ---
+    // --- PODCAST SECTION ---
     defineField({
-      name: 'about',
-      title: 'Sección Nosotros',
+      name: 'podcast_section',
+      title: 'Sección de Podcast',
       type: 'object',
       fields: [
-        defineField({ name: 'tag', title: 'Tag Sección (ES)', type: 'string' }),
-        defineField({ name: 'tag_en', title: 'Tag Section (EN)', type: 'string' }),
-        defineField({ name: 'title_main', title: 'Título Principal (ES)', type: 'string' }),
-        defineField({ name: 'title_main_en', title: 'Main Title (EN)', type: 'string' }),
-        defineField({ name: 'title_accent', title: 'Título Acento (ES)', type: 'string' }),
-        defineField({ name: 'title_accent_en', title: 'Accent Title (EN)', type: 'string' }),
-        defineField({ name: 'intro', title: 'Introducción (ES)', type: 'text', rows: 4 }),
-        defineField({ name: 'intro_en', title: 'Introduction (EN)', type: 'text', rows: 4 }),
-        defineField({
-          name: 'profile',
-          title: 'Perfil Fundador',
-          type: 'object',
-          fields: [
-            defineField({ name: 'tag', title: 'Tag Perfil (ES)', type: 'string' }),
-            defineField({ name: 'tag_en', title: 'Profile Tag (EN)', type: 'string' }),
-            defineField({ name: 'name', title: 'Nombre', type: 'string' }),
-            defineField({ name: 'role', title: 'Cargo (ES)', type: 'string' }),
-            defineField({ name: 'role_en', title: 'Role (EN)', type: 'string' }),
-            defineField({ name: 'bio', title: 'Biografía (ES)', type: 'text', rows: 4 }),
-            defineField({ name: 'bio_en', title: 'Bio (EN)', type: 'text', rows: 4 }),
-            defineField({ name: 'photo', title: 'Foto de Perfil', type: 'image', options: { hotspot: true } }),
-          ]
-        }),
-        defineField({
-          name: 'values',
-          title: 'Nuestros Valores',
-          type: 'object',
-          fields: [
-            defineField({ name: 'tag', title: 'Tag Valores (ES)', type: 'string' }),
-            defineField({ name: 'tag_en', title: 'Values Tag (EN)', type: 'string' }),
-            defineField({ name: 'title', title: 'Título Valores (ES)', type: 'string' }),
-            defineField({ name: 'title_en', title: 'Values Title (EN)', type: 'string' }),
-            defineField({
-              name: 'items',
-              title: 'Lista de Valores',
-              type: 'array',
-              of: [{
-                type: 'object',
-                fields: [
-                  defineField({ name: 'icon', title: 'Emoji/Icono', type: 'string' }),
-                  defineField({ name: 'label', title: 'Título (ES)', type: 'string' }),
-                  defineField({ name: 'label_en', title: 'Title (EN)', type: 'string' }),
-                  defineField({ name: 'desc', title: 'Descripción (ES)', type: 'text', rows: 2 }),
-                  defineField({ name: 'desc_en', title: 'Description (EN)', type: 'text', rows: 2 }),
-                ]
-              }]
-            })
-          ]
-        })
-      ],
+        defineField({ name: 'badge', title: 'Badge (ES)', type: 'string' }),
+        defineField({ name: 'badge_en', title: 'Badge (EN)', type: 'string' }),
+        defineField({ name: 'tag', title: 'Tag / Guía (ES)', type: 'string' }),
+        defineField({ name: 'tag_en', title: 'Tag / Guide (EN)', type: 'string' }),
+        defineField({ name: 'title', title: 'Título Sección (ES)', type: 'string' }),
+        defineField({ name: 'title_en', title: 'Section Title (EN)', type: 'string' }),
+        defineField({ name: 'description', title: 'Descripción Sección (ES)', type: 'text', rows: 3 }),
+        defineField({ name: 'description_en', title: 'Section Description (EN)', type: 'text', rows: 3 }),
+        defineField({ name: 'spotify_url', title: 'URL de Embed Spotify', type: 'string', description: 'Ej: https://open.spotify.com/embed/show/...' }),
+      ]
     }),
 
     // --- BLOG HIGHLIGHTS ---
@@ -134,11 +102,28 @@ export default defineType({
       title: 'Sección Highlights de Blog',
       type: 'object',
       fields: [
+        defineField({ name: 'badge', title: 'Badge (ES)', type: 'string' }),
+        defineField({ name: 'badge_en', title: 'Badge (EN)', type: 'string' }),
         defineField({ name: 'tag', title: 'Tag Sección (ES/EN)', type: 'string' }),
         defineField({ name: 'title', title: 'Título Sección (ES)', type: 'string' }),
         defineField({ name: 'title_en', title: 'Section Title (EN)', type: 'string' }),
         defineField({ name: 'view_all', title: 'Texto Ver Todos (ES)', type: 'string' }),
         defineField({ name: 'view_all_en', title: 'View All Text (EN)', type: 'string' }),
+      ]
+    }),
+
+    // --- CLIENTS SECTION ---
+    defineField({
+      name: 'clients_section',
+      title: 'Sección de Clientes',
+      type: 'object',
+      fields: [
+        defineField({ name: 'badge', title: 'Badge (ES)', type: 'string' }),
+        defineField({ name: 'badge_en', title: 'Badge (EN)', type: 'string' }),
+        defineField({ name: 'tag', title: 'Tag / Guía (ES)', type: 'string' }),
+        defineField({ name: 'tag_en', title: 'Tag / Guide (EN)', type: 'string' }),
+        defineField({ name: 'title', title: 'Título Sección (ES)', type: 'string' }),
+        defineField({ name: 'title_en', title: 'Section Title (EN)', type: 'string' }),
       ]
     }),
 
@@ -148,6 +133,10 @@ export default defineType({
       title: 'Sección Llamada a la Acción (Final)',
       type: 'object',
       fields: [
+        defineField({ name: 'badge', title: 'Badge (ES)', type: 'string' }),
+        defineField({ name: 'badge_en', title: 'Badge (EN)', type: 'string' }),
+        defineField({ name: 'tag', title: 'Tag / Guía (ES)', type: 'string' }),
+        defineField({ name: 'tag_en', title: 'Tag / Guide (EN)', type: 'string' }),
         defineField({ name: 'title', title: 'Título (ES)', type: 'string' }),
         defineField({ name: 'title_en', title: 'Title (EN)', type: 'string' }),
         defineField({ name: 'button_text', title: 'Texto Botón (ES)', type: 'string' }),

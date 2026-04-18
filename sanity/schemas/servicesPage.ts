@@ -12,6 +12,8 @@ export default defineType({
       fields: [
         defineField({ name: 'tag', title: 'Tag (ES)', type: 'string' }),
         defineField({ name: 'tag_en', title: 'Tag (EN)', type: 'string' }),
+        defineField({ name: 'badge', title: 'Badge superior (ES)', type: 'string' }),
+        defineField({ name: 'badge_en', title: 'Badge top (EN)', type: 'string' }),
         defineField({ name: 'title', title: 'Título (ES)', type: 'string' }),
         defineField({ name: 'title_en', title: 'Title (EN)', type: 'string' }),
         defineField({ name: 'description', title: 'Descripción (ES)', type: 'text', rows: 3 }),

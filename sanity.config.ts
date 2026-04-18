@@ -5,7 +5,7 @@ import { schemaTypes } from './sanity/schemas';
 import { TranslateAction } from './sanity/actions/TranslateAction';
 
 // Define singleton types
-const singletonTypes = new Set(['landingPage', 'servicesPage', 'contactPage', 'siteSettings']);
+const singletonTypes = new Set(['landingPage', 'servicesPage', 'aboutPage', 'contactPage', 'siteSettings']);
 
 export default defineConfig({
   name: 'default',
@@ -43,6 +43,13 @@ export default defineConfig({
                 S.document()
                   .schemaType('servicesPage')
                   .documentId('servicesPage')
+              ),
+            S.listItem()
+              .title('Página de Nosotros')
+              .child(
+                S.document()
+                  .schemaType('aboutPage')
+                  .documentId('aboutPage')
               ),
             S.listItem()
               .title('Página de Contacto')

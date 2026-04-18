@@ -1,10 +1,10 @@
-import { client, landingPageQuery } from "@/lib/sanity";
+import { client, aboutPageQuery } from "@/lib/sanity";
 import NosotrosContent from "./NosotrosContent";
 
-export const revalidate = 60;
+export const revalidate = 0;
 
 export default async function NosotrosPage() {
-  const landingData = await client.fetch(landingPageQuery);
+  const data = await client.fetch(aboutPageQuery);
 
-  return <NosotrosContent data={landingData?.about} />;
+  return <NosotrosContent data={data?.about} />;
 }

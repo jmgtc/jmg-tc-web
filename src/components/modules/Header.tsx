@@ -18,6 +18,7 @@ export default function Header({ cmsData }: { cmsData?: any }) {
   const site = cmsData;
 
   const labels = {
+    home: (language === "en" ? h?.home_en : h?.home) || (language === "es" ? "Inicio" : "Home"),
     about: (language === "en" ? h?.about_en : h?.about) || dict.header.about,
     services: (language === "en" ? h?.services_en : h?.services) || dict.header.services,
     blog: (language === "en" ? h?.blog_en : h?.blog) || dict.header.blog,
@@ -77,6 +78,9 @@ export default function Header({ cmsData }: { cmsData?: any }) {
         {/* Nav escritorio - Oculto en mantenimiento */}
         {!isMaintenance && (
           <nav className="hidden md:flex items-center gap-8">
+            <Link href="/" className={`text-sm font-medium transition-colors ${pathname === "/" ? "text-gold" : "hover:text-gold"}`}>
+              {labels.home}
+            </Link>
             <Link href="/nosotros" className={`text-sm font-medium transition-colors ${pathname === "/nosotros" ? "text-gold" : "hover:text-gold"}`}>
               {labels.about}
             </Link>
@@ -150,6 +154,9 @@ export default function Header({ cmsData }: { cmsData?: any }) {
       {/* Menú móvil desplegable */}
       {mobileOpen && (
         <div className="mt-2 glass rounded-3xl p-6 flex flex-col gap-4 md:hidden">
+          <Link href="/" onClick={() => setMobileOpen(false)} className={`text-sm font-medium ${pathname === "/" ? "text-gold" : ""}`}>
+            {labels.home}
+          </Link>
           <Link href="/nosotros" onClick={() => setMobileOpen(false)} className={`text-sm font-medium ${pathname === "/nosotros" ? "text-gold" : ""}`}>
             {labels.about}
           </Link>

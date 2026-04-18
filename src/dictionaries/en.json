@@ -5,18 +5,18 @@
     "blog": "Blog",
     "cta": "Schedule a Call",
     "login": "Login",
-    "panel": "Panel"
+    "panel": "Dashboard"
   },
   "hero": {
     "badge": "IT Consulting & AI Development",
     "title": "By your side to design, optimize, and protect",
     "title_highlight": "your digital environment",
-    "subtitle": "Customized strategies to take your company to the next technological level.",
-    "cta": "Get started now"
+    "subtitle": "Tailored strategies to take your company to the next technological level.",
+    "cta": "Get Started"
   },
   "services": {
     "title": "Our Services",
-    "description": "Three technological pillars. One unique strategic partner.",
+    "description": "Three technological pillars. One strategic partner.",
     "it": {
       "tag": "Section 02 // IT Management",
       "title": "IT Management",
@@ -24,38 +24,38 @@
       "desc_short": "Robust and always-on infrastructure. We manage your systems so you can focus on your business.",
       "cta": "Hire Service",
       "phases": [
-        { "num": "01", "label": "Audit", "desc": "We analyze your current infrastructure to detect vulnerabilities and improvement opportunities." },
-        { "num": "02", "label": "Goals", "desc": "We define clear goals and a measurable action plan tailored to your business." },
-        { "num": "03", "label": "Solution", "desc": "We implement the necessary tools and processes to operate efficiently." },
-        { "num": "04", "label": "Monitoring", "desc": "We monitor continuously to guarantee optimal performance." }
+        { "num": "01", "label": "Diagnosis", "desc": "We analyze your current infrastructure to detect vulnerabilities and improvement opportunities." },
+        { "num": "02", "label": "Objectives", "desc": "We define clear goals and a measurable action plan tailored to your business." },
+        { "num": "03", "label": "Solution", "desc": "We implement the tools and processes necessary for efficient operations." },
+        { "num": "04", "label": "Monitoring", "desc": "We continuously monitor to ensure optimal performance at all times." }
       ]
     },
     "web": {
       "tag": "Section 02 // Web Development",
       "title": "Web & App Development",
       "subtitle": "Digital presence that converts visitors into customers.",
-      "desc_short": "Premium digital presence that converts visitors into customers. Modern technologies and conversion-oriented design.",
+      "desc_short": "Premium digital presence that converts visitors into clients. Modern technologies and conversion-oriented design.",
       "cta": "Hire Development",
       "phases": [
-        { "num": "01", "label": "Requirement", "desc": "We listen to your vision and define functional and design requirements." },
+        { "num": "01", "label": "Requirements", "desc": "We listen to your vision and define the functional and design requirements." },
         { "num": "02", "label": "Design", "desc": "We create prototypes and mockups that reflect your brand identity." },
-        { "num": "03", "label": "Development", "desc": "We build with modern, fast, and scalable technologies." },
-        { "num": "04", "label": "Monitoring", "desc": "We ensure performance and stability after launch." }
+        { "num": "03", "label": "Development", "desc": "We build using modern, fast, and scalable technologies." },
+        { "num": "04", "label": "Launch Hub", "desc": "We ensure full functionality and peak performance after launch." }
       ]
     },
     "ia": {
-      "tag": "Section 03 // AI Consultant",
-      "title": "AI Consultant",
-      "title_main": "Consultant",
-      "title_highlight": "AI",
+      "tag": "Section 03 // ConsultorIA",
+      "title": "ConsultorIA",
+      "title_main": "AI",
+      "title_highlight": "Consulting",
       "subtitle": "Intelligent automation for a 24/7 business.",
       "desc_short": "Intelligent automation so your business operates 24/7. We identify processes, implement AI, and measure real impact.",
-      "cta": "Automate your business",
+      "cta": "Automate Your Company",
       "phases": [
-        { "num": "01", "label": "Identify", "desc": "We map out repetitive processes in your company that can be automated with AI." },
-        { "num": "02", "label": "Technology", "desc": "We select the most appropriate AI tools: LLMs, agents, APIs, and workflows." },
-        { "num": "03", "label": "Design", "desc": "We design the automation flow tailored to your team without interrupting operations." },
-        { "num": "04", "label": "Monitoring", "desc": "We measure the real impact and continuously optimize the smart system." }
+        { "num": "01", "label": "Identify", "desc": "We map the repetitive processes in your company that can be automated with AI." },
+        { "num": "02", "label": "Technology", "desc": "We select the most suitable AI tools: LLMs, agents, APIs, and workflows." },
+        { "num": "03", "label": "Design", "desc": "We design the automation flow tailored to your team without disrupting operations." },
+        { "num": "04", "label": "Execution", "desc": "We measure real impact and continuously optimize the intelligent system." }
       ]
     },
     "phase_label": "0",
@@ -63,29 +63,29 @@
   },
   "blog": {
     "title": "Our Chronicles",
-    "description": "Exploring the forefront of AI, development, and digital transformation.",
+    "description": "Exploring the cutting edge of AI, development, and digital transformation.",
     "read_more": "Read more",
-    "insights_tag": "Insights & Tech"
+    "insights_tag": "Latest Tech Analysis"
   },
   "about": {
     "tag": "About JMG // Who we are",
     "title_main": "Your technology,",
     "title_accent": "in expert hands",
-    "intro": "JMG Tech Consulting was founded on a core principle: elite technology should be accessible to all. We simplify the complex and automate the routine so you can scale without friction.",
+    "intro": "JMG Tech Consulting was born from the conviction that any business, regardless of size, deserves access to elite technology. We simplify and automate so you can grow without friction.",
     "profile": {
       "tag": "Profile // Founder",
       "name": "Jose Gutiérrez",
       "role": "Software Engineer · Founder",
-      "desc": "With over a decade of expertise in IT infrastructure and AI ecosystems, Jose serves as a strategic technology partner. He deciphers business DNA to deliver high-impact solutions that transcend generic hardware proposals."
+      "desc": "With over a decade of experience in IT infrastructure and AI ecosystems, Jose acts as a trusted technology partner. He understands the ADN of each business to provide impact solutions, moving away from generic proposals."
     },
     "values": {
-      "tag": "Values // Core Pillars",
-      "title": "Our values",
+      "tag": "Values // Pillars",
+      "title": "Our Values",
       "items": [
-        { "icon": "⚡", "label": "Innovation", "desc": "Cutting-edge tools for a distinct market advantage." },
-        { "icon": "🔒", "label": "Security", "desc": "Data protection anchored in the highest global standards." },
-        { "icon": "🤝", "label": "Partnership", "desc": "Strategic alignment as a partner, not just a service provider." },
-        { "icon": "🔍", "label": "Clarity", "desc": "Measurable results and transparent, no-surprise roadmaps." }
+        { "icon": "⚡", "label": "Innovation", "desc": "We adopt the latest technologies to give you a real competitive edge." },
+        { "icon": "🔒", "label": "Security", "desc": "Your infrastructure and data protected under the highest standards." },
+        { "icon": "🤝", "label": "Proximity", "desc": "We are your partner, not just a provider. We understand your business in depth." },
+        { "icon": "🔍", "label": "Transparency", "desc": "Clear communication, no-surprise budgets, and measurable results." }
       ]
     }
   }

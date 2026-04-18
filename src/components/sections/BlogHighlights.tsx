@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { client, urlFor } from "@/lib/sanity";
 import Link from "next/link";
+import Badge from "@/components/modules/Badge";
 
 function stripHtml(html: string) {
   if (!html) return "";
@@ -41,7 +42,8 @@ export default function BlogHighlights({ data }: { data?: any }) {
   }, []);
 
   const labels = {
-    tag: data?.tag || "Section_05 // Blog",
+    tag: (language === "en" ? data?.tag_en : data?.tag) || data?.tag || "Section_05 // Blog",
+    badge: (language === "en" ? data?.badge_en : data?.badge) || "",
     title: (language === 'es' ? data?.title : data?.title_en) || (language === 'es' ? 'Últimas publicaciones' : 'Latest posts'),
     view_all: (language === 'es' ? data?.view_all : data?.view_all_en) || (language === 'es' ? 'Ver todas →' : 'View all →')
   };
@@ -55,8 +57,9 @@ export default function BlogHighlights({ data }: { data?: any }) {
 
       <div className="container mx-auto px-6 relative z-10">
         {/* Header */}
-        <div className="flex items-end justify-between mb-12">
+        <div className="flex flex-col md:flex-row items-center md:items-end justify-between mb-12 text-center md:text-left">
           <div>
+            <Badge text={labels.badge} className="mb-4" />
             <span className="text-[10px] font-mono text-white/40 uppercase tracking-[0.4em] block mb-3">
               {labels.tag}
             </span>

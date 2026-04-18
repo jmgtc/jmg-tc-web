@@ -6,7 +6,7 @@ const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'mfth4gqi'
 export const client = createClient({
   projectId: projectId,
   dataset: "production",
-  useCdn: true,
+  useCdn: false,
   apiVersion: "2023-01-01",
 });
 
@@ -17,28 +17,36 @@ export function urlFor(source: any) {
 }
 
 // Query for shared/global settings
-export const siteSettingsQuery = `*[_type == "siteSettings"][0]`;
+export const siteSettingsQuery = `*[_id == "siteSettings" || _id == "drafts.siteSettings" || _type == "siteSettings"] | order(_updatedAt desc)[0]`;
 
-// Improved Landing Page Query (Includes AI, Values, CTA, and references to Services)
+// Improved Landing Page Query
 export const landingPageQuery = `
   {
     "landing": *[_type == "landingPage"][0],
     "services": *[_type == "serviceItem"] | order(order asc),
-    "settings": *[_type == "siteSettings"][0]
+    "clients": *[_type == "client"] | order(order asc),
+    "settings": *[_id == "siteSettings" || _id == "drafts.siteSettings" || _type == "siteSettings"] | order(_updatedAt desc)[0]
   }
 `;
 
 export const servicesPageQuery = `
   {
-    "header": *[_type == "servicesPage"][0],
+    "header": *[_type == "servicesPage"][0].header,
     "services": *[_type == "serviceItem"] | order(order asc),
-    "settings": *[_type == "siteSettings"][0]
+    "settings": *[_id == "siteSettings" || _id == "drafts.siteSettings" || _type == "siteSettings"] | order(_updatedAt desc)[0]
+  }
+`;
+
+export const aboutPageQuery = `
+  {
+    "about": *[_type == "aboutPage"][0],
+    "settings": *[_id == "siteSettings" || _id == "drafts.siteSettings" || _type == "siteSettings"] | order(_updatedAt desc)[0]
   }
 `;
 
 export const contactPageQuery = `
   {
     "info": *[_type == "contactPage"][0],
-    "settings": *[_type == "siteSettings"][0]
+    "settings": *[_id == "siteSettings" || _id == "drafts.siteSettings" || _type == "siteSettings"] | order(_updatedAt desc)[0]
   }
 `;

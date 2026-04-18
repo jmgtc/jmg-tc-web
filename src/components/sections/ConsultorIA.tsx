@@ -1,6 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import Badge from "@/components/modules/Badge";
 
 interface ConsultorIAProps {
   data?: any;
@@ -12,6 +13,7 @@ export default function ConsultorIA({ data }: ConsultorIAProps) {
 
   const labels = {
     tag: (language === "en" ? data?.tag_en : data?.tag) || srvIA.tag,
+    badge: (language === "en" ? data?.badge_en : data?.badge) || "",
     title: (language === "en" ? data?.title_en : data?.title) || srvIA.title_main,
     highlight: (language === "en" ? data?.highlight_en : data?.highlight) || srvIA.title_highlight,
     desc: (language === "en" ? data?.description_en : data?.description) || srvIA.desc_short,
@@ -30,6 +32,7 @@ export default function ConsultorIA({ data }: ConsultorIAProps) {
       <div className="container mx-auto px-6 relative z-10">
         {/* Header */}
         <div className="text-center mb-16">
+          <Badge text={labels.badge} className="mb-6" />
           <span className="text-[10px] font-mono text-gold/60 uppercase tracking-[0.5em] block mb-4">
             {labels.tag}
           </span>

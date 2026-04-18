@@ -5,20 +5,26 @@ export default defineType({
   title: 'Página de Contacto',
   type: 'document',
   fields: [
-    // --- INFO COLUMN ---
+    // Campos en la raíz para compatibilidad y simplicidad
+    defineField({ name: 'title', title: 'Título Principal (ES)', type: 'string' }),
+    defineField({ name: 'title_en', title: 'Title Principal (EN)', type: 'string' }),
+    defineField({ name: 'title_accent', title: 'Acento Título (ES)', type: 'string' }),
+    defineField({ name: 'title_accent_en', title: 'Title Accent (EN)', type: 'string' }),
+    defineField({ name: 'description', title: 'Descripción (ES)', type: 'text', rows: 3 }),
+    defineField({ name: 'description_en', title: 'Description (EN)', type: 'text', rows: 3 }),
+    defineField({ name: 'email', title: 'Email Público', type: 'string' }),
+    defineField({ name: 'phone', title: 'Teléfono Público', type: 'string' }),
+    defineField({ name: 'address', title: 'Dirección / Ubicación', type: 'string' }),
+    defineField({ name: 'tag', title: 'Tag de Página (ES/EN)', type: 'string' }),
+    defineField({ name: 'badge', title: 'Badge superior (ES)', type: 'string' }),
+    defineField({ name: 'badge_en', title: 'Badge top (EN)', type: 'string' }),
+    
+    // --- INFO COLUMN (Mantenido por si se usa en el frontend) ---
     defineField({
       name: 'info',
-      title: 'Columna de Información',
+      title: 'Configuración Adicional Información',
       type: 'object',
       fields: [
-        defineField({ name: 'tag', title: 'Tag (ES/EN)', type: 'string' }),
-        defineField({ name: 'title', title: 'Título (ES)', type: 'string' }),
-        defineField({ name: 'title_en', title: 'Title (EN)', type: 'string' }),
-        defineField({ name: 'title_accent', title: 'Palabra Resaltada (ES)', type: 'string' }),
-        defineField({ name: 'title_accent_en', title: 'Highlighted Word (EN)', type: 'string' }),
-        defineField({ name: 'description', title: 'Descripción (ES)', type: 'text', rows: 3 }),
-        defineField({ name: 'description_en', title: 'Description (EN)', type: 'text', rows: 3 }),
-        defineField({ name: 'email', title: 'Email de contacto', type: 'string' }),
         defineField({ name: 'appointment_url', title: 'URL Reserva Cita', type: 'string' }),
         defineField({ name: 'appointment_label', title: 'Texto Link Cita (ES)', type: 'string' }),
         defineField({ name: 'appointment_label_en', title: 'Appointment Link Text (EN)', type: 'string' }),
@@ -28,12 +34,10 @@ export default defineType({
     // --- FORM LABELS ---
     defineField({
       name: 'form',
-      title: 'Formulario de Contacto',
+      title: 'Textos del Formulario',
       type: 'object',
       fields: [
         defineField({ name: 'tag', title: 'Tag Formulario (ES/EN)', type: 'string' }),
-        
-        // Form Labels
         defineField({ name: 'label_name', title: 'Label Nombre (ES)', type: 'string' }),
         defineField({ name: 'label_name_en', title: 'Label Name (EN)', type: 'string' }),
         defineField({ name: 'label_email', title: 'Label Email (ES)', type: 'string' }),
@@ -44,8 +48,6 @@ export default defineType({
         defineField({ name: 'label_service_en', title: 'Label Service (EN)', type: 'string' }),
         defineField({ name: 'label_message', title: 'Label Mensaje (ES)', type: 'string' }),
         defineField({ name: 'label_message_en', title: 'Label Message (EN)', type: 'string' }),
-
-        // Placeholders
         defineField({ name: 'ph_name', title: 'Placeholder Nombre (ES)', type: 'string' }),
         defineField({ name: 'ph_name_en', title: 'Placeholder Name (EN)', type: 'string' }),
         defineField({ name: 'ph_email', title: 'Placeholder Email (ES)', type: 'string' }),
@@ -56,8 +58,6 @@ export default defineType({
         defineField({ name: 'ph_service_en', title: 'Placeholder Service (EN)', type: 'string' }),
         defineField({ name: 'ph_message', title: 'Placeholder Mensaje (ES)', type: 'string' }),
         defineField({ name: 'ph_message_en', title: 'Placeholder Message (EN)', type: 'string' }),
-
-        // Submission & Other
         defineField({ name: 'success_title', title: 'Título Éxito (ES)', type: 'string' }),
         defineField({ name: 'success_title_en', title: 'Success Title (EN)', type: 'string' }),
         defineField({ name: 'success_desc', title: 'Mensaje Éxito (ES)', type: 'string' }),
@@ -69,6 +69,34 @@ export default defineType({
         defineField({ name: 'retry_btn', title: 'Texto Botón Reintentar (ES)', type: 'string' }),
         defineField({ name: 'retry_btn_en', title: 'Retry Button Text (EN)', type: 'string' }),
       ]
-    })
+    }),
+    defineField({
+      name: 'calendlyUrl',
+      title: 'Calendly URL',
+      type: 'url',
+      description: 'Enlace de tu Calendly (ej: https://calendly.com/tu-usuario/cita)',
+    }),
+    defineField({
+      name: 'calendlyTitle',
+      title: 'Calendly Title (ES)',
+      type: 'string',
+    }),
+    defineField({
+      name: 'calendlyTitleEn',
+      title: 'Calendly Title (EN)',
+      type: 'string',
+    }),
+    defineField({
+      name: 'calendlyDescription',
+      title: 'Calendly Description (ES)',
+      type: 'text',
+      rows: 2
+    }),
+    defineField({
+      name: 'calendlyDescriptionEn',
+      title: 'Calendly Description (EN)',
+      type: 'text',
+      rows: 2
+    }),
   ],
 });

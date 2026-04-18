@@ -7,7 +7,8 @@ export default defineType({
   fields: [
     defineField({ name: 'title', title: 'Título (ES)', type: 'string' }),
     defineField({ name: 'title_en', title: 'Title (EN)', type: 'string' }),
-    defineField({ name: 'tag', title: 'Tag (ej: Module_Servicios // IT)', type: 'string' }),
+    defineField({ name: 'tag', title: 'Tag (ES) (ej: Module_Servicios // IT)', type: 'string' }),
+    defineField({ name: 'tag_en', title: 'Tag (EN)', type: 'string' }),
     defineField({ name: 'description', title: 'Descripción (ES)', type: 'text', rows: 3 }),
     defineField({ name: 'description_en', title: 'Description (EN)', type: 'text', rows: 3 }),
     defineField({

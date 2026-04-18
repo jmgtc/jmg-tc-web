@@ -4,6 +4,9 @@ import serviceItem from './serviceItem';
 import servicesPage from './servicesPage';
 import contactPage from './contactPage';
 import siteSettings from './siteSettings';
+import client from './client';
+import aboutPage from './aboutPage';
+import legalPage from './legalPage';
 
 export const schemaTypes = [
   post,
@@ -12,4 +15,7 @@ export const schemaTypes = [
   servicesPage,
   contactPage,
   siteSettings,
+  client,
+  aboutPage,
+  legalPage,
 ];

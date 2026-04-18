@@ -4,7 +4,14 @@ const nextConfig = {
     // Permite despliegue ignorando errores de tipos en esta fase de estabilización
     ignoreBuildErrors: true,
   },
-  // La clave 'eslint' ya no es compatible en Next.js 16.
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cdn.sanity.io',
+      },
+    ],
+  },
   // Otras configuraciones aquí...
 };
 

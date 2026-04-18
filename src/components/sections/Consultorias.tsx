@@ -4,6 +4,8 @@ import { useLanguage } from "@/components/providers/LanguageProvider";
 import { urlFor } from "@/lib/sanity";
 import Image from "next/image";
 
+import Badge from "@/components/modules/Badge";
+
 interface ServicePhase {
   label?: string;
   label_en?: string;
@@ -25,6 +27,10 @@ interface ServiceItem {
 
 interface ConsultoriasProps {
   headerData?: {
+    tag?: string;
+    tag_en?: string;
+    badge?: string;
+    badge_en?: string;
     title?: string;
     title_en?: string;
     description?: string;
@@ -39,6 +45,8 @@ export default function Consultorias({ headerData, services }: ConsultoriasProps
   const srvWeb = dict.services.web;
 
   const sectionHeader = {
+    tag: (language === "en" ? headerData?.tag_en : headerData?.tag) || "Section_02 // Expertise",
+    badge: (language === "en" ? headerData?.badge_en : headerData?.badge) || "",
     title: (language === "en" ? headerData?.title_en : headerData?.title) || "",
     description: (language === "en" ? headerData?.description_en : headerData?.description) || "",
   };
@@ -68,9 +76,15 @@ export default function Consultorias({ headerData, services }: ConsultoriasProps
   const displayServices = services && services.length > 0 ? services : fallbackServices;
 
   return (
-    <section className="bg-black py-24">
+    <section className="bg-black py-24 relative overflow-hidden">
       {(sectionHeader.title || sectionHeader.description) && (
-        <div className="container mx-auto px-6 mb-16 text-center">
+        <div className="container mx-auto px-6 mb-16 text-center relative z-10">
+          <Badge text={sectionHeader.badge} className="mb-6" />
+          {sectionHeader.tag && (
+            <span className="text-[10px] font-mono text-white/20 uppercase tracking-[0.5em] block mb-4">
+              {sectionHeader.tag}
+            </span>
+          )}
           {sectionHeader.title && <h2 className="text-4xl font-bold text-white mb-4">{sectionHeader.title}</h2>}
           {sectionHeader.description && <p className="text-white/70 max-w-2xl mx-auto text-lg">{sectionHeader.description}</p>}
         </div>
@@ -87,7 +101,7 @@ export default function Consultorias({ headerData, services }: ConsultoriasProps
             {/* Text side */}
             <div className="flex-1">
               <span className="text-[10px] font-mono text-white/40 uppercase tracking-[0.4em] block mb-4">
-                {srv.tag}
+                {(language === "en" ? srv.tag_en : srv.tag) || srv.tag}
               </span>
               <h2 className="text-4xl font-bold text-white mb-2">{title}</h2>
               <p className="text-white/70 mb-10 text-lg leading-relaxed">{desc}</p>

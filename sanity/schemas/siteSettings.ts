@@ -13,6 +13,8 @@ export default defineType({
       title: 'Contenido Header',
       type: 'object',
       fields: [
+        defineField({ name: 'home', title: 'Label Inicio (ES)', type: 'string' }),
+        defineField({ name: 'home_en', title: 'Label Home (EN)', type: 'string' }),
         defineField({ name: 'about', title: 'Label Nosotros (ES)', type: 'string' }),
         defineField({ name: 'about_en', title: 'Label About (EN)', type: 'string' }),
         defineField({ name: 'services', title: 'Label Servicios (ES)', type: 'string' }),

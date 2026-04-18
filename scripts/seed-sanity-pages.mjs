@@ -14,7 +14,7 @@ const client = createClient({
 });
 
 async function seed() {
-  console.log('🚀 Iniciando población de documentos Sanity...');
+  console.log('🚀 Actualizando Landing Page con la sección de Clientes...');
 
   // 1. LANDING PAGE
   const landingDoc = {
@@ -90,11 +90,16 @@ async function seed() {
       }
     },
     blog_highlights: {
-      tag: es.services.ia.tag, // Fallback
+      tag: 'Blog // Artículos',
       title: es.blog.title,
       title_en: en.blog.title,
       view_all: 'Ver todas →',
       view_all_en: 'View all →',
+    },
+    clients_section: {
+      tag: 'Confianza // Partners',
+      title: 'Nuestros Clientes',
+      title_en: 'Our Clients',
     },
     cta_section: {
       title: '¿Listo para transformar tu tecnológica?',
@@ -105,26 +110,10 @@ async function seed() {
   };
 
   try {
-    console.log('--- Creando Página de Inicio ---');
     await client.createOrReplace(landingDoc);
-    console.log('✅ Página de Inicio creada/actualizada.');
-
-    // 2. SITE SETTINGS (Basic metadata)
-    const settingsDoc = {
-      _id: 'siteSettings',
-      _type: 'siteSettings',
-      title: 'JMG Tech Consulting',
-      description: es.hero.subtitle,
-      address: 'Madrid, España',
-      email: 'info@jmg-tc.com',
-      phone: '+34 000 000 000',
-    };
-    await client.createOrReplace(settingsDoc);
-    console.log('✅ Ajustes Globales creados/actualizados.');
-
-    console.log('✨ Proceso finalizado con éxito.');
+    console.log('✅ Landing Page actualizada con éxito.');
   } catch (err) {
-    console.error('❌ Error durante la población:', err);
+    console.error('❌ Error al actualizar landing:', err);
   }
 }
 

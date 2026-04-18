@@ -3,6 +3,7 @@
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { urlFor } from "@/lib/sanity";
 import Image from "next/image";
+import Badge from "@/components/modules/Badge";
 
 interface HeroProps {
   data?: any;
@@ -15,6 +16,7 @@ export default function Hero({ data }: HeroProps) {
   // Localized content with fallback to dictionary
   const content = {
     badge: (language === "en" ? data?.badge_en : data?.badge) || t.badge,
+    tag: (language === "en" ? data?.tag_en : data?.tag) || "Section_01 // Hero",
     title: (language === "en" ? data?.title_en : data?.title) || t.title,
     title_highlight: (language === "en" ? data?.title_highlight_en : data?.title_highlight) || t.title_highlight,
     subtitle: (language === "en" ? data?.subtitle_en : data?.subtitle) || t.subtitle,
@@ -45,13 +47,7 @@ export default function Hero({ data }: HeroProps) {
       </div>
 
       <div className="container mx-auto px-6 relative z-10 text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-8 border border-white/10">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-gold"></span>
-          </span>
-          <span className="text-xs font-bold uppercase tracking-widest text-gold">{content.badge}</span>
-        </div>
+        <Badge text={content.badge} className="mb-8" />
 
         <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
           {content.title} <br />
@@ -77,7 +73,7 @@ export default function Hero({ data }: HeroProps) {
       {/* Decorative Module Indicator */}
       <div className="absolute bottom-10 left-10 hidden md:block">
         <div className="text-[10px] font-mono text-white/20 uppercase tracking-[0.5em]">
-          Module_01 // Hero_Core
+          {content.tag}
         </div>
       </div>
     </section>

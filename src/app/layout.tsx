@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/modules/Header";
 import AIConcierge from "@/components/modules/AIConcierge";
+import CookieBanner from "@/components/modules/CookieBanner";
 import { ClerkProvider } from '@clerk/nextjs';
 
 const geistSans = Geist({
@@ -19,10 +20,21 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://jmg-tc.com"),
   title: "JMG Tech Consulting | Consultoría IT y Desarrollo AI",
   description: "Socio tecnológico especializado en desarrollo web, automatización con IA y consultoría IT.",
+  icons: {
+    icon: [
+      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/logo-favicon.png", sizes: "any",  type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    shortcut: "/favicon-32.png",
+  },
 };
 
 import { LanguageProvider } from "@/components/providers/LanguageProvider";
 import { client, siteSettingsQuery } from "@/lib/sanity";
+import Footer from "@/components/modules/Footer";
 
 export const revalidate = 60;
 
@@ -39,8 +51,10 @@ export default async function RootLayout({
         <ClerkProvider>
           <LanguageProvider>
             <Header cmsData={settings} />
-            {children}
+            <main>{children}</main>
+            <Footer cmsData={settings} />
             <AIConcierge />
+            <CookieBanner />
           </LanguageProvider>
         </ClerkProvider>
       </body>
