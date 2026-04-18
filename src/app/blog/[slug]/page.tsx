@@ -51,21 +51,52 @@ export default function BlogPostPage() {
   const displayTitle = language === 'en' && post.title_en ? post.title_en : post.title;
   const displayBody = language === 'en' && post.body_en ? post.body_en : post.body;
 
-  // Simple renderer for Portable Text blocks
+  // Advanced renderer for Portable Text to support bold, italics and links
   const renderContent = (blocks: any) => {
     if (!blocks || !Array.isArray(blocks)) return null;
+    
     return blocks.map((block: any, i: number) => {
       if (block._type !== 'block' || !block.children) return null;
       
-      const text = block.children.map((child: any) => child.text).join('');
-      
-      // Basic style mapping
-      if (block.style === 'h2') return <h2 key={block._key || i} className="text-3xl font-bold text-white mt-12 mb-6">{text}</h2>;
-      if (block.style === 'h3') return <h3 key={block._key || i} className="text-2xl font-bold text-white mt-10 mb-4">{text}</h3>;
+      const { style = 'normal', children, markDefs = [] } = block;
+
+      const renderSpan = (span: any, j: number) => {
+        let content: React.ReactNode = span.text;
+
+        if (span.marks && span.marks.length > 0) {
+          span.marks.forEach((mark: string) => {
+            // Check if it's a basic style mark
+            if (mark === 'strong') content = <strong key={`${mark}-${j}`} className="font-bold text-white tracking-normal">{content}</strong>;
+            if (mark === 'em') content = <em key={`${mark}-${j}`} className="italic">{content}</em>;
+            
+            // Check if it's a link mark (defined in markDefs)
+            const linkDef = markDefs.find((def: any) => def._key === mark);
+            if (linkDef && linkDef._type === 'link') {
+              content = (
+                <a 
+                  key={`${mark}-${j}`} 
+                  href={linkDef.href} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-gold hover:underline transition-all font-medium"
+                >
+                  {content}
+                </a>
+              );
+            }
+          });
+        }
+        return <span key={span._key || j}>{content}</span>;
+      };
+
+      const content = children.map((span: any, j: number) => renderSpan(span, j));
+
+      if (style === 'h2') return <h2 key={block._key || i} className="text-3xl font-bold text-white mt-12 mb-6">{content}</h2>;
+      if (style === 'h3') return <h3 key={block._key || i} className="text-2xl font-bold text-white mt-10 mb-4">{content}</h3>;
       
       return (
         <p key={block._key || i} className="text-white/70 leading-[1.8] font-light mb-6 whitespace-pre-wrap">
-          {text}
+          {content}
         </p>
       );
     });
