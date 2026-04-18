@@ -5,13 +5,21 @@ function generateSlug(text: string): string {
   return text
     .toString()
     .toLowerCase()
-    .normalize('NFD') // Normaliza caracteres especiales (acentos)
-    .replace(/[\u0300-\u036f]/g, '') // Elimina los acentos
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
     .trim()
-    .replace(/\s+/g, '-') // Reemplaza espacios por -
-    .replace(/[^\w-]+/g, '') // Elimina caracteres no permitidos
-    .replace(/--+/g, '-'); // Elimina guiones dobles
+    .replace(/\s+/g, '-')
+    .replace(/[^\w-]+/g, '')
+    .replace(/--+/g, '-');
 }
+
+const sanity = createClient({
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+  dataset: 'production',
+  token: process.env.SANITY_WRITE_TOKEN,
+  useCdn: false,
+  apiVersion: '2023-05-03',
+});
 
 // Manejador para pre-flight requests (CORS)
 export async function OPTIONS() {
