@@ -44,7 +44,9 @@ export async function POST(req: NextRequest) {
     const bodyData = await req.json();
     
     // Extraemos los datos que envía JMG-TC NewsFlow AI
-    const { title, content, excerpt, imageUrl } = bodyData;
+    const { title, content, excerpt } = bodyData;
+    // Intentamos pillar la imagen de varios campos posibles
+    const imgUrl = bodyData.imageUrl || bodyData.image_url || bodyData.image || bodyData.mainImage;
 
     if (!title || !content) {
       return NextResponse.json({ error: 'Faltan campos obligatorios (title/content)' }, { status: 400, headers: corsHeaders });
@@ -60,6 +62,7 @@ export async function POST(req: NextRequest) {
       title: title,
       slug: { _type: 'slug', current: slug },
       publishedAt: new Date().toISOString(),
+      excerpt: excerpt || '',
       // Convertimos el contenido a PortableText (formato Sanity)
       body: [
         {
@@ -78,27 +81,28 @@ export async function POST(req: NextRequest) {
       ],
     };
 
-    // 2. Si hay imagen, intentamos descargarla y subirla a Sanity
-    if (imageUrl && imageUrl.startsWith('http')) {
+    // 2. Si hay imagen, intentamos subirla
+    if (imgUrl && typeof imgUrl === 'string' && imgUrl.startsWith('http')) {
       try {
-        const imageRes = await fetch(imageUrl);
+        console.log('[NewsFlow] Intentando procesar imagen de:', imgUrl);
+        const imageRes = await fetch(imgUrl);
+        if (!imageRes.ok) throw new Error(`Fallo al descargar imagen: ${imageRes.statusText}`);
+        
         const arrayBuffer = await imageRes.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
         
         const asset = await sanity.assets.upload('image', buffer, {
           filename: `newsflow-${slug}.png`,
+          contentType: imageRes.headers.get('content-type') || 'image/png'
         });
         
         newPost.mainImage = {
           _type: 'image',
-          asset: {
-            _type: 'reference',
-            _ref: asset._id,
-          },
+          asset: { _type: 'reference', _ref: asset._id },
         };
+        console.log('[NewsFlow] ✅ Imagen subida con éxito:', asset._id);
       } catch (imgErr) {
-        console.error('[NewsFlow] Error subiendo imagen:', imgErr);
-        // Continuamos sin imagen si falla el upload
+        console.error('[NewsFlow] ❌ Error subiendo imagen:', imgErr);
       }
     }
 
