@@ -102,8 +102,8 @@ export default function BlogHighlights({ data }: { data?: any }) {
                     className="text-xl font-bold text-white mb-3 group-hover:text-gold transition-colors line-clamp-2 leading-tight"
                     dangerouslySetInnerHTML={{ __html: displayTitle }}
                   />
-                  <p className="text-xs text-white/60 line-clamp-3 leading-relaxed font-light mb-6">
-                    {stripHtml(displayExcerpt)}
+                  <p className="text-xs text-white/60 leading-relaxed font-light mb-6">
+                    {stripHtml(displayExcerpt || "").substring(0, 50)}{displayExcerpt && displayExcerpt.length > 50 ? "..." : ""}
                   </p>
                   <div className="mt-auto pt-4 border-t border-white/5 text-[10px] font-mono text-white/30 uppercase tracking-widest">
                     {new Date(post.publishedAt).toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US', { 

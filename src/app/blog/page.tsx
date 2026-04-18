@@ -102,8 +102,8 @@ export default function BlogPage() {
                        {displayTitle}
                     </h2>
                     
-                    <p className="text-sm text-white/70 leading-relaxed line-clamp-3 font-light mb-8 flex-grow">
-                      {displayBody || "..."}
+                    <p className="text-sm text-white/70 leading-relaxed font-light mb-8 flex-grow">
+                      {(displayBody || "").substring(0, 100)}{displayBody && displayBody.length > 100 ? "..." : ""}
                     </p>
 
                     <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
