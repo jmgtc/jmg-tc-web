@@ -1,5 +1,7 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import Link from "next/link";
 import { client, urlFor } from "@/lib/sanity";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
