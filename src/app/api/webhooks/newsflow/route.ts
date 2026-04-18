@@ -1,30 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@sanity/client';
-import slugify from 'slugify';
-
-const sanity = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-  dataset: 'production',
-  token: process.env.SANITY_WRITE_TOKEN,
-  useCdn: false,
-  apiVersion: '2023-05-03',
-});
+// Función interna para generar slugs sin dependencias externas
+function generateSlug(text: string): string {
+  return text
+    .toString()
+    .toLowerCase()
+    .normalize('NFD') // Normaliza caracteres especiales (acentos)
+    .replace(/[\u0300-\u036f]/g, '') // Elimina los acentos
+    .trim()
+    .replace(/\s+/g, '-') // Reemplaza espacios por -
+    .replace(/[^\w-]+/g, '') // Elimina caracteres no permitidos
+    .replace(/--+/g, '-'); // Elimina guiones dobles
+}
 
 export async function POST(req: NextRequest) {
   try {
     const bodyData = await req.json();
     
     // Extraemos los datos que envía JMG-TC NewsFlow AI
-    // Nota: NewsFlow suele enviar 'title', 'content', 'excerpt' y 'imageUrl'
     const { title, content, excerpt, imageUrl } = bodyData;
 
     if (!title || !content) {
       return NextResponse.json({ error: 'Faltan campos obligatorios (title/content)' }, { status: 400 });
     }
 
-    // Generar slug único añadiendo un pequeño hash para evitar colisiones
+    // Generar slug único
     const uniqueId = Math.random().toString(36).substring(2, 7);
-    const slug = slugify(title, { lower: true, strict: true }) + '-' + uniqueId;
+    const slug = generateSlug(title) + '-' + uniqueId;
 
     // 1. Crear el objeto básico del post
     const newPost: any = {
