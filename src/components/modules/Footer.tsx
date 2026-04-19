@@ -9,7 +9,7 @@ interface FooterProps {
 }
 
 const getSocialIcon = (platform: string) => {
-  const p = platform.toLowerCase();
+  const p = (platform || "").toLowerCase();
   
   if (p.includes('instagram')) return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -35,6 +35,13 @@ const getSocialIcon = (platform: string) => {
 
   if (p.includes('whatsapp')) return <MessageSquare size={18} />;
   if (p.includes('telegram') || p.includes('send')) return <Send size={18} />;
+  if (p.includes('google')) return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"></circle>
+      <path d="M12 8v8"></path>
+      <path d="M8 12h8"></path>
+    </svg>
+  );
   
   return <Globe size={18} />;
 };
@@ -46,7 +53,7 @@ export default function Footer({ cmsData }: FooterProps) {
   // Intento buscar tanto en el objeto footer como en la raíz por si no se han migrado los datos
   const footer = cmsData?.footer;
   const tagValue = footer?.tag || site?.tag || "v2.3";
-  const socialData = footer?.socialLinks || site?.socialLinks || [];
+  const socialData = footer?.socialLinks || site?.socialLinks || site?.footer?.socialLinks || [];
 
   const content = {
     brand_name: site?.logoText || "JMG Tech Consulting",

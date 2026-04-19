@@ -17,7 +17,7 @@ export function urlFor(source: any) {
 }
 
 // Query for shared/global settings
-export const siteSettingsQuery = `*[_id == "siteSettings" || _id == "drafts.siteSettings" || _type == "siteSettings"] | order(_updatedAt desc)[0]`;
+export const siteSettingsQuery = `*[_id in ["siteSettings", "drafts.siteSettings"]] | order(_updatedAt desc)[0]`;
 
 // Improved Landing Page Query
 export const landingPageQuery = `
@@ -25,7 +25,7 @@ export const landingPageQuery = `
     "landing": *[_type == "landingPage"][0],
     "services": *[_type == "serviceItem"] | order(order asc),
     "clients": *[_type == "client"] | order(order asc),
-    "settings": *[_id == "siteSettings" || _id == "drafts.siteSettings" || _type == "siteSettings"] | order(_updatedAt desc)[0]
+    "settings": *[_id in ["siteSettings", "drafts.siteSettings"]] | order(_updatedAt desc)[0]
   }
 `;
 
@@ -33,20 +33,20 @@ export const servicesPageQuery = `
   {
     "header": *[_type == "servicesPage"][0].header,
     "services": *[_type == "serviceItem"] | order(order asc),
-    "settings": *[_id == "siteSettings" || _id == "drafts.siteSettings" || _type == "siteSettings"] | order(_updatedAt desc)[0]
+    "settings": *[_id in ["siteSettings", "drafts.siteSettings"]] | order(_updatedAt desc)[0]
   }
 `;
 
 export const aboutPageQuery = `
   {
     "about": *[_type == "aboutPage"][0],
-    "settings": *[_id == "siteSettings" || _id == "drafts.siteSettings" || _type == "siteSettings"] | order(_updatedAt desc)[0]
+    "settings": *[_id in ["siteSettings", "drafts.siteSettings"]] | order(_updatedAt desc)[0]
   }
 `;
 
 export const contactPageQuery = `
   {
     "info": *[_type == "contactPage"][0],
-    "settings": *[_id == "siteSettings" || _id == "drafts.siteSettings" || _type == "siteSettings"] | order(_updatedAt desc)[0]
+    "settings": *[_id in ["siteSettings", "drafts.siteSettings"]] | order(_updatedAt desc)[0]
   }
 `;
