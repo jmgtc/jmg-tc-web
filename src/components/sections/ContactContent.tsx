@@ -69,20 +69,20 @@ export default function ContactContent({ cmsData }: ContactContentProps) {
   };
 
   return (
-    <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-16 items-start">
+    <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-16 items-start w-full overflow-hidden">
       {/* Left — Info */}
-      <div className="flex flex-col items-start pt-8">
+      <div className="flex flex-col items-start pt-8 w-full">
         <Badge text={content.badge} className="mb-6" />
         <span className="text-[10px] font-mono text-white/20 uppercase tracking-[0.4em] block mb-3">
           {content.tag}
         </span>
-        <h1 className="text-5xl font-bold text-white mb-6 leading-tight">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6 leading-tight whitespace-normal break-keep">
           {content.title}<br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-300 to-zinc-600">
             {content.title_accent}
           </span>
         </h1>
-        <p className="text-brand-gray-body text-lg leading-relaxed mb-10">
+        <p className="text-brand-gray-body text-lg leading-relaxed mb-10 break-keep">
           {content.desc}
         </p>
 

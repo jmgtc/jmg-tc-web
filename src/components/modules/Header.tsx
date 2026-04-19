@@ -70,24 +70,24 @@ export default function Header({ cmsData }: { cmsData?: any }) {
             alt="JMG Tech Consulting"
             className="h-10 w-10 object-contain rounded-full"
           />
-          <span className="hidden md:block text-sm font-bold text-white/80">
+          <span className="hidden lg:block text-sm font-bold text-white/80 whitespace-nowrap">
             {labels.brand_main} <span className="text-gold">{labels.brand_accent}</span>
           </span>
         </Link>
 
         {/* Nav escritorio - Oculto en mantenimiento */}
         {!isMaintenance && (
-          <nav className="hidden md:flex items-center gap-8">
-            <Link href="/" className={`text-sm font-medium transition-colors ${pathname === "/" ? "text-gold" : "hover:text-gold"}`}>
+          <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
+            <Link href="/" className={`text-sm font-medium transition-colors whitespace-nowrap ${pathname === "/" ? "text-gold" : "hover:text-gold"}`}>
               {labels.home}
             </Link>
-            <Link href="/nosotros" className={`text-sm font-medium transition-colors ${pathname === "/nosotros" ? "text-gold" : "hover:text-gold"}`}>
+            <Link href="/nosotros" className={`text-sm font-medium transition-colors whitespace-nowrap ${pathname === "/nosotros" ? "text-gold" : "hover:text-gold"}`}>
               {labels.about}
             </Link>
-            <Link href="/servicios" className={`text-sm font-medium transition-colors ${pathname === "/servicios" ? "text-gold" : "hover:text-gold"}`}>
+            <Link href="/servicios" className={`text-sm font-medium transition-colors whitespace-nowrap ${pathname === "/servicios" ? "text-gold" : "hover:text-gold"}`}>
               {labels.services}
             </Link>
-            <Link href="/blog" className={`text-sm font-medium transition-colors ${pathname === "/blog" ? "text-gold" : "hover:text-gold"}`}>
+            <Link href="/blog" className={`text-sm font-medium transition-colors whitespace-nowrap ${pathname === "/blog" ? "text-gold" : "hover:text-gold"}`}>
               {labels.blog}
             </Link>
   
@@ -137,7 +137,7 @@ export default function Header({ cmsData }: { cmsData?: any }) {
         {/* Botón móvil - Oculto en mantenimiento */}
         {!isMaintenance && (
           <button
-            className="md:hidden p-2 rounded-full hover:bg-white/10 transition-colors"
+            className="lg:hidden p-2 rounded-full hover:bg-white/10 transition-colors"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Menú"
           >
@@ -153,7 +153,7 @@ export default function Header({ cmsData }: { cmsData?: any }) {
 
       {/* Menú móvil desplegable */}
       {mobileOpen && (
-        <div className="mt-2 glass rounded-3xl p-6 flex flex-col gap-4 md:hidden">
+        <div className="mt-2 glass rounded-3xl p-6 flex flex-col gap-4 lg:hidden">
           <Link href="/" onClick={() => setMobileOpen(false)} className={`text-sm font-medium ${pathname === "/" ? "text-gold" : ""}`}>
             {labels.home}
           </Link>
