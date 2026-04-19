@@ -154,8 +154,12 @@ export default function BlogPostPage() {
         <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-12">{displayTitle}</h1>
 
         {post.mainImage && (
-          <div className="w-full aspect-video rounded-[2rem] overflow-hidden mb-12 shadow-2xl border border-white/10">
-            <img src={urlFor(post.mainImage).url()} alt={displayTitle} className="w-full h-full object-cover" />
+          <div className="w-full h-auto max-h-[300px] md:max-h-[350px] lg:max-h-[400px] rounded-[2rem] overflow-hidden mb-12 shadow-2xl border border-white/10 group">
+            <img 
+              src={urlFor(post.mainImage).url()} 
+              alt={displayTitle} 
+              className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105" 
+            />
           </div>
         )}
 
