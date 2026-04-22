@@ -7,6 +7,11 @@ import { useLanguage } from "@/components/providers/LanguageProvider";
 
 const POSTS_PER_PAGE = 21;
 
+function stripHtml(html: string) {
+  if (!html) return "";
+  return html.replace(/<[^>]*>/g, "").trim();
+}
+
 export default function BlogPage() {
   const { language, t } = useLanguage();
   const [posts, setPosts] = useState<any[]>([]);
@@ -122,7 +127,10 @@ export default function BlogPage() {
                       </h2>
                       
                       <p className="text-sm text-white/70 leading-relaxed font-light mb-8 flex-grow">
-                        {(displayBody || "").substring(0, 100)}{displayBody && displayBody.length > 100 ? "..." : ""}
+                        {(() => {
+                          const stripped = stripHtml(displayBody || "");
+                          return stripped.substring(0, 100) + (stripped.length > 100 ? "..." : "");
+                        })()}
                       </p>
 
                       <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
