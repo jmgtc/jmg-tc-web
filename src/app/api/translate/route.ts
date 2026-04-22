@@ -27,6 +27,7 @@ export async function POST(req: Request) {
     const prompt = `
       Eres un traductor experto en tecnología y consultoría IT. 
       Traduce el siguiente contenido del ESPAÑOL al INGLÉS manteniendo un tono profesional, elegante y corporativo (estilo Apple/Tesla).
+      Si el contenido incluye etiquetas HTML, presérvalas exactamente igual y traduce solo el texto visible.
       
       TÍTULO: ${title}
       CONTENIDO: ${body}

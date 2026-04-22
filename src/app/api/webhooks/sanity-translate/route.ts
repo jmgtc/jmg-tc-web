@@ -14,22 +14,34 @@ const sanity = createClient({
 const DEEPL_KEY = process.env.DEEPL_API_KEY!;
 
 // ─── DeepL translator ─────────────────────────────────────────────────────
-async function translate(text: string): Promise<string> {
+async function translate(text: string, isHTML = false): Promise<string> {
   if (!text?.trim()) return '';
-  const res = await fetch('https://api-free.deepl.com/v2/translate', {
-    method: 'POST',
-    headers: {
-      'Authorization': `DeepL-Auth-Key ${DEEPL_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      text: [text],
-      source_lang: 'ES',
-      target_lang: 'EN-US',
-    }),
-  });
-  const data = await res.json();
-  return data.translations?.[0]?.text ?? text;
+  try {
+    const res = await fetch('https://api-free.deepl.com/v2/translate', {
+      method: 'POST',
+      headers: {
+        'Authorization': `DeepL-Auth-Key ${DEEPL_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        text: [text],
+        source_lang: 'ES',
+        target_lang: 'EN-US',
+        tag_handling: isHTML ? 'html' : undefined,
+      }),
+    });
+    
+    if (!res.ok) {
+      console.error(`[DeepL Error] status: ${res.status}`);
+      return text;
+    }
+    
+    const data = await res.json();
+    return data.translations?.[0]?.text ?? text;
+  } catch (err) {
+    console.error('[DeepL Exception]', err);
+    return text;
+  }
 }
 
 // ─── PortableText translator (preserves structure, translates text spans) ─
@@ -41,7 +53,9 @@ async function translatePortableText(blocks: any[]): Promise<any[]> {
       const children = [];
       for (const child of block.children) {
         if (child._type === 'span' && child.text?.trim()) {
-          children.push({ ...child, text: await translate(child.text) });
+          // Detectamos si el texto parece contener HTML
+          const containsHtml = /<[a-z][\s\S]*>/i.test(child.text);
+          children.push({ ...child, text: await translate(child.text, containsHtml) });
         } else {
           children.push(child);
         }

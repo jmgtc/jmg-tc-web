@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
 
     // --- TRADUCCIÓN AUTOMÁTICA (DeepL) ---
     const titleEn = await translateWithDeepL(title);
-    const bodyEnText = await translateWithDeepL(content);
+    const bodyEnText = await translateWithDeepL(content, true); // Pasar true para manejar HTML
 
     // --- PARSER DE FORMATO (Markdown a PortableText) ---
     const paragraphs = content.split(/\n\n+/);
