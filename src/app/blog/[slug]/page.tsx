@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { client, urlFor } from "@/lib/sanity";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { PortableText } from "@portabletext/react";
 
 // Iconos para compartir
 const ShareIcon = ({ type }: { type: string }) => {
@@ -77,9 +78,13 @@ export default function BlogPostPage() {
   const calculateReadingTime = (blocks: any) => {
     if (!blocks) return 1;
     let text = "";
-    blocks.forEach((b: any) => {
-      if (b.children) b.children.forEach((c: any) => text += c.text);
-    });
+    if (typeof blocks === 'string') {
+      text = blocks.replace(/<[^>]*>/g, ''); // Limpiar HTML si existe
+    } else if (Array.isArray(blocks)) {
+      blocks.forEach((b: any) => {
+        if (b.children) b.children.forEach((c: any) => text += c.text);
+      });
+    }
     const words = text.split(/\s+/).length;
     return Math.ceil(words / 200);
   };
@@ -105,33 +110,51 @@ export default function BlogPostPage() {
   };
 
   const renderContent = (blocks: any) => {
-    if (!blocks || !Array.isArray(blocks)) return null;
-    return blocks.map((block: any, i: number) => {
-      if (block._type !== 'block' || !block.children) return null;
-      const { style = 'normal', children, markDefs = [] } = block;
+    if (!blocks) return null;
 
-      const renderSpan = (span: any, j: number) => {
-        let content: React.ReactNode = span.text;
-        if (span.marks && span.marks.length > 0) {
-          span.marks.forEach((mark: string) => {
-            if (mark === 'strong') content = <strong key={j} className="font-bold text-white">{content}</strong>;
-            if (mark === 'em') content = <em key={j} className="italic">{content}</em>;
-            const linkDef = markDefs.find((def: any) => def._key === mark);
-            if (linkDef && linkDef._type === 'link') {
-              content = <a key={j} href={linkDef.href} target="_blank" rel="noopener" className="text-gold hover:underline">{content}</a>;
-            }
-          });
-        }
-        return <span key={j}>{content}</span>;
-      };
+    // 1. Detección de HTML crudo (si viene como string o como un solo bloque con HTML)
+    let rawHtml = "";
+    if (typeof blocks === 'string' && (blocks.includes('<p>') || blocks.includes('<strong') || blocks.includes('<h'))) {
+      rawHtml = blocks;
+    } else if (Array.isArray(blocks) && blocks.length === 1 && blocks[0]._type === 'block') {
+      const firstText = blocks[0].children?.[0]?.text;
+      if (typeof firstText === 'string' && (firstText.includes('<p>') || firstText.includes('<strong'))) {
+        rawHtml = firstText;
+      }
+    }
 
-      const content = children.map((span: any, j: number) => renderSpan(span, j));
-      const classes = "text-white/80 leading-relaxed mb-6 font-light";
-      
-      if (style === 'h2') return <h2 key={i} className="text-3xl font-bold text-white mt-12 mb-6">{content}</h2>;
-      if (style === 'h3') return <h3 key={i} className="text-2xl font-bold text-white mt-8 mb-4">{content}</h3>;
-      return <p key={i} className={classes}>{content}</p>;
-    });
+    if (rawHtml) {
+      return (
+        <div 
+          className="prose prose-invert max-w-none prose-gold
+            prose-p:text-white/80 prose-p:leading-relaxed prose-p:mb-6 prose-p:font-light
+            prose-headings:text-white prose-headings:font-bold
+            prose-strong:text-white prose-strong:font-bold
+            prose-a:text-gold prose-a:no-underline hover:prose-a:underline"
+          dangerouslySetInnerHTML={{ __html: rawHtml }} 
+        />
+      );
+    }
+
+    // 2. Renderizado estándar de Sanity (Portable Text)
+    const components = {
+      block: {
+        h2: ({children}: any) => <h2 className="text-3xl font-bold text-white mt-12 mb-6">{children}</h2>,
+        h3: ({children}: any) => <h3 className="text-2xl font-bold text-white mt-8 mb-4">{children}</h3>,
+        normal: ({children}: any) => <p className="text-white/80 leading-relaxed mb-6 font-light">{children}</p>,
+      },
+      marks: {
+        strong: ({children}: any) => <strong className="font-bold text-white">{children}</strong>,
+        em: ({children}: any) => <em className="italic">{children}</em>,
+        link: ({children, value}: any) => (
+          <a href={value.href} target="_blank" rel="noopener" className="text-gold hover:underline">
+            {children}
+          </a>
+        ),
+      },
+    };
+
+    return <PortableText value={blocks} components={components} />;
   };
 
   return (
