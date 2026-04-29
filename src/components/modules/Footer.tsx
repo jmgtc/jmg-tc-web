@@ -183,7 +183,7 @@ export default function Footer({ cmsData }: FooterProps) {
 
       {/* WhatsApp Floating Button */}
       <a
-        href="https://wa.me/34600000000?text=Hola,%20me%20interesa%20un%20diagnóstico%20gratuito"
+        href="https://wa.me/34639023805?text=Hola,%20me%20interesa%20un%20diagnóstico%20gratuito"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-24 left-6 z-40 w-12 h-12 rounded-full flex items-center justify-center shadow-[0_4px_24px_rgba(37,211,102,0.4)] bg-[#25D366] hover:scale-110 transition-all duration-300 group"
