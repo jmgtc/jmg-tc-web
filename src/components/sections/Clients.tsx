@@ -118,8 +118,8 @@ export default function Clients({ data, clients }: ClientProps) {
             scrollbarWidth: "none",
             msOverflowStyle: "none",
             cursor: "grab",
-            paddingLeft:  "clamp(56px, 9vw, 140px)",
-            paddingRight: "clamp(56px, 9vw, 140px)",
+            paddingLeft:  "clamp(40px, 4vw, 60px)",
+            paddingRight: "clamp(40px, 4vw, 60px)",
             paddingTop: "12px",
             paddingBottom: "16px",
           }}
@@ -197,8 +197,8 @@ function LogoCard({ client }: { client: any }) {
       style={{
         flexShrink: 0,
         scrollSnapAlign: "center",
-        width:  "clamp(280px, 34vw, 420px)",
-        height: "clamp(240px, 26vw, 360px)",
+        width:  "clamp(260px, 21.5vw, 310px)",
+        height: "clamp(190px, 18vw, 250px)",
         borderRadius: "24px",
         background: "#111318",
         border: `1px solid ${hov ? "rgba(255,255,255,0.16)" : "rgba(255,255,255,0.08)"}`,
