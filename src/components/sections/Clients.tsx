@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useCallback, useEffect } from "react";
+import React, { useRef, useState, useCallback } from "react";
 import Image from "next/image";
 import { urlFor } from "@/lib/sanity";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -26,14 +26,19 @@ export default function Clients({ data, clients }: ClientProps) {
     (language === "es" ? data?.title : data?.title_en) ||
     (language === "es" ? "Nuestros Clientes" : "Our Clients");
 
+  // ── Card width helper ──────────────────────────────────────────
+  const getCardW = () => {
+    const el = trackRef.current;
+    if (!el) return 400;
+    const first = el.firstElementChild as HTMLElement | null;
+    return first ? first.offsetWidth + 28 : 400;
+  };
+
   // ── Scroll → dot sync ──────────────────────────────────────────
   const onScroll = useCallback(() => {
     const el = trackRef.current;
     if (!el) return;
-    const cardW = el.firstElementChild
-      ? (el.firstElementChild as HTMLElement).offsetWidth + 28
-      : 400;
-    const idx = Math.round(el.scrollLeft / cardW);
+    const idx = Math.round(el.scrollLeft / getCardW());
     setActiveIndex(Math.min(Math.max(idx, 0), clients.length - 1));
   }, [clients.length]);
 
@@ -41,10 +46,7 @@ export default function Clients({ data, clients }: ClientProps) {
   const scrollBy = (dir: "prev" | "next") => {
     const el = trackRef.current;
     if (!el) return;
-    const cardW = el.firstElementChild
-      ? (el.firstElementChild as HTMLElement).offsetWidth + 28
-      : 400;
-    el.scrollBy({ left: dir === "next" ? cardW : -cardW, behavior: "smooth" });
+    el.scrollBy({ left: dir === "next" ? getCardW() : -getCardW(), behavior: "smooth" });
   };
 
   // ── Mouse drag ─────────────────────────────────────────────────
@@ -60,11 +62,10 @@ export default function Clients({ data, clients }: ClientProps) {
   const onMouseMove = (e: React.MouseEvent) => {
     if (!isDragging.current || !trackRef.current) return;
     e.preventDefault();
-    const diff = (e.pageX - startX.current) * 1.3;
-    trackRef.current.scrollLeft = scrollStart.current - diff;
+    trackRef.current.scrollLeft = scrollStart.current - (e.pageX - startX.current) * 1.2;
   };
 
-  const onMouseUp = () => {
+  const stopDrag = () => {
     isDragging.current = false;
     if (trackRef.current) trackRef.current.style.cursor = "grab";
   };
@@ -73,89 +74,70 @@ export default function Clients({ data, clients }: ClientProps) {
   const goTo = (i: number) => {
     const el = trackRef.current;
     if (!el) return;
-    const cardW = el.firstElementChild
-      ? (el.firstElementChild as HTMLElement).offsetWidth + 28
-      : 400;
-    el.scrollTo({ left: cardW * i, behavior: "smooth" });
+    el.scrollTo({ left: getCardW() * i, behavior: "smooth" });
   };
 
   return (
-    <section className="py-28 relative overflow-hidden" style={{ background: "#0a0b0e" }}>
-      {/* Top separator */}
-      <div className="absolute top-0 inset-x-0 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent)" }} />
+    <section
+      className="py-28 relative overflow-hidden"
+      style={{ background: "#0a0b0e" }}
+    >
+      {/* Top line */}
+      <div
+        className="absolute top-0 inset-x-0 h-px"
+        style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent)" }}
+      />
 
-      {/* Ambient glow */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] rounded-full pointer-events-none"
-        style={{ background: "radial-gradient(ellipse, rgba(99,102,241,0.04) 0%, transparent 70%)" }} />
+      {/* Subtle ambient */}
+      <div
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[900px] h-[250px] pointer-events-none"
+        style={{ background: "radial-gradient(ellipse, rgba(99,102,241,0.05) 0%, transparent 70%)" }}
+      />
 
-      {/* Title */}
-      <div className="text-center mb-14 px-6">
-        <span className="block text-[10px] font-mono tracking-[0.5em] uppercase mb-4"
-          style={{ color: "rgba(255,255,255,0.2)" }}>
+      {/* ── Title ── */}
+      <div className="text-center mb-16 px-6">
+        <span
+          className="block text-[10px] font-mono tracking-[0.55em] uppercase mb-4"
+          style={{ color: "rgba(255,255,255,0.2)" }}
+        >
           {language === "es" ? "Confían en nosotros" : "They trust us"}
         </span>
-        <h2 className="text-4xl md:text-5xl font-bold tracking-tight" style={{ color: "rgba(255,255,255,0.92)" }}>
+        <h2
+          className="text-4xl md:text-5xl font-bold tracking-tight"
+          style={{ color: "rgba(255,255,255,0.92)" }}
+        >
           {title}
         </h2>
       </div>
 
-      {/* Carousel container */}
+      {/* ── Carousel ── */}
       <div className="relative">
         {/* Arrow prev */}
-        <button
-          onClick={() => scrollBy("prev")}
-          aria-label="Anterior"
-          className="absolute left-3 md:left-6 top-1/2 -translate-y-1/2 z-20
-            w-11 h-11 rounded-full flex items-center justify-center
-            transition-all duration-200 hover:scale-110"
-          style={{
-            background: "rgba(255,255,255,0.05)",
-            border: "1px solid rgba(255,255,255,0.1)",
-            color: "rgba(255,255,255,0.5)",
-          }}
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-          </svg>
-        </button>
+        <ArrowBtn dir="prev" onClick={() => scrollBy("prev")} />
 
         {/* Arrow next */}
-        <button
-          onClick={() => scrollBy("next")}
-          aria-label="Siguiente"
-          className="absolute right-3 md:right-6 top-1/2 -translate-y-1/2 z-20
-            w-11 h-11 rounded-full flex items-center justify-center
-            transition-all duration-200 hover:scale-110"
-          style={{
-            background: "rgba(255,255,255,0.05)",
-            border: "1px solid rgba(255,255,255,0.1)",
-            color: "rgba(255,255,255,0.5)",
-          }}
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
-            <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-          </svg>
-        </button>
+        <ArrowBtn dir="next" onClick={() => scrollBy("next")} />
 
         {/* Track */}
         <div
           ref={trackRef}
           onMouseDown={onMouseDown}
           onMouseMove={onMouseMove}
-          onMouseUp={onMouseUp}
-          onMouseLeave={onMouseUp}
+          onMouseUp={stopDrag}
+          onMouseLeave={stopDrag}
           onScroll={onScroll}
-          className="flex gap-7 overflow-x-auto"
+          className="flex overflow-x-auto"
           style={{
+            gap: "28px",
             scrollSnapType: "x mandatory",
             WebkitOverflowScrolling: "touch",
             scrollbarWidth: "none",
             msOverflowStyle: "none",
             cursor: "grab",
-            paddingLeft: "clamp(60px, 8vw, 140px)",
-            paddingRight: "clamp(60px, 8vw, 140px)",
-            paddingTop: "16px",
-            paddingBottom: "20px",
+            paddingLeft:  "clamp(56px, 9vw, 140px)",
+            paddingRight: "clamp(56px, 9vw, 140px)",
+            paddingTop: "12px",
+            paddingBottom: "16px",
           }}
         >
           {clients.map((client, i) => (
@@ -164,7 +146,7 @@ export default function Clients({ data, clients }: ClientProps) {
         </div>
       </div>
 
-      {/* Dots */}
+      {/* ── Dots ── */}
       {clients.length > 1 && (
         <div className="flex items-center justify-center gap-2 mt-10">
           {clients.map((_, i) => (
@@ -174,10 +156,10 @@ export default function Clients({ data, clients }: ClientProps) {
               aria-label={`Ir al cliente ${i + 1}`}
               className="rounded-full transition-all duration-300"
               style={{
-                width: i === activeIndex ? "24px" : "6px",
+                width:  i === activeIndex ? "24px" : "6px",
                 height: "6px",
                 background: i === activeIndex
-                  ? "rgba(242,204,82,0.9)"
+                  ? "rgba(242,204,82,0.85)"
                   : "rgba(255,255,255,0.15)",
               }}
             />
@@ -188,68 +170,112 @@ export default function Clients({ data, clients }: ClientProps) {
   );
 }
 
-// ── Logo-only Card ─────────────────────────────────────────────────────────────
+// ── Arrow button ───────────────────────────────────────────────────────────────
+function ArrowBtn({ dir, onClick }: { dir: "prev" | "next"; onClick: () => void }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      aria-label={dir === "prev" ? "Anterior" : "Siguiente"}
+      className="absolute top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200"
+      style={{
+        [dir === "prev" ? "left" : "right"]: "clamp(12px, 2vw, 24px)",
+        background: hov ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.05)",
+        border: `1px solid ${hov ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.1)"}`,
+        color: hov ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.45)",
+        transform: `translateY(-50%) scale(${hov ? 1.08 : 1})`,
+      }}
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
+        {dir === "prev"
+          ? <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+          : <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+        }
+      </svg>
+    </button>
+  );
+}
+
+// ── Logo Card ─────────────────────────────────────────────────────────────────
 function LogoCard({ client }: { client: any }) {
-  const [hovered, setHovered] = useState(false);
+  const [hov, setHov] = useState(false);
 
   const logoUrl = client.logo
     ? urlFor(client.logo).width(600).format("webp").url()
     : null;
 
+  // Whether the logo likely has a transparent bg (no bg color set in schema)
+  // We always wrap in a white pill so transparent logos don't vanish on dark
+  const needsWhiteBg = !client.hasDarkLogo && !client.logoBg;
+
   return (
     <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
       style={{
         flexShrink: 0,
         scrollSnapAlign: "center",
-        /* Responsive width via clamp */
-        width: "clamp(280px, 36vw, 420px)",
-        height: "clamp(240px, 28vw, 360px)",
+        width:  "clamp(280px, 34vw, 420px)",
+        height: "clamp(240px, 26vw, 360px)",
         borderRadius: "24px",
         background: "#111318",
-        border: hovered
-          ? "1px solid rgba(255,255,255,0.18)"
-          : "1px solid rgba(255,255,255,0.08)",
-        boxShadow: hovered
-          ? "0 0 40px rgba(99,102,241,0.08), 0 8px 32px rgba(0,0,0,0.4)"
-          : "0 4px 20px rgba(0,0,0,0.3)",
-        transform: hovered ? "scale(1.025)" : "scale(1)",
-        transition: "all 0.3s cubic-bezier(0.4,0,0.2,1)",
+        border: `1px solid ${hov ? "rgba(255,255,255,0.16)" : "rgba(255,255,255,0.08)"}`,
+        boxShadow: hov
+          ? "0 0 36px rgba(99,102,241,0.07), 0 8px 28px rgba(0,0,0,0.45)"
+          : "0 4px 16px rgba(0,0,0,0.3)",
+        transform: hov ? "scale(1.02)" : "scale(1)",
+        transition: "all 0.28s cubic-bezier(0.4,0,0.2,1)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: "clamp(28px, 6%, 56px)",
-        cursor: "default",
         userSelect: "none",
+        cursor: "default",
       }}
     >
       {logoUrl ? (
-        <div style={{ position: "relative", width: "100%", height: "100%" }}>
-          <Image
-            src={logoUrl}
-            alt={client.name || "Cliente"}
-            fill
-            loading="lazy"
-            sizes="(max-width: 640px) 85vw, (max-width: 1024px) 40vw, 420px"
-            style={{
-              objectFit: "contain",
-              filter: "brightness(1.4) contrast(0.9)",
-              opacity: hovered ? 1 : 0.75,
-              transition: "opacity 0.3s ease",
-            }}
-          />
+        /* White pill wrapper — keeps transparent logos visible */
+        <div
+          style={{
+            width: "62%",
+            height: "60%",
+            borderRadius: "14px",
+            background: "#ffffff",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "14px",
+            transition: "box-shadow 0.28s ease",
+            boxShadow: hov ? "0 2px 16px rgba(0,0,0,0.15)" : "none",
+          }}
+        >
+          <div style={{ position: "relative", width: "100%", height: "100%" }}>
+            <Image
+              src={logoUrl}
+              alt={client.name || "Cliente"}
+              fill
+              loading="lazy"
+              sizes="(max-width: 640px) 55vw, (max-width: 1024px) 30vw, 280px"
+              style={{
+                objectFit: "contain",
+                filter: hov ? "none" : "grayscale(100%)",
+                opacity: hov ? 1 : 0.82,
+                transition: "filter 0.3s ease, opacity 0.3s ease",
+              }}
+            />
+          </div>
         </div>
       ) : (
-        /* Fallback: initials */
+        /* Fallback: two-letter monogram */
         <span
           style={{
-            fontSize: "clamp(32px, 6vw, 56px)",
+            fontSize: "clamp(28px, 5vw, 48px)",
             fontWeight: 900,
             letterSpacing: "-0.04em",
-            color: "rgba(255,255,255,0.25)",
+            color: hov ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.2)",
             textTransform: "uppercase",
-            userSelect: "none",
+            transition: "color 0.3s ease",
           }}
         >
           {client.name?.slice(0, 2) || "CL"}
