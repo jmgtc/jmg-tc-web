@@ -1,8 +1,8 @@
 import { defineConfig } from 'sanity';
-import { deskTool } from 'sanity/desk';
+import { structureTool } from 'sanity/structure';
 import { visionTool } from '@sanity/vision';
 import { schemaTypes } from './sanity/schemas';
-import { TranslateAction } from './sanity/actions/TranslateAction';
+import { createPublishWithTranslationAction } from './sanity/actions/TranslateAction';
 
 // Define singleton types
 const singletonTypes = new Set(['landingPage', 'servicesPage', 'aboutPage', 'contactPage', 'siteSettings']);
@@ -17,7 +17,7 @@ export default defineConfig({
   basePath: '/admin',
 
   plugins: [
-    deskTool({
+    structureTool({
       structure: (S) =>
         S.list()
           .title('Gestión de Contenido')
@@ -87,10 +87,16 @@ export default defineConfig({
 
   document: {
     actions: (prev, context) => {
-      // Add Translate action to posts
       let actions = prev;
+      
+      // Auto-translate on publish for posts
       if (context.schemaType === 'post') {
-        actions = [...prev, TranslateAction];
+        actions = prev.map((originalAction) => {
+          if (originalAction.action === 'publish') {
+            return createPublishWithTranslationAction(originalAction);
+          }
+          return originalAction;
+        });
       }
 
       // For singletons, remove "Delete" and "Duplicate" as they don't make sense
