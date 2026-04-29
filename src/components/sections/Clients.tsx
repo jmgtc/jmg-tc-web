@@ -70,18 +70,6 @@ export default function Clients({ data, clients }: ClientProps) {
         </div>
       </div>
 
-      <style jsx>{`
-        @keyframes marquee {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-33.33%); }
-        }
-        .animate-marquee {
-          animation: marquee 40s linear infinite;
-        }
-        .group\/marquee:hover .animate-marquee {
-          animation-play-state: paused;
-        }
-      `}</style>
     </section>
   );
 }

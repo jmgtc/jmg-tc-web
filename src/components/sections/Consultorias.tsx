@@ -1,10 +1,10 @@
 "use client";
 
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import Link from "next/link";
+import Badge from "@/components/modules/Badge";
 import { urlFor } from "@/lib/sanity";
 import Image from "next/image";
-
-import Badge from "@/components/modules/Badge";
 
 interface ServicePhase {
   label?: string;
@@ -16,10 +16,15 @@ interface ServicePhase {
 interface ServiceItem {
   _id: string;
   tag?: string;
+  tag_en?: string;
   title?: string;
   title_en?: string;
   description?: string;
   description_en?: string;
+  problem?: string;
+  problem_en?: string;
+  result?: string;
+  result_en?: string;
   phases?: ServicePhase[];
   dark?: boolean;
   icon_image?: any;
@@ -39,107 +44,206 @@ interface ConsultoriasProps {
   services?: ServiceItem[];
 }
 
+const PRODUCTS = [
+  {
+    num: "01",
+    tagEs: "Entrada",
+    tagEn: "Starter",
+    titleEs: "Web Profesional",
+    titleEn: "Professional Website",
+    problemEs: "¿Tu web antigua no capta clientes o da mala imagen?",
+    problemEn: "Does your old website fail to capture clients or give a bad impression?",
+    descEs: "Diseñamos webs de alto rendimiento enfocadas en conversión. Rápidas, modernas y optimizadas para posicionarse en Google y captar leads.",
+    descEn: "We design high-performance websites focused on conversion. Fast, modern and optimized to rank on Google and capture leads.",
+    features: ["Next.js / WordPress", "SEO técnico", "Formulario de contacto", "Responsive perfecto", "Panel CMS"],
+    featuresEn: ["Next.js / WordPress", "Technical SEO", "Contact form", "Perfect responsive", "CMS panel"],
+    resultEs: "Una web que trabaja mientras tú duermes.",
+    resultEn: "A website that works while you sleep.",
+    color: "from-blue-500/20 to-transparent",
+    accent: "text-blue-400",
+    border: "border-blue-500/20",
+    cta: "Solicitar web",
+    ctaEn: "Request website",
+  },
+  {
+    num: "02",
+    tagEs: "Core",
+    tagEn: "Core",
+    titleEs: "Sistema Automatizado con IA",
+    titleEn: "AI Automated System",
+    problemEs: "¿Respondes manualmente a leads y pierdes tiempo en tareas repetitivas?",
+    problemEn: "Do you manually respond to leads and waste time on repetitive tasks?",
+    descEs: "Implementamos un asistente inteligente en tu web que capta, cualifica y responde a clientes 24/7. Flujos automatizados que reemplazan trabajo manual.",
+    descEn: "We implement an intelligent assistant on your website that captures, qualifies and responds to clients 24/7. Automated workflows replacing manual work.",
+    features: ["Asistente IA (Gemini)", "Captación de leads", "Respuestas automáticas", "Integración CRM", "Análisis de conversación"],
+    featuresEn: ["AI Assistant (Gemini)", "Lead capture", "Automatic responses", "CRM integration", "Conversation analytics"],
+    resultEs: "Tu empresa en piloto automático para ventas y soporte.",
+    resultEn: "Your company on autopilot for sales and support.",
+    color: "from-gold/20 to-transparent",
+    accent: "text-gold",
+    border: "border-gold/30",
+    cta: "Ver demo IA",
+    ctaEn: "See AI demo",
+    highlight: true,
+  },
+  {
+    num: "03",
+    tagEs: "Avanzado",
+    tagEn: "Advanced",
+    titleEs: "Plataforma a Medida",
+    titleEn: "Custom Platform",
+    problemEs: "¿Necesitas un SaaS, dashboard o sistema con lógica de negocio compleja?",
+    problemEn: "Do you need a SaaS, dashboard or system with complex business logic?",
+    descEs: "Desarrollamos plataformas completas: auth, pagos, base de datos, panel de administración y API. Escalable desde el día uno.",
+    descEn: "We develop complete platforms: auth, payments, database, admin panel and API. Scalable from day one.",
+    features: ["Auth (Clerk)", "Pagos (Stripe)", "PostgreSQL + Prisma", "Dashboard cliente", "API REST"],
+    featuresEn: ["Auth (Clerk)", "Payments (Stripe)", "PostgreSQL + Prisma", "Client Dashboard", "REST API"],
+    resultEs: "Tu propio producto digital listo para escalar.",
+    resultEn: "Your own digital product ready to scale.",
+    color: "from-purple-500/20 to-transparent",
+    accent: "text-purple-400",
+    border: "border-purple-500/20",
+    cta: "Consultar proyecto",
+    ctaEn: "Consult project",
+  },
+  {
+    num: "04",
+    tagEs: "Estrategia",
+    tagEn: "Strategy",
+    titleEs: "Consultoría Tecnológica IT",
+    titleEn: "IT Technology Consulting",
+    problemEs: "¿Tu infraestructura IT falla o no sabes por dónde empezar a digitalizarte?",
+    problemEn: "Is your IT infrastructure failing or don't you know where to start digitalizing?",
+    descEs: "Auditamos tu situación tecnológica y diseñamos una hoja de ruta clara. Soporte técnico, diagnóstico de sistemas y plan de acción.",
+    descEn: "We audit your tech situation and design a clear roadmap. Technical support, system diagnostics and action plan.",
+    features: ["Auditoría IT", "Diagnóstico de sistemas", "Hoja de ruta tech", "Soporte técnico", "Optimización"],
+    featuresEn: ["IT Audit", "System diagnostics", "Tech roadmap", "Technical support", "Optimization"],
+    resultEs: "Claridad total sobre tu tecnología y cómo mejorarla.",
+    resultEn: "Total clarity on your technology and how to improve it.",
+    color: "from-green-500/20 to-transparent",
+    accent: "text-green-400",
+    border: "border-green-500/20",
+    cta: "Solicitar auditoría",
+    ctaEn: "Request audit",
+  },
+];
+
 export default function Consultorias({ headerData, services }: ConsultoriasProps) {
-  const { language, dict } = useLanguage();
-  const srvIT = dict.services.it;
-  const srvWeb = dict.services.web;
-
-  const sectionHeader = {
-    tag: (language === "en" ? headerData?.tag_en : headerData?.tag) || "Section_02 // Expertise",
-    badge: (language === "en" ? headerData?.badge_en : headerData?.badge) || "",
-    title: (language === "en" ? headerData?.title_en : headerData?.title) || "",
-    description: (language === "en" ? headerData?.description_en : headerData?.description) || "",
-  };
-
-  // Static Fallback
-  const fallbackServices: ServiceItem[] = [
-    {
-      _id: "01",
-      tag: srvIT.tag,
-      title: srvIT.title,
-      title_en: srvIT.title,
-      description: srvIT.subtitle,
-      description_en: srvIT.subtitle,
-      phases: srvIT.phases.map(f => ({ label: f.label, desc: f.desc })),
-    },
-    {
-      _id: "02",
-      tag: srvWeb.tag,
-      title: srvWeb.title,
-      title_en: srvWeb.title,
-      description: srvWeb.subtitle,
-      description_en: srvWeb.subtitle,
-      phases: srvWeb.phases.map(f => ({ label: f.label, desc: f.desc })),
-    },
-  ];
-
-  const displayServices = services && services.length > 0 ? services : fallbackServices;
+  const { language } = useLanguage();
 
   return (
-    <section className="bg-black py-24 relative overflow-hidden">
-      {(sectionHeader.title || sectionHeader.description) && (
-        <div className="container mx-auto px-6 mb-16 text-center relative z-10">
-          <Badge text={sectionHeader.badge} className="mb-6" />
-          {sectionHeader.tag && (
-            <span className="text-[10px] font-mono text-white/20 uppercase tracking-[0.5em] block mb-4">
-              {sectionHeader.tag}
-            </span>
-          )}
-          {sectionHeader.title && <h2 className="text-4xl font-bold text-white mb-4">{sectionHeader.title}</h2>}
-          {sectionHeader.description && <p className="text-white/70 max-w-2xl mx-auto text-lg">{sectionHeader.description}</p>}
+    <section className="bg-brand-black py-28 relative overflow-hidden">
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+      <div className="container mx-auto px-6 relative z-10">
+        {/* Header */}
+        <div className="text-center mb-20 max-w-3xl mx-auto">
+          <span className="text-[10px] font-mono text-white/30 uppercase tracking-[0.5em] block mb-4">
+            Section_03 // Servicios
+          </span>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+            {language === "es"
+              ? <>Elige lo que necesitas. <span className="text-gold">Escala cuando quieras.</span></>
+              : <>Choose what you need. <span className="text-gold">Scale when you want.</span></>}
+          </h2>
+          <p className="text-white/60 text-lg">
+            {language === "es"
+              ? "No vendemos horas. Entregamos resultados medibles con tecnología de alto nivel."
+              : "We don't sell hours. We deliver measurable results with high-level technology."}
+          </p>
         </div>
-      )}
-      {displayServices.map((srv, i) => {
-        const title = (language === "en" ? srv.title_en : srv.title) || srv.title || "Servicio JMG-TC";
-        const desc = (language === "en" ? srv.description_en : srv.description) || srv.description || "";
 
-        return (
-          <div
-            key={srv._id}
-            className={`container mx-auto px-6 mb-24 flex flex-col ${i % 2 !== 0 ? "md:flex-row-reverse" : "md:flex-row"} items-center gap-16`}
-          >
-            {/* Text side */}
-            <div className="flex-1">
-              <span className="text-[10px] font-mono text-white/40 uppercase tracking-[0.4em] block mb-4">
-                {(language === "en" ? srv.tag_en : srv.tag) || srv.tag}
-              </span>
-              <h2 className="text-4xl font-bold text-white mb-2">{title}</h2>
-              <p className="text-white/70 mb-10 text-lg leading-relaxed">{desc}</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {srv.phases?.map((fase: any, idx) => (
-                  <div key={idx} className="p-5 rounded-2xl bg-white/5 border border-white/10 hover:border-gold/50 transition-all group backdrop-blur-xl">
-                    <span className="text-gold font-bold text-xs tracking-widest">{(idx + 1).toString().padStart(2, '0')}</span>
-                    <h3 className="font-bold text-white mt-1 mb-1 group-hover:text-gold transition-colors">
-                      {language === "en" ? fase.label_en || fase.label : fase.label}
-                    </h3>
-                    <p className="text-xs text-white/60 leading-relaxed font-light">
-                      {language === "en" ? fase.desc_en || fase.desc : fase.desc}
-                    </p>
-                  </div>
+        {/* Products Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {PRODUCTS.map((product) => (
+            <div
+              key={product.num}
+              className={`group relative rounded-3xl p-8 border bg-gradient-to-br ${product.color} border-white/10 ${product.highlight ? "border-gold/30" : ""} transition-all duration-300 hover:-translate-y-1 overflow-hidden`}
+            >
+              {product.highlight && (
+                <div className="absolute top-4 right-4">
+                  <span className="text-[9px] font-mono bg-gold text-black px-2 py-1 rounded-full font-bold uppercase tracking-wider">
+                    {language === "es" ? "Más popular" : "Most popular"}
+                  </span>
+                </div>
+              )}
+
+              {/* Number + Tag */}
+              <div className="flex items-center gap-3 mb-6">
+                <span className={`text-4xl font-black ${product.accent} opacity-30`}>{product.num}</span>
+                <span className={`text-[10px] font-mono ${product.accent} uppercase tracking-widest opacity-70`}>
+                  {language === "es" ? product.tagEs : product.tagEn}
+                </span>
+              </div>
+
+              {/* Title */}
+              <h3 className="text-2xl font-bold text-white mb-3">
+                {language === "es" ? product.titleEs : product.titleEn}
+              </h3>
+
+              {/* Problem */}
+              <p className={`text-sm ${product.accent} mb-4 leading-relaxed opacity-90 italic`}>
+                {language === "es" ? product.problemEs : product.problemEn}
+              </p>
+
+              {/* Description */}
+              <p className="text-white/60 text-sm leading-relaxed mb-6">
+                {language === "es" ? product.descEs : product.descEn}
+              </p>
+
+              {/* Features */}
+              <ul className="space-y-2 mb-6">
+                {(language === "es" ? product.features : product.featuresEn).map((f, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm text-white/70">
+                    <svg className={`w-3.5 h-3.5 flex-shrink-0 ${product.accent}`} fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                    </svg>
+                    {f}
+                  </li>
                 ))}
-              </div>
-            </div>
+              </ul>
 
-            {/* Visual side */}
-            <div className="flex-1 flex items-center justify-center relative">
-              <div className="absolute inset-0 bg-gold/5 blur-[100px] rounded-full" />
-              <div className="w-80 h-80 rounded-3xl border border-white/10 bg-white/5 backdrop-blur-3xl flex items-center justify-center shadow-2xl relative z-10 group overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-gold/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                {srv.icon_image ? (
-                  <Image
-                    src={urlFor(srv.icon_image).width(320).height(320).url()}
-                    alt={title}
-                    fill
-                    className="object-cover opacity-60 group-hover:opacity-100 transition-opacity"
-                  />
-                ) : (
-                  <span className="text-gold font-bold text-9xl opacity-20 group-hover:opacity-40 transition-all transform group-hover:scale-110">{(i + 1).toString().padStart(2, '0')}</span>
-                )}
+              {/* Result */}
+              <div className={`p-4 rounded-xl bg-white/5 border ${product.border} mb-6`}>
+                <p className="text-[10px] font-mono text-white/30 uppercase tracking-widest mb-1">
+                  {language === "es" ? "Resultado" : "Result"}
+                </p>
+                <p className={`text-sm font-semibold ${product.accent}`}>
+                  → {language === "es" ? product.resultEs : product.resultEn}
+                </p>
               </div>
+
+              {/* CTA */}
+              <Link
+                href="/contacto"
+                className={`inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold transition-all hover:scale-105 ${
+                  product.highlight
+                    ? "bg-gold text-black hover:bg-white shadow-[0_0_20px_rgba(242,204,82,0.3)]"
+                    : "bg-white/10 text-white hover:bg-white/20 border border-white/20"
+                }`}
+              >
+                {language === "es" ? product.cta : product.ctaEn}
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+              </Link>
             </div>
-          </div>
-        );
-      })}
+          ))}
+        </div>
+
+        {/* Bottom CTA */}
+        <div className="mt-16 text-center">
+          <p className="text-white/40 text-sm mb-4">
+            {language === "es" ? "¿No estás seguro qué necesitas? Te ayudamos a decidir." : "Not sure what you need? We'll help you decide."}
+          </p>
+          <Link
+            href="/contacto"
+            className="inline-flex items-center gap-2 text-gold text-sm font-semibold hover:text-white transition-colors group"
+          >
+            {language === "es" ? "Solicitar diagnóstico gratuito →" : "Request free diagnosis →"}
+          </Link>
+        </div>
+      </div>
     </section>
   );
 }
