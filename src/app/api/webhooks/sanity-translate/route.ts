@@ -11,10 +11,10 @@ const sanity = createClient({
   apiVersion: '2023-05-03',
 });
 
-const DEEPL_KEY = process.env.DEEPL_API_KEY;
+const DEEPL_KEY = process.env.DEEPL_API_KEY || process.env.DEEPL_KEY;
 
 if (!DEEPL_KEY) {
-  console.error('[auto-translate] CRITICAL: DEEPL_API_KEY is not defined in environment variables!');
+  console.error('[auto-translate] CRITICAL: Neither DEEPL_API_KEY nor DEEPL_KEY is defined!');
 }
 
 // ─── DeepL translator with Retries ─────────────────────────────────────────
