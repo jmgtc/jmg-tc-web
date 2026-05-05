@@ -60,8 +60,8 @@ export async function GET() {
   console.log('[auto-repair] Starting translation health check...');
   
   try {
-    // 1. Find untranslated posts
-    const untranslated = await sanity.fetch(`*[_type == "post" && !defined(title_en)] {
+    // 1. Find untranslated posts (missing or empty title_en)
+    const untranslated = await sanity.fetch(`*[_type == "post" && (!defined(title_en) || title_en == "")] {
       _id, title, excerpt, body
     }`);
 
