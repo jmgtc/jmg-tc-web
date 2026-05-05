@@ -60,10 +60,12 @@ export async function GET() {
   console.log('[auto-repair] Starting translation health check...');
   
   try {
-    // 1. Find untranslated posts (missing or empty title_en)
-    const untranslated = await sanity.fetch(`*[_type == "post" && (!defined(title_en) || title_en == "")] {
+    // 1. Find untranslated posts (missing, empty, or same as Spanish)
+    const untranslated = await sanity.fetch(`*[_type == "post" && (!defined(title_en) || title_en == "" || title_en == title)] {
       _id, title, excerpt, body
     }`);
+
+    console.log(`[auto-repair] Found ${untranslated.length} untranslated posts:`, untranslated.map((p: any) => p._id));
 
     if (untranslated.length === 0) {
       return new Response(JSON.stringify({ message: 'All posts are already translated' }), { status: 200 });
