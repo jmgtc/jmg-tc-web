@@ -73,22 +73,35 @@ export async function GET() {
 
     console.log(`[auto-repair] Found ${untranslated.length} untranslated posts. Repairing...`);
 
-    const repairs = [];
-    for (const doc of untranslated) {
-      const updates: any = {};
-      if (doc.title) updates.title_en = await translate(doc.title);
-      if (doc.excerpt) updates.excerpt_en = await translate(doc.excerpt);
-      if (Array.isArray(doc.body)) updates.body_en = await translatePortableText(doc.body);
+    const results = [];
+    const debug = [];
+    const errors = [];
 
-      await sanity.patch(doc._id).set(updates).commit();
-      repairs.push(doc._id);
-      console.log(`[auto-repair] Successfully repaired document: ${doc._id}`);
+    for (const post of untranslated) {
+      try {
+        const updates: any = {};
+        updates.title_en = await translate(post.title);
+        if (post.excerpt) updates.excerpt_en = await translate(post.excerpt);
+        if (Array.isArray(post.body)) {
+          updates.body_en = await translatePortableText(post.body);
+        }
+
+        await sanity.patch(post._id).set(updates).commit();
+        results.push(post._id);
+        debug.push({ id: post._id, original: post.title, translated: updates.title_en });
+      } catch (err: any) {
+        errors.push({ id: post._id, error: err.message });
+      }
     }
 
-    return new Response(JSON.stringify({ success: true, repairedCount: repairs.length, ids: repairs }), { status: 200 });
-
+    return new Response(JSON.stringify({ 
+      success: true, 
+      repairedCount: results.length, 
+      ids: results,
+      debug,
+      errors: errors.length > 0 ? errors : undefined
+    }), { status: 200 });
   } catch (error: any) {
-    console.error('[auto-repair] Failed:', error);
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });
   }
 }

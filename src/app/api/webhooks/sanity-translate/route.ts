@@ -51,15 +51,14 @@ async function translate(text: string, isHTML = false, retries = 3): Promise<str
 
       if (!res.ok) {
         const errorData = await res.text();
-        console.error(`[DeepL Error] status: ${res.status}`, errorData);
-        return text;
+        throw new Error(`DeepL API Error (${res.status}): ${errorData}`);
       }
       
       const data = await res.json();
       return data.translations?.[0]?.text ?? text;
-    } catch (err) {
-      console.error(`[DeepL Exception] Attempt ${attempt}:`, err);
-      if (attempt === retries) return text;
+    } catch (err: any) {
+      console.error(`[DeepL Exception] Attempt ${attempt}:`, err.message);
+      if (attempt === retries) throw err;
       await sleep(1000 * attempt);
     }
   }
