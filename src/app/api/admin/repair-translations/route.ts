@@ -79,8 +79,14 @@ export async function GET() {
 
     for (const post of untranslated) {
       try {
-        const updates: any = {};
-        updates.title_en = await translate(post.title);
+        const translatedTitle = await translate(post.title);
+        
+        // Check if translation actually happened
+        if (translatedTitle === post.title && post.title.length > 5) {
+          throw new Error(`DeepL returned the same text. Possible Auth/Config issue. Key present: ${!!DEEPL_KEY}`);
+        }
+
+        const updates: any = { title_en: translatedTitle };
         if (post.excerpt) updates.excerpt_en = await translate(post.excerpt);
         if (Array.isArray(post.body)) {
           updates.body_en = await translatePortableText(post.body);
@@ -88,7 +94,7 @@ export async function GET() {
 
         await sanity.patch(post._id).set(updates).commit();
         results.push(post._id);
-        debug.push({ id: post._id, original: post.title, translated: updates.title_en });
+        debug.push({ id: post._id, original: post.title, translated: translatedTitle });
       } catch (err: any) {
         errors.push({ id: post._id, error: err.message });
       }
