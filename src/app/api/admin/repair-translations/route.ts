@@ -8,12 +8,18 @@ const sanity = createClient({
   apiVersion: '2023-05-03',
 });
 
-const DEEPL_KEY = process.env.DEEPL_API_KEY!;
+const DEEPL_KEY = process.env.DEEPL_API_KEY || process.env.DEEPL_KEY;
 
 async function translate(text: string, isHTML = false): Promise<string> {
   if (!text?.trim()) return '';
+  if (!DEEPL_KEY) throw new Error('DEEPL_API_KEY is missing');
+
+  const endpoint = DEEPL_KEY.endsWith(':fx') 
+    ? 'https://api-free.deepl.com/v2/translate' 
+    : 'https://api.deepl.com/v2/translate';
+
   try {
-    const res = await fetch('https://api-free.deepl.com/v2/translate', {
+    const res = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Authorization': `DeepL-Auth-Key ${DEEPL_KEY}`,
@@ -26,11 +32,19 @@ async function translate(text: string, isHTML = false): Promise<string> {
         tag_handling: isHTML ? 'html' : undefined,
       }),
     });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(`DeepL Error (${res.status}): ${errorText}`);
+    }
+
     const data = await res.json();
-    return data.translations?.[0]?.text ?? text;
-  } catch (err) {
-    console.error('[Auto-Repair DeepL Error]', err);
-    return text;
+    const result = data.translations?.[0]?.text;
+    if (!result) throw new Error('DeepL returned empty translation');
+    return result;
+  } catch (err: any) {
+    console.error('[Auto-Repair DeepL Error]', err.message);
+    throw err; // DO NOT RETURN ORIGINAL TEXT, THROW SO WE KNOW IT FAILED
   }
 }
 

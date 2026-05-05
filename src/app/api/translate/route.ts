@@ -16,14 +16,12 @@ export async function POST(req: Request) {
     const reqBody = await req.json();
     const { documentId, title, body } = reqBody;
 
-    const apiKey = process.env.DEEPL_API_KEY;
-
+    const apiKey = process.env.DEEPL_API_KEY || process.env.DEEPL_KEY;
     if (!apiKey) {
       return NextResponse.json({ error: "Falta la DEEPL_API_KEY en el servidor" }, { status: 500 });
     }
 
-    const isFree = apiKey.endsWith(":fx");
-    const baseUrl = isFree 
+    const baseUrl = apiKey.endsWith(":fx") 
       ? "https://api-free.deepl.com/v2/translate" 
       : "https://api.deepl.com/v2/translate";
 
