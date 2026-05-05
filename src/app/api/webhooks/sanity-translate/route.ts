@@ -17,9 +17,14 @@ const DEEPL_KEY = process.env.DEEPL_API_KEY!;
 async function translate(text: string, isHTML = false, retries = 3): Promise<string> {
   if (!text?.trim()) return '';
   
+  // Auto-detect endpoint based on key suffix
+  const endpoint = DEEPL_KEY.endsWith(':fx') 
+    ? 'https://api-free.deepl.com/v2/translate' 
+    : 'https://api.deepl.com/v2/translate';
+
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
-      const res = await fetch('https://api-free.deepl.com/v2/translate', {
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Authorization': `DeepL-Auth-Key ${DEEPL_KEY}`,
@@ -237,9 +242,14 @@ export async function POST(req: NextRequest) {
   }
 
   // Write translations back to Sanity
-  await sanity.patch(_id).set(updates).commit();
-
-  console.log(`[auto-translate] ✅ ${Object.keys(updates).length} fields translated for ${_id}`);
+  try {
+    console.log(`[auto-translate] Committing updates to Sanity for ${_id}...`, Object.keys(updates));
+    await sanity.patch(_id).set(updates).commit();
+    console.log(`[auto-translate] ✅ Success for ${_id}`);
+  } catch (err: any) {
+    console.error(`[auto-translate] ❌ Sanity Commit Failed:`, err.message);
+    return NextResponse.json({ error: 'Sanity Commit Failed', details: err.message }, { status: 500 });
+  }
 
   return NextResponse.json({
     success: true,
