@@ -3,6 +3,7 @@ import { structureTool } from 'sanity/structure';
 import { visionTool } from '@sanity/vision';
 import { schemaTypes } from './sanity/schemas';
 import { createPublishWithTranslationAction } from './sanity/actions/TranslateAction';
+import { createAIAction } from './sanity/actions/AIAction';
 
 // Define singleton types
 const singletonTypes = new Set(['landingPage', 'servicesPage', 'aboutPage', 'contactPage', 'siteSettings']);
@@ -89,14 +90,21 @@ export default defineConfig({
     actions: (prev, context) => {
       let actions = prev;
       
-      // Auto-translate on publish for posts
-      if (context.schemaType === 'post') {
+      // Document types that support automatic translation
+      const translatableTypes = ['post', 'landingPage', 'servicesPage', 'aboutPage', 'serviceItem'];
+      
+      if (translatableTypes.includes(context.schemaType)) {
         actions = prev.map((originalAction) => {
           if (originalAction.action === 'publish') {
             return createPublishWithTranslationAction(originalAction);
           }
           return originalAction;
         });
+
+        // Add AI generation for posts
+        if (context.schemaType === 'post') {
+          actions = [createAIAction(null), ...actions];
+        }
       }
 
       // For singletons, remove "Delete" and "Duplicate" as they don't make sense

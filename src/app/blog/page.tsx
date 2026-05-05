@@ -34,6 +34,13 @@ export default function BlogPage() {
         }`;
         const data = await client.fetch(query);
         setPosts(data);
+
+        // --- REVISIÓN Y REPARACIÓN AUTOMÁTICA ---
+        // Si detectamos algún post sin traducción, disparamos la reparación en segundo plano
+        if (data.some((p: any) => !p.title_en)) {
+          console.log('[Blog] Detectados posts sin traducción. Iniciando auto-reparación...');
+          fetch('/api/admin/repair-translations').catch(() => {});
+        }
       } catch (err) {
         console.error("Error fetching posts:", err);
       } finally {

@@ -13,35 +13,48 @@ const sanity = createClient({
 
 const DEEPL_KEY = process.env.DEEPL_API_KEY!;
 
-// ─── DeepL translator ─────────────────────────────────────────────────────
-async function translate(text: string, isHTML = false): Promise<string> {
+// ─── DeepL translator with Retries ─────────────────────────────────────────
+async function translate(text: string, isHTML = false, retries = 3): Promise<string> {
   if (!text?.trim()) return '';
-  try {
-    const res = await fetch('https://api-free.deepl.com/v2/translate', {
-      method: 'POST',
-      headers: {
-        'Authorization': `DeepL-Auth-Key ${DEEPL_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        text: [text],
-        source_lang: 'ES',
-        target_lang: 'EN-US',
-        tag_handling: isHTML ? 'html' : undefined,
-      }),
-    });
-    
-    if (!res.ok) {
-      console.error(`[DeepL Error] status: ${res.status}`);
-      return text;
+  
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch('https://api-free.deepl.com/v2/translate', {
+        method: 'POST',
+        headers: {
+          'Authorization': `DeepL-Auth-Key ${DEEPL_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text: [text],
+          source_lang: 'ES',
+          target_lang: 'EN-US',
+          tag_handling: isHTML ? 'html' : undefined,
+        }),
+      });
+      
+      if (res.status === 429 || res.status >= 500) {
+        // Rate limit or server error, wait and retry
+        console.warn(`[DeepL] Attempt ${attempt} failed with status ${res.status}. Retrying...`);
+        await sleep(1000 * attempt);
+        continue;
+      }
+
+      if (!res.ok) {
+        const errorData = await res.text();
+        console.error(`[DeepL Error] status: ${res.status}`, errorData);
+        return text;
+      }
+      
+      const data = await res.json();
+      return data.translations?.[0]?.text ?? text;
+    } catch (err) {
+      console.error(`[DeepL Exception] Attempt ${attempt}:`, err);
+      if (attempt === retries) return text;
+      await sleep(1000 * attempt);
     }
-    
-    const data = await res.json();
-    return data.translations?.[0]?.text ?? text;
-  } catch (err) {
-    console.error('[DeepL Exception]', err);
-    return text;
   }
+  return text;
 }
 
 // ─── PortableText translator (preserves structure, translates text spans) ─

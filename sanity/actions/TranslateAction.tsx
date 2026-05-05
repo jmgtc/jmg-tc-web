@@ -46,13 +46,11 @@ export const createPublishWithTranslationAction = (originalPublishAction: any) =
 
         // Necesita traducción si:
         // 1. No tiene título en inglés, O
-        // 2. No tiene cuerpo en inglés, O
+        // 2. No tiene cuerpo en inglés (si hay un cuerpo en español), O
         // 3. El título en inglés es idéntico al español (= nunca se tradujo de verdad)
         const needsTranslation =
           title &&
-          bodyText &&
-          (!titleEnText || !bodyEnText || titleEnText === title.trim());
-
+          (!titleEnText || (bodyText && !bodyEnText) || titleEnText === title.trim());
 
         if (needsTranslation) {
           const response = await fetch('/api/translate', {
@@ -61,7 +59,8 @@ export const createPublishWithTranslationAction = (originalPublishAction: any) =
             body: JSON.stringify({
               documentId: props.id,
               title,
-              body: draft.body || [] // Pasamos el array original para preservar el formato
+              body: draft.body || [], // Pasamos el array original para preservar el formato
+              patchDocument: false
             }),
           });
 

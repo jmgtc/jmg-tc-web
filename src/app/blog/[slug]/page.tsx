@@ -71,8 +71,9 @@ export default function BlogPostPage() {
     );
   }
 
+  const hasEnglishBody = post.body_en && (typeof post.body_en === 'string' ? post.body_en.trim().length > 0 : post.body_en.length > 0);
   const displayTitle = language === 'en' && post.title_en ? post.title_en : post.title;
-  const displayBody = language === 'en' && post.body_en ? post.body_en : post.body;
+  const displayBody = language === 'en' && hasEnglishBody ? post.body_en : post.body;
 
   // Calculo de tiempo de lectura
   const calculateReadingTime = (blocks: any) => {
@@ -116,10 +117,16 @@ export default function BlogPostPage() {
     let rawHtml = "";
     if (typeof blocks === 'string' && (blocks.includes('<p>') || blocks.includes('<strong') || blocks.includes('<h'))) {
       rawHtml = blocks;
-    } else if (Array.isArray(blocks) && blocks.length === 1 && blocks[0]._type === 'block') {
-      const firstText = blocks[0].children?.[0]?.text;
-      if (typeof firstText === 'string' && (firstText.includes('<p>') || firstText.includes('<strong'))) {
-        rawHtml = firstText;
+    } else if (Array.isArray(blocks)) {
+      const fullText = blocks.map((b: any) => {
+        if (b._type === 'block' && b.children) {
+          return b.children.map((c: any) => c.text || '').join('');
+        }
+        return '';
+      }).join('\\n');
+      
+      if (typeof fullText === 'string' && (fullText.includes('<p>') || fullText.includes('<strong') || fullText.includes('<h'))) {
+        rawHtml = fullText;
       }
     }
 
