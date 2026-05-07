@@ -93,102 +93,169 @@ async function translatePortableText(blocks: any[]): Promise<any[]> {
 function sleep(ms: number) { return new Promise(r => setTimeout(r, ms)); }
 
 // ─── Per-document-type translation logic ──────────────────────────────────
+// Helper to decide if a field needs translation
+async function translateIfNeeded(source: string, currentTranslation: string | undefined): Promise<string | null> {
+  if (!source?.trim()) return null;
+  // Only translate if English version is missing, empty, or identical to Spanish
+  if (!currentTranslation || currentTranslation.trim() === '' || currentTranslation.trim() === source.trim()) {
+    return await translate(source);
+  }
+  return null; // Skip to save quota
+}
+
 async function translateDocument(docType: string, doc: any): Promise<Record<string, any>> {
   const updates: Record<string, any> = {};
 
   if (docType === 'post') {
-    // Blog post: title + full body PortableText
-    if (doc.title) updates.title_en = await translate(doc.title);
-    await sleep(300);
-    if (doc.excerpt) { updates.excerpt_en = await translate(doc.excerpt); await sleep(300); }
-    if (Array.isArray(doc.body)) {
+    const title_en = await translateIfNeeded(doc.title, doc.title_en);
+    if (title_en) updates.title_en = title_en;
+    
+    const excerpt_en = await translateIfNeeded(doc.excerpt, doc.excerpt_en);
+    if (excerpt_en) updates.excerpt_en = excerpt_en;
+
+    if (Array.isArray(doc.body) && (!doc.body_en || doc.body_en.length === 0)) {
       updates.body_en = await translatePortableText(doc.body);
     }
   }
 
   else if (docType === 'landingPage') {
-    // ── Hero ──
     const h = doc.hero;
-    if (h?.badge)           { updates['hero.badge_en']           = await translate(h.badge);           await sleep(300); }
-    if (h?.tag)             { updates['hero.tag_en']             = await translate(h.tag);             await sleep(300); }
-    if (h?.title)           { updates['hero.title_en']           = await translate(h.title);           await sleep(300); }
-    if (h?.title_highlight) { updates['hero.title_highlight_en'] = await translate(h.title_highlight); await sleep(300); }
-    if (h?.subtitle)        { updates['hero.subtitle_en']        = await translate(h.subtitle);        await sleep(300); }
-    if (h?.cta)             { updates['hero.cta_en']             = await translate(h.cta);             await sleep(300); }
+    const hero_badge = await translateIfNeeded(h?.badge, h?.badge_en);
+    if (hero_badge) updates['hero.badge_en'] = hero_badge;
 
-    // ── Services Highlights ──
+    const hero_tag = await translateIfNeeded(h?.tag, h?.tag_en);
+    if (hero_tag) updates['hero.tag_en'] = hero_tag;
+
+    const hero_title = await translateIfNeeded(h?.title, h?.title_en);
+    if (hero_title) updates['hero.title_en'] = hero_title;
+
+    const hero_highlight = await translateIfNeeded(h?.title_highlight, h?.title_highlight_en);
+    if (hero_highlight) updates['hero.title_highlight_en'] = hero_highlight;
+
+    const hero_subtitle = await translateIfNeeded(h?.subtitle, h?.subtitle_en);
+    if (hero_subtitle) updates['hero.subtitle_en'] = hero_subtitle;
+
+    const hero_cta = await translateIfNeeded(h?.cta, h?.cta_en);
+    if (hero_cta) updates['hero.cta_en'] = hero_cta;
+
+    // Services Highlights
     const sh = doc.services_highlights;
-    if (sh?.tag)         { updates['services_highlights.tag_en']         = await translate(sh.tag);         await sleep(300); }
-    if (sh?.title)       { updates['services_highlights.title_en']       = await translate(sh.title);       await sleep(300); }
-    if (sh?.description) { updates['services_highlights.description_en'] = await translate(sh.description); await sleep(300); }
+    const sh_tag = await translateIfNeeded(sh?.tag, sh?.tag_en);
+    if (sh_tag) updates['services_highlights.tag_en'] = sh_tag;
 
-    // ── Podcast ──
+    const sh_title = await translateIfNeeded(sh?.title, sh?.title_en);
+    if (sh_title) updates['services_highlights.title_en'] = sh_title;
+
+    const sh_desc = await translateIfNeeded(sh?.description, sh?.description_en);
+    if (sh_desc) updates['services_highlights.description_en'] = sh_desc;
+
+    // Podcast
     const pod = doc.podcast_section;
-    if (pod?.tag)         { updates['podcast_section.tag_en']         = await translate(pod.tag);         await sleep(300); }
-    if (pod?.title)       { updates['podcast_section.title_en']       = await translate(pod.title);       await sleep(300); }
-    if (pod?.description) { updates['podcast_section.description_en'] = await translate(pod.description); await sleep(300); }
+    const pod_tag = await translateIfNeeded(pod?.tag, pod?.tag_en);
+    if (pod_tag) updates['podcast_section.tag_en'] = pod_tag;
 
-    // ── Blog Highlights ──
+    const pod_title = await translateIfNeeded(pod?.title, pod?.title_en);
+    if (pod_title) updates['podcast_section.title_en'] = pod_title;
+
+    const pod_desc = await translateIfNeeded(pod?.description, pod?.description_en);
+    if (pod_desc) updates['podcast_section.description_en'] = pod_desc;
+
+    // Blog Highlights
     const blog = doc.blog_highlights;
-    if (blog?.tag)      { updates['blog_highlights.tag_en']      = await translate(blog.tag);      await sleep(300); }
-    if (blog?.title)    { updates['blog_highlights.title_en']    = await translate(blog.title);    await sleep(300); }
-    if (blog?.view_all) { updates['blog_highlights.view_all_en'] = await translate(blog.view_all); await sleep(300); }
+    const blog_tag = await translateIfNeeded(blog?.tag, blog?.tag_en);
+    if (blog_tag) updates['blog_highlights.tag_en'] = blog_tag;
 
-    // ── Clients ──
+    const blog_title = await translateIfNeeded(blog?.title, blog?.title_en);
+    if (blog_title) updates['blog_highlights.title_en'] = blog_title;
+
+    const blog_viewall = await translateIfNeeded(blog?.view_all, blog?.view_all_en);
+    if (blog_viewall) updates['blog_highlights.view_all_en'] = blog_viewall;
+
+    // Clients
     const cl = doc.clients_section;
-    if (cl?.tag)   { updates['clients_section.tag_en']   = await translate(cl.tag);   await sleep(300); }
-    if (cl?.title) { updates['clients_section.title_en'] = await translate(cl.title); await sleep(300); }
+    const cl_tag = await translateIfNeeded(cl?.tag, cl?.tag_en);
+    if (cl_tag) updates['clients_section.tag_en'] = cl_tag;
 
-    // ── ConsultorIA ──
+    const cl_title = await translateIfNeeded(cl?.title, cl?.title_en);
+    if (cl_title) updates['clients_section.title_en'] = cl_title;
+
+    // ConsultorIA
     const ia = doc.consultoria_ia;
-    if (ia?.tag)         { updates['consultoria_ia.tag_en']         = await translate(ia.tag);         await sleep(300); }
-    if (ia?.title)       { updates['consultoria_ia.title_en']       = await translate(ia.title);       await sleep(300); }
-    if (ia?.description) { updates['consultoria_ia.description_en'] = await translate(ia.description); await sleep(300); }
+    const ia_tag = await translateIfNeeded(ia?.tag, ia?.tag_en);
+    if (ia_tag) updates['consultoria_ia.tag_en'] = ia_tag;
 
-    // ── CTA ──
+    const ia_title = await translateIfNeeded(ia?.title, ia?.title_en);
+    if (ia_title) updates['consultoria_ia.title_en'] = ia_title;
+
+    const ia_desc = await translateIfNeeded(ia?.description, ia?.description_en);
+    if (ia_desc) updates['consultoria_ia.description_en'] = ia_desc;
+
+    // CTA
     const cta = doc.cta_section;
-    if (cta?.tag)         { updates['cta_section.tag_en']         = await translate(cta.tag);         await sleep(300); }
-    if (cta?.title)       { updates['cta_section.title_en']       = await translate(cta.title);       await sleep(300); }
-    if (cta?.button_text) { updates['cta_section.button_text_en'] = await translate(cta.button_text); await sleep(300); }
+    const cta_tag = await translateIfNeeded(cta?.tag, cta?.tag_en);
+    if (cta_tag) updates['cta_section.tag_en'] = cta_tag;
 
-    // ── About ──
+    const cta_title = await translateIfNeeded(cta?.title, cta?.title_en);
+    if (cta_title) updates['cta_section.title_en'] = cta_title;
+
+    const cta_btn = await translateIfNeeded(cta?.button_text, cta?.button_text_en);
+    if (cta_btn) updates['cta_section.button_text_en'] = cta_btn;
+
+    // About (on Landing)
     const ab = doc.about;
-    if (ab?.tag)          { updates['about.tag_en']          = await translate(ab.tag);          await sleep(300); }
-    if (ab?.title_main)   { updates['about.title_main_en']   = await translate(ab.title_main);   await sleep(300); }
-    if (ab?.title_accent) { updates['about.title_accent_en'] = await translate(ab.title_accent); await sleep(300); }
-    if (ab?.intro)        { updates['about.intro_en']        = await translate(ab.intro);        await sleep(300); }
-    if (ab?.profile?.tag)  { updates['about.profile.tag_en']  = await translate(ab.profile.tag);  await sleep(300); }
-    if (ab?.profile?.role) { updates['about.profile.role_en'] = await translate(ab.profile.role); await sleep(300); }
-    if (ab?.profile?.bio)  { updates['about.profile.bio_en']  = await translate(ab.profile.bio);  await sleep(300); }
+    const ab_tag = await translateIfNeeded(ab?.tag, ab?.tag_en);
+    if (ab_tag) updates['about.tag_en'] = ab_tag;
+
+    const ab_title = await translateIfNeeded(ab?.title_main, ab?.title_main_en);
+    if (ab_title) updates['about.title_main_en'] = ab_title;
+
+    const ab_accent = await translateIfNeeded(ab?.title_accent, ab?.title_accent_en);
+    if (ab_accent) updates['about.title_accent_en'] = ab_accent;
+
+    const ab_intro = await translateIfNeeded(ab?.intro, ab?.intro_en);
+    if (ab_intro) updates['about.intro_en'] = ab_intro;
   }
 
   else if (docType === 'servicesPage') {
     const hdr = doc.header;
-    if (hdr?.tag)         { updates['header.tag_en']         = await translate(hdr.tag);         await sleep(300); }
-    if (hdr?.badge)       { updates['header.badge_en']       = await translate(hdr.badge);       await sleep(300); }
-    if (hdr?.title)       { updates['header.title_en']       = await translate(hdr.title);       await sleep(300); }
-    if (hdr?.description) { updates['header.description_en'] = await translate(hdr.description); await sleep(300); }
+    const hdr_tag = await translateIfNeeded(hdr?.tag, hdr?.tag_en);
+    if (hdr_tag) updates['header.tag_en'] = hdr_tag;
+
+    const hdr_badge = await translateIfNeeded(hdr?.badge, hdr?.badge_en);
+    if (hdr_badge) updates['header.badge_en'] = hdr_badge;
+
+    const hdr_title = await translateIfNeeded(hdr?.title, hdr?.title_en);
+    if (hdr_title) updates['header.title_en'] = hdr_title;
+
+    const hdr_desc = await translateIfNeeded(hdr?.description, hdr?.description_en);
+    if (hdr_desc) updates['header.description_en'] = hdr_desc;
   }
 
   else if (docType === 'serviceItem') {
-    if (doc.title)       { updates.title_en       = await translate(doc.title);       await sleep(300); }
-    if (doc.description) { updates.description_en = await translate(doc.description); await sleep(300); }
-    if (doc.cta)         { updates.cta_en         = await translate(doc.cta);         await sleep(300); }
-    if (doc.priceLabel)  { updates.priceLabel_en  = await translate(doc.priceLabel);  await sleep(300); }
-    if (Array.isArray(doc.features) && doc.features.length) {
-      updates.features_en = [];
-      for (const f of doc.features) {
-        updates.features_en.push(await translate(f));
-        await sleep(200);
-      }
-    }
+    const s_title = await translateIfNeeded(doc.title, doc.title_en);
+    if (s_title) updates.title_en = s_title;
+
+    const s_desc = await translateIfNeeded(doc.description, doc.description_en);
+    if (s_desc) updates.description_en = s_desc;
+
+    const s_cta = await translateIfNeeded(doc.cta, doc.cta_en);
+    if (s_cta) updates.cta_en = s_cta;
+
+    const s_price = await translateIfNeeded(doc.priceLabel, doc.priceLabel_en);
+    if (s_price) updates.priceLabel_en = s_price;
   }
 
   else if (docType === 'aboutPage') {
-    if (doc.tag)          { updates.tag_en         = await translate(doc.tag);          await sleep(300); }
-    if (doc.title)        { updates.title_en        = await translate(doc.title);        await sleep(300); }
-    if (doc.description)  { updates.description_en  = await translate(doc.description);  await sleep(300); }
-    if (Array.isArray(doc.body)) {
+    const a_tag = await translateIfNeeded(doc.tag, doc.tag_en);
+    if (a_tag) updates.tag_en = a_tag;
+
+    const a_title = await translateIfNeeded(doc.title, doc.title_en);
+    if (a_title) updates.title_en = a_title;
+
+    const a_desc = await translateIfNeeded(doc.description, doc.description_en);
+    if (a_desc) updates.description_en = a_desc;
+
+    if (Array.isArray(doc.body) && (!doc.body_en || doc.body_en.length === 0)) {
       updates.body_en = await translatePortableText(doc.body);
     }
   }
