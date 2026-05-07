@@ -119,15 +119,20 @@ export async function GET() {
     const results = [];
     const debug = [];
     const errors = [];
+    const processLog: string[] = [];
 
     for (const post of untranslated) {
       try {
+        processLog.push(`Processing post ${post._id}: "${post.title.substring(0, 20)}..."`);
+        
         const translatedTitle = await translate(post.title);
         
-        // Check if translation actually happened
         if (translatedTitle === post.title && post.title.length > 5) {
-          throw new Error(`DeepL returned the same text. Possible Auth/Config issue. Key present: ${!!DEEPL_KEY}`);
+          processLog.push(`FAILED: Translation is identical to source.`);
+          throw new Error(`All engines (DeepL/Gemini) returned identical text. Key check: DeepL=${!!DEEPL_KEY}, Gemini=${!!GEMINI_KEY}`);
         }
+
+        processLog.push(`SUCCESS: Translated to "${translatedTitle.substring(0, 20)}..."`);
 
         const updates: any = { title_en: translatedTitle };
         if (post.excerpt) updates.excerpt_en = await translate(post.excerpt);
@@ -148,6 +153,7 @@ export async function GET() {
       repairedCount: results.length, 
       ids: results,
       debug,
+      log: processLog,
       errors: errors.length > 0 ? errors : undefined
     }), { status: 200 });
   } catch (error: any) {
