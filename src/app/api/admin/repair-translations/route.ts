@@ -1,4 +1,6 @@
 import { createClient } from '@sanity/client';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
 
 const sanity = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
@@ -9,6 +11,9 @@ const sanity = createClient({
 });
 
 const DEEPL_KEY = process.env.DEEPL_API_KEY || process.env.DEEPL_KEY;
+const GEMINI_KEY = process.env.GEMINI_API_KEY;
+const genAI = GEMINI_KEY ? new GoogleGenerativeAI(GEMINI_KEY) : null;
+
 
 async function translate(text: string, isHTML = false): Promise<string> {
   if (!text?.trim()) return '';
@@ -35,6 +40,10 @@ async function translate(text: string, isHTML = false): Promise<string> {
 
     if (!res.ok) {
       const errorText = await res.text();
+      if (res.status === 456 || errorText.includes('quota')) {
+        console.warn('[Auto-Repair] DeepL Quota exceeded. Falling back to Gemini...');
+        return await translateWithGemini(text, isHTML);
+      }
       throw new Error(`DeepL Error (${res.status}): ${errorText}`);
     }
 
@@ -44,7 +53,32 @@ async function translate(text: string, isHTML = false): Promise<string> {
     return result;
   } catch (err: any) {
     console.error('[Auto-Repair DeepL Error]', err.message);
-    throw err; // DO NOT RETURN ORIGINAL TEXT, THROW SO WE KNOW IT FAILED
+    
+    // Fallback to Gemini for any error during the repair process
+    console.warn('[Auto-Repair] Falling back to Gemini as safety net...');
+    return await translateWithGemini(text, isHTML);
+  }
+}
+
+// ─── Gemini Fallback Translator ───────────────────────────────────────────
+async function translateWithGemini(text: string, isHTML = false): Promise<string> {
+  if (!genAI) {
+    console.error('[Gemini] Missing GEMINI_API_KEY. Cannot fallback.');
+    return text;
+  }
+
+  try {
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const prompt = isHTML 
+      ? `Translate the following HTML content from Spanish to English. Preserve all HTML tags and structure exactly: \n\n${text}`
+      : `Translate the following text from Spanish to English. Return only the translated text: \n\n${text}`;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    return response.text().trim();
+  } catch (err: any) {
+    console.error('[Gemini Exception Repair]', err.message);
+    return text;
   }
 }
 

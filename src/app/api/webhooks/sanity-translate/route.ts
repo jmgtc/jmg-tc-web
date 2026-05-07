@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@sanity/client';
 import crypto from 'crypto';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
 
 // ─── Sanity Client (server-side write access) ─────────────────────────────
 const sanity = createClient({
@@ -16,6 +18,10 @@ const DEEPL_KEY = process.env.DEEPL_API_KEY || process.env.DEEPL_KEY;
 if (!DEEPL_KEY) {
   console.error('[auto-translate] CRITICAL: Neither DEEPL_API_KEY nor DEEPL_KEY is defined!');
 }
+
+const GEMINI_KEY = process.env.GEMINI_API_KEY;
+const genAI = GEMINI_KEY ? new GoogleGenerativeAI(GEMINI_KEY) : null;
+
 
 // ─── DeepL translator with Retries ─────────────────────────────────────────
 async function translate(text: string, isHTML = false, retries = 3): Promise<string> {
@@ -49,6 +55,11 @@ async function translate(text: string, isHTML = false, retries = 3): Promise<str
         continue;
       }
 
+      if (res.status === 456) {
+        console.warn('[DeepL] Quota exceeded (456). Falling back to Gemini...');
+        return await translateWithGemini(text, isHTML);
+      }
+
       if (!res.ok) {
         const errorData = await res.text();
         throw new Error(`DeepL API Error (${res.status}): ${errorData}`);
@@ -58,11 +69,42 @@ async function translate(text: string, isHTML = false, retries = 3): Promise<str
       return data.translations?.[0]?.text ?? text;
     } catch (err: any) {
       console.error(`[DeepL Exception] Attempt ${attempt}:`, err.message);
-      if (attempt === retries) throw err;
+      
+      // If we are out of quota, don't even retry DeepL, go straight to Gemini
+      if (err.message.includes('456')) {
+        return await translateWithGemini(text, isHTML);
+      }
+
+      if (attempt === retries) {
+        console.warn('[auto-translate] DeepL failed completely. Trying Gemini as final resort...');
+        return await translateWithGemini(text, isHTML);
+      }
       await sleep(1000 * attempt);
     }
   }
   return text;
+}
+
+// ─── Gemini Fallback Translator ───────────────────────────────────────────
+async function translateWithGemini(text: string, isHTML = false): Promise<string> {
+  if (!genAI) {
+    console.error('[Gemini] Missing GEMINI_API_KEY. Cannot fallback.');
+    return text;
+  }
+
+  try {
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const prompt = isHTML 
+      ? `Translate the following HTML content from Spanish to English. Preserve all HTML tags and structure exactly: \n\n${text}`
+      : `Translate the following text from Spanish to English. Return only the translated text: \n\n${text}`;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    return response.text().trim();
+  } catch (err: any) {
+    console.error('[Gemini Exception]', err.message);
+    return text; // Return original if everything fails
+  }
 }
 
 // ─── PortableText translator (preserves structure, translates text spans) ─
