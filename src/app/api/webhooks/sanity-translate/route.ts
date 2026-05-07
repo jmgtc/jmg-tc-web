@@ -95,12 +95,29 @@ async function translateWithGemini(text: string, isHTML = false): Promise<string
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     const prompt = isHTML 
-      ? `Translate the following HTML content from Spanish to English. Preserve all HTML tags and structure exactly: \n\n${text}`
-      : `Translate the following text from Spanish to English. Return only the translated text: \n\n${text}`;
+      ? `You are a professional translator. Translate the following HTML content from Spanish to English. 
+         Preserve all HTML tags and structure exactly. 
+         CRITICAL: You MUST translate the content even if it contains many technical terms or brand names. 
+         Example: 'y' MUST become 'and'. 
+         Content: \n\n${text}`
+      : `You are a professional translator. Translate the following text from Spanish to English. 
+         Return ONLY the translated text, no explanations. 
+         CRITICAL: Always translate to English even if the source looks similar. 
+         Example: 'y' MUST become 'and'. 
+         Text: \n\n${text}`;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
-    return response.text().trim();
+    const translated = response.text().trim();
+
+    // Final safety check: if it still returned the same, try one more time with even more pressure
+    if (translated === text.trim() && text.length > 5) {
+       console.warn('[Gemini] Lazy response detected in webhook, retrying...');
+       const retryResult = await model.generateContent(`TRANSLATE THIS TO ENGLISH NOW, DO NOT RETURN THE ORIGINAL: ${text}`);
+       return retryResult.response.text().trim();
+    }
+
+    return translated;
   } catch (err: any) {
     console.error('[Gemini Exception]', err.message);
     return text; // Return original if everything fails
