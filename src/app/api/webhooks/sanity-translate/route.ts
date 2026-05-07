@@ -356,11 +356,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Missing _id or _type' }, { status: 400 });
   }
 
-  // TEMP SHIELD: Ignore this specific post to prevent loop during manual fix
-  if (_id === 'Tl8TPWlstF1riKjWvfEJ7a') {
-    return NextResponse.json({ skipped: 'manual fix in progress' });
-  }
-
   // Skip draft documents (Sanity sends both draft and published events)
   if (_id.startsWith('drafts.')) {
     return NextResponse.json({ skipped: 'draft document' });
