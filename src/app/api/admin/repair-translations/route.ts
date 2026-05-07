@@ -38,23 +38,18 @@ async function translate(text: string, isHTML = false): Promise<string> {
       }),
     });
 
-    if (!res.ok) {
-      const errorText = await res.text();
-      if (res.status === 456 || errorText.includes('quota')) {
-        console.warn('[Auto-Repair] DeepL Quota exceeded. Falling back to Gemini...');
-        return await translateWithGemini(text, isHTML);
-      }
-      throw new Error(`DeepL Error (${res.status}): ${errorText}`);
-    }
-
     const data = await res.json();
     const result = data.translations?.[0]?.text;
-    if (!result) throw new Error('DeepL returned empty translation');
+    
+    // If DeepL returns same text or empty, try Gemini
+    if (!result || result.trim() === text.trim()) {
+      console.warn('[Auto-Repair] DeepL returned identical or empty text. Trying Gemini...');
+      return await translateWithGemini(text, isHTML);
+    }
+
     return result;
   } catch (err: any) {
     console.error('[Auto-Repair DeepL Error]', err.message);
-    
-    // Fallback to Gemini for any error during the repair process
     console.warn('[Auto-Repair] Falling back to Gemini as safety net...');
     return await translateWithGemini(text, isHTML);
   }
