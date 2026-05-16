@@ -70,15 +70,15 @@ export async function generateMetadata(
                            post.title_en.trim() !== "" && 
                            post.title_en !== post.title;
     
-    const displayTitle = (isEn && hasValidTitleEn) ? post.title_en : post.title;
+    const displayTitle = (isEn && hasValidTitleEn) ? post.title_en : (post.title || "Artículo");
     
     const title = `${displayTitle} | JMG Tech Consulting`;
 
-    const description = post.excerpt
+    const description = post.excerpt && typeof post.excerpt === "string"
       ? post.excerpt.replace(/<[^>]*>/g, "").substring(0, 160)
       : "Noticias y análisis sobre IA, tecnología y transformación digital.";
 
-    const imageUrl = post.mainImage
+    const imageUrl = post.mainImage?.asset
       ? urlFor(post.mainImage).width(1200).height(630).url()
       : undefined;
 
@@ -95,7 +95,7 @@ export async function generateMetadata(
         siteName: "JMG Tech Consulting",
         type: "article",
         publishedTime: post.publishedAt,
-        ...(imageUrl ? { images: [{ url: imageUrl, width: 1200, height: 630, alt: post.title }] } : {}),
+        ...(imageUrl ? { images: [{ url: imageUrl, width: 1200, height: 630, alt: String(post.title || "") }] } : {}),
       },
       twitter: {
         card: "summary_large_image",
@@ -105,7 +105,7 @@ export async function generateMetadata(
       },
     };
   } catch (err) {
-    console.error("[generateMetadata] Error:", err);
+    console.error("[generateMetadata] Error fatal:", err);
     return { title: "JMG Tech Consulting | Blog" };
   }
 }
@@ -200,9 +200,9 @@ export default async function BlogPostPage({
   try {
     post = await client.fetch(buildPostQuery(slug));
   } catch (err: any) {
-    console.error("[blog/[slug]] Error fetching post from Sanity:", err);
-    // Evitamos el 500 devolviendo notFound() si falla la conexión o la cuota
-    notFound();
+    console.error("[blog/[slug]] Error crítico fetch Sanity:", err);
+    // No lanzamos error para evitar el 500, dejamos que !post dispare notFound()
+    post = null;
   }
 
   if (!post) {
@@ -241,14 +241,17 @@ export default async function BlogPostPage({
 
         {/* Categorías y Tiempo de Lectura */}
         <div className="flex flex-wrap items-center gap-4 mb-8">
-          {post.categories?.map((cat: string) => (
-            <span
-              key={cat}
-              className="px-3 py-1 rounded-full bg-gold/10 border border-gold/20 text-gold text-[10px] uppercase tracking-widest"
-            >
-              {cat}
-            </span>
-          ))}
+          {Array.isArray(post.categories) && post.categories.map((cat: any) => {
+            if (!cat || typeof cat !== "string") return null;
+            return (
+              <span
+                key={cat}
+                className="px-3 py-1 rounded-full bg-gold/10 border border-gold/20 text-gold text-[10px] uppercase tracking-widest"
+              >
+                {cat}
+              </span>
+            );
+          })}
           <span className="text-[10px] text-white/40 uppercase tracking-widest flex items-center gap-2">
             <svg
               className="w-3 h-3"
@@ -288,11 +291,14 @@ export default async function BlogPostPage({
         {/* Etiquetas */}
         {post.tags && post.tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-12 pt-8 border-t border-white/5">
-            {post.tags.map((tag: string) => (
-              <span key={tag} className="text-xs text-white/40 font-mono">
-                #{tag.replace(/\s+/g, "")}
-              </span>
-            ))}
+            {post.tags.map((tag: any) => {
+              if (typeof tag !== "string") return null;
+              return (
+                <span key={tag} className="text-xs text-white/40 font-mono">
+                  #{tag.replace(/\s+/g, "")}
+                </span>
+              );
+            })}
           </div>
         )}
 
