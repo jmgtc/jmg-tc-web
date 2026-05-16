@@ -48,9 +48,10 @@ export const proxy = clerkMiddleware(async (auth, request) => {
   return NextResponse.next();
 });
 
-// Mantener la configuración del matcher
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|public).*)',
+    // Excluir archivos estáticos de Next.js y rutas públicas del blog
+    // Clerk no debe correr en rutas del blog — sus headers rompen SSG en producción
+    '/((?!_next/static|_next/image|favicon.ico|public|blog).*)',
   ],
 };
