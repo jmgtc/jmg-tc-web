@@ -128,7 +128,7 @@ function renderContent(blocks: any) {
     let processed = html.replace(/<br\s*\/?>/gi, '\n');
     
     // 2. Extraemos párrafos para mantener estructura
-    const paragraphs = processed.split(/<\/?p>/i).filter(p => p.trim() !== "");
+    const paragraphs = processed.split(/<\/?p>/i).filter(p => p && p.trim() !== "");
     
     return paragraphs.map((p, i) => {
       // Parseo quirúrgico de tags reportados: <strong>, <h3>, <a>
@@ -138,7 +138,9 @@ function renderContent(blocks: any) {
       let currentLink: string | null = null;
       
       const content = parts.map((part, j) => {
+        if (!part) return null;
         const lowerPart = part.toLowerCase();
+        
         if (lowerPart === '<strong>') { isStrong = true; return null; }
         if (lowerPart === '</strong>') { isStrong = false; return null; }
         if (lowerPart === '<h3>') { isH3 = true; return null; }
@@ -171,65 +173,84 @@ function renderContent(blocks: any) {
     });
   };
 
-  // 1. Caso: El contenido es directamente un string con HTML
+  // 1. Caso: El contenido es directamente un string
   if (typeof blocks === "string") {
     const hasHtml = /<[a-z][\s\S]*>/i.test(blocks);
-    if (!hasHtml) {
-      return (
-        <div className="space-y-4">
-          {blocks.split('\n\n').map((p, i) => (
-            <p key={i} className="text-white/80 leading-relaxed font-light">{p}</p>
-          ))}
-        </div>
-      );
+    if (hasHtml) {
+      console.log("blog_content_html_detected: direct string");
+      return <div className="blog-content-html">{renderSafeHtml(blocks)}</div>;
     }
-    return <div className="blog-content-html">{renderSafeHtml(blocks)}</div>;
+    return (
+      <div className="space-y-4">
+        {blocks.split('\n\n').map((p, i) => (
+          <p key={i} className="text-white/80 leading-relaxed font-light">{p}</p>
+        ))}
+      </div>
+    );
   }
 
   // 2. Caso: PortableText Array
-  if (!Array.isArray(blocks)) return null;
+  if (Array.isArray(blocks)) {
+    // Definimos qué consideramos HTML
+    const htmlRegex = /<[a-z][\s\S]*>/i;
+    
+    // Concatenamos TODO el texto para ver si hay HTML en algún lugar del array
+    let allText = "";
+    let containsHtml = false;
+    
+    for (const block of blocks) {
+      if (block.children && Array.isArray(block.children)) {
+        for (const child of block.children) {
+          if (child.text) {
+            allText += child.text;
+            if (htmlRegex.test(child.text)) {
+              containsHtml = true;
+            }
+          }
+        }
+      }
+      allText += "\n";
+    }
 
-  // Verificamos si los bloques contienen HTML crudo dentro (común en flujos automáticos)
-  const firstBlockText = blocks[0]?.children?.[0]?.text;
-  if (typeof firstBlockText === "string" && /<[a-z][\s\S]*>/i.test(firstBlockText)) {
-    // Si el primer bloque ya parece HTML, procesamos todo como HTML concatenado
-    const fullHtml = blocks
-      .map(b => b.children?.map((c: any) => c.text).join("") || "")
-      .join("\n");
-    return <div className="blog-content-html">{renderSafeHtml(fullHtml)}</div>;
+    if (containsHtml) {
+      console.log("portabletext_html_detected: nested in array");
+      return <div className="blog-content-html">{renderSafeHtml(allText)}</div>;
+    }
+
+    // Si no hay HTML, procedemos con PortableText normal
+    const components = {
+      block: {
+        normal: ({ children }: any) => <p className="mb-6 text-white/80 leading-relaxed font-light">{children}</p>,
+        h2: ({ children }: any) => <h2 className="text-3xl font-bold mt-12 mb-6 text-white">{children}</h2>,
+        h3: ({ children }: any) => <h3 className="text-2xl font-bold mt-8 mb-4 text-white/90">{children}</h3>,
+        blockquote: ({ children }: any) => (
+          <blockquote className="border-l-4 border-gold/50 pl-6 my-8 italic text-white/60">
+            {children}
+          </blockquote>
+        ),
+      },
+      list: {
+        bullet: ({ children }: any) => <ul className="list-disc pl-6 mb-6 space-y-2 text-white/80 font-light">{children}</ul>,
+        number: ({ children }: any) => <ol className="list-decimal pl-6 mb-6 space-y-2 text-white/80 font-light">{children}</ol>,
+      },
+      marks: {
+        strong: ({ children }: any) => <strong className="font-bold text-white">{children}</strong>,
+        link: ({ children, value }: any) => {
+          const href = value?.href || "";
+          const rel = href && !href.startsWith("/") ? "noreferrer noopener" : undefined;
+          return (
+            <a href={href} rel={rel} className="text-gold hover:underline transition-all">
+              {children}
+            </a>
+          );
+        },
+      },
+    };
+
+    return <PortableText value={blocks} components={components} />;
   }
 
-  // Componentes normales para PortableText genuino
-  const components = {
-    block: {
-      normal: ({ children }: any) => <p className="mb-6 text-white/80 leading-relaxed font-light">{children}</p>,
-      h2: ({ children }: any) => <h2 className="text-3xl font-bold mt-12 mb-6 text-white">{children}</h2>,
-      h3: ({ children }: any) => <h3 className="text-2xl font-bold mt-8 mb-4 text-white/90">{children}</h3>,
-      blockquote: ({ children }: any) => (
-        <blockquote className="border-l-4 border-gold/50 pl-6 my-8 italic text-white/60">
-          {children}
-        </blockquote>
-      ),
-    },
-    list: {
-      bullet: ({ children }: any) => <ul className="list-disc pl-6 mb-6 space-y-2 text-white/80 font-light">{children}</ul>,
-      number: ({ children }: any) => <ol className="list-decimal pl-6 mb-6 space-y-2 text-white/80 font-light">{children}</ol>,
-    },
-    marks: {
-      strong: ({ children }: any) => <strong className="font-bold text-white">{children}</strong>,
-      link: ({ children, value }: any) => {
-        const href = value?.href || "";
-        const rel = href && !href.startsWith("/") ? "noreferrer noopener" : undefined;
-        return (
-          <a href={href} rel={rel} className="text-gold hover:underline transition-all">
-            {children}
-          </a>
-        );
-      },
-    },
-  };
-
-  return <PortableText value={blocks} components={components} />;
+  return null;
 }
 
 // ─── Page Component ──────────────────────────────────────────────────────────
