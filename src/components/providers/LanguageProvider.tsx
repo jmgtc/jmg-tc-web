@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import es from "@/dictionaries/es.json";
 import en from "@/dictionaries/en.json";
 
@@ -24,6 +25,7 @@ export function LanguageProvider({
   initialLanguage?: Language;
 }) {
   const [language, setLanguageState] = useState<Language>(initialLanguage);
+  const router = useRouter();
 
   // Sync state with cookie on mount (mostly for client-side navigation or hydration check)
   React.useEffect(() => {
@@ -40,6 +42,9 @@ export function LanguageProvider({
     setLanguageState(lang);
     // Persist in cookie for Server Components (365 days)
     document.cookie = `NEXT_LOCALE=${lang}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`;
+    
+    // Force refresh of the current route to update Server Components
+    router.refresh();
   };
 
   const dict = language === "es" ? es : en;
