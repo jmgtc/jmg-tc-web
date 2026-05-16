@@ -1,3 +1,4 @@
+import { NextRequest } from 'next/server';
 import { createClient } from '@sanity/client';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
@@ -116,9 +117,21 @@ async function translatePortableText(blocks: any[]): Promise<any[]> {
   return translated;
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  // ── Auth guard ──────────────────────────────────────────────────────────
+  const adminSecret = process.env.ADMIN_API_SECRET;
+  const provided    = req.headers.get('x-admin-secret');
+  if (!adminSecret || !provided || provided !== adminSecret) {
+    console.warn('[auto-repair] Unauthorized request — missing or invalid x-admin-secret');
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+  // ────────────────────────────────────────────────────────────────────────
+
   console.log('[auto-repair] Starting translation health check...');
-  
+
   try {
     // 1. Find untranslated posts (missing, empty, or same as Spanish)
     const untranslated = await sanity.fetch(`*[_type == "post" && (!defined(title_en) || title_en == "" || title_en == title)] {

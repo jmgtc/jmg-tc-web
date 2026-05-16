@@ -124,8 +124,21 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // --- CREACIÓN DEL DOCUMENTO ---
+    // --- DEDUPLICACIÓN POR SLUG ---
     const slugValue = generateSlug(title);
+    const existing = await sanity.fetch(
+      `*[_type == "post" && slug.current == $slug][0]._id`,
+      { slug: slugValue }
+    );
+    if (existing) {
+      console.log(`[newsflow] Duplicate slug detected: "${slugValue}" — skipping creation`);
+      return NextResponse.json(
+        { status: 'duplicate_skipped', slug: slugValue, existingId: existing },
+        { status: 200, headers: corsHeaders }
+      );
+    }
+
+    // --- CREACIÓN DEL DOCUMENTO ---
     const postDoc = {
       _type: 'post',
       title: title,

@@ -1,5 +1,5 @@
 import { createClient } from "@sanity/client";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = 'force-dynamic'
 
@@ -11,10 +11,25 @@ const sanityClient = createClient({
   apiVersion: "2023-01-01",
 });
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+  // ── Auth guard ──────────────────────────────────────────────────────────
+  const adminSecret = process.env.ADMIN_API_SECRET;
+  const provided    = req.headers.get('x-admin-secret');
+  if (!adminSecret || !provided || provided !== adminSecret) {
+    console.warn('[translate] Unauthorized request — missing or invalid x-admin-secret');
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  // ────────────────────────────────────────────────────────────────────────
+
   try {
     const reqBody = await req.json();
     const { documentId, title, body } = reqBody;
+
+    // ── Payload validation ───────────────────────────────────────────────
+    if (!title && !body) {
+      return NextResponse.json({ error: 'Payload must include at least title or body' }, { status: 400 });
+    }
+    // ────────────────────────────────────────────────────────────────────
 
     const apiKey = process.env.DEEPL_API_KEY || process.env.DEEPL_KEY;
     if (!apiKey) {
