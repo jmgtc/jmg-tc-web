@@ -50,8 +50,9 @@ export const proxy = clerkMiddleware(async (auth, request) => {
 
 export const config = {
   matcher: [
-    // Excluir archivos estáticos de Next.js y rutas públicas del blog
-    // Clerk no debe correr en rutas del blog — sus headers rompen SSG en producción
-    '/((?!_next/static|_next/image|favicon.ico|public|blog).*)',
+    // Excluir rutas del blog, _next y estáticos del middleware de Clerk
+    // Esto garantiza que el blog sea público y cacheable en el Edge sin interferencia de Clerk.
+    '/((?!_next|blog|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    '/(api|trpc)(.*)',
   ],
 };

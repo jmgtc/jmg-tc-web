@@ -50,10 +50,11 @@ export async function generateStaticParams() {
 // ─── generateMetadata ────────────────────────────────────────────────────────
 
 export async function generateMetadata(
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ): Promise<Metadata> {
+  const { slug } = await params;
   try {
-    const post = await client.fetch(buildPostQuery(params.slug));
+    const post = await client.fetch(buildPostQuery(slug));
     if (!post) {
       return { title: "Artículo no encontrado | JMG Tech Consulting" };
     }
@@ -70,7 +71,7 @@ export async function generateMetadata(
       ? urlFor(post.mainImage).width(1200).height(630).url()
       : undefined;
 
-    const canonical = `${BASE_URL}/blog/${params.slug}`;
+    const canonical = `${BASE_URL}/blog/${slug}`;
 
     return {
       title,
@@ -190,12 +191,13 @@ function renderContent(blocks: any) {
 export default async function BlogPostPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
+  const { slug } = await params;
   let post: any = null;
 
   try {
-    post = await client.fetch(buildPostQuery(params.slug));
+    post = await client.fetch(buildPostQuery(slug));
   } catch (err: any) {
     console.error("[blog/[slug]] Error fetching post:", err);
     // Si es un error de cuota (402) o de red, lanzar para que error.tsx lo maneje
@@ -211,7 +213,7 @@ export default async function BlogPostPage({
   const displayTitle = post.title; // ES por defecto en SSR
   const displayBody = post.body;
   const readingTime = calculateReadingTime(displayBody);
-  const postUrl = `${BASE_URL}/blog/${params.slug}`;
+  const postUrl = `${BASE_URL}/blog/${slug}`;
 
   return (
     <main className="min-h-screen bg-[#070707] text-white pt-32 pb-24">
