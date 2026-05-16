@@ -64,8 +64,12 @@ export async function generateMetadata(
       return { title: "Artículo no encontrado | JMG Tech Consulting" };
     }
 
-    // Lógica de metadatos dinámica por idioma
-    const hasValidTitleEn = post.title_en && post.title_en !== post.title;
+    // Lógica de metadatos dinámica por idioma con validación estricta
+    const hasValidTitleEn = post.title_en && 
+                           typeof post.title_en === "string" && 
+                           post.title_en.trim() !== "" && 
+                           post.title_en !== post.title;
+    
     const displayTitle = (isEn && hasValidTitleEn) ? post.title_en : post.title;
     
     const title = `${displayTitle} | JMG Tech Consulting`;
@@ -100,7 +104,8 @@ export async function generateMetadata(
         ...(imageUrl ? { images: [imageUrl] } : {}),
       },
     };
-  } catch {
+  } catch (err) {
+    console.error("[generateMetadata] Error:", err);
     return { title: "JMG Tech Consulting | Blog" };
   }
 }
@@ -114,79 +119,64 @@ function calculateReadingTime(blocks: any): number {
     text = blocks.replace(/<[^>]*>/g, "");
   } else if (Array.isArray(blocks)) {
     blocks.forEach((b: any) => {
-      if (b.children) b.children.forEach((c: any) => (text += c.text));
+      if (b && b.children && Array.isArray(b.children)) {
+        b.children.forEach((c: any) => {
+          if (c && typeof c.text === "string") {
+            text += c.text;
+          }
+        });
+      }
     });
   }
-  return Math.ceil(text.split(/\s+/).length / 200);
+  const wordCount = text.split(/\s+/).filter(Boolean).length;
+  return Math.ceil(wordCount / 200) || 1;
 }
 
 function renderContent(blocks: any) {
   if (!blocks) return null;
 
-  // HTML crudo (legacy)
-  let rawHtml = "";
-  if (
-    typeof blocks === "string" &&
-    (blocks.includes("<p>") || blocks.includes("<strong") || blocks.includes("<h"))
-  ) {
-    rawHtml = blocks;
-  } else if (Array.isArray(blocks)) {
-    const fullText = blocks
-      .map((b: any) =>
-        b._type === "block" && b.children
-          ? b.children.map((c: any) => c.text || "").join("")
-          : ""
-      )
-      .join("\n");
-    if (
-      typeof fullText === "string" &&
-      (fullText.includes("<p>") || fullText.includes("<strong") || fullText.includes("<h"))
-    ) {
-      rawHtml = fullText;
-    }
-  }
-
-  if (rawHtml) {
+  // Si es un string (posible corrupción o texto plano heredado)
+  if (typeof blocks === "string") {
     return (
-      <div
-        className="prose prose-invert max-w-none prose-gold
-          prose-p:text-white/80 prose-p:leading-relaxed prose-p:mb-6 prose-p:font-light
-          prose-headings:text-white prose-headings:font-bold
-          prose-strong:text-white prose-strong:font-bold
-          prose-a:text-gold prose-a:no-underline hover:prose-a:underline"
-        dangerouslySetInnerHTML={{ __html: rawHtml }}
-      />
+      <div className="space-y-4">
+        {blocks.split('\n\n').map((p, i) => (
+          <p key={i} className="text-white/80 leading-relaxed font-light">{p}</p>
+        ))}
+      </div>
     );
   }
 
-  // Portable Text estándar
+  // Si no es un array, PortableText fallará
+  if (!Array.isArray(blocks)) {
+    return null;
+  }
+
+  // Componentes personalizados para PortableText
   const components = {
     block: {
-      h2: ({ children }: any) => (
-        <h2 className="text-3xl font-bold text-white mt-12 mb-6">{children}</h2>
-      ),
-      h3: ({ children }: any) => (
-        <h3 className="text-2xl font-bold text-white mt-8 mb-4">{children}</h3>
-      ),
-      normal: ({ children }: any) => (
-        <p className="text-white/80 leading-relaxed mb-6 font-light">{children}</p>
+      normal: ({ children }: any) => <p className="mb-6 text-white/80 leading-relaxed font-light">{children}</p>,
+      h2: ({ children }: any) => <h2 className="text-3xl font-bold mt-12 mb-6 text-white">{children}</h2>,
+      h3: ({ children }: any) => <h3 className="text-2xl font-bold mt-8 mb-4 text-white/90">{children}</h3>,
+      blockquote: ({ children }: any) => (
+        <blockquote className="border-l-4 border-gold/50 pl-6 my-8 italic text-white/60">
+          {children}
+        </blockquote>
       ),
     },
+    list: {
+      bullet: ({ children }: any) => <ul className="list-disc pl-6 mb-6 space-y-2 text-white/80 font-light">{children}</ul>,
+      number: ({ children }: any) => <ol className="list-decimal pl-6 mb-6 space-y-2 text-white/80 font-light">{children}</ol>,
+    },
     marks: {
-      strong: ({ children }: any) => (
-        <strong className="font-bold text-white">{children}</strong>
-      ),
-      em: ({ children }: any) => <em className="italic">{children}</em>,
-      link: ({ children, value }: any) => (
-        <a
-          href={value.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-gold hover:underline"
-        >
-          {children}
-        </a>
-      ),
+      strong: ({ children }: any) => <strong className="font-bold text-white">{children}</strong>,
+      link: ({ children, value }: any) => {
+        const rel = !value.href.startsWith("/") ? "noreferrer noopener" : undefined;
+        return (
+          <a href={value.href} rel={rel} className="text-gold hover:underline transition-all">
+            {children}
+          </a>
+        );
+      },
     },
   };
 
@@ -217,16 +207,28 @@ export default async function BlogPostPage({
     notFound();
   }
 
-  // Lógica de selección de idioma inteligente
+  // Lógica de selección de idioma inteligente con validación defensiva
   const isEn = language === "en";
   
-  // Usar inglés solo si existe y es diferente del español
-  const hasValidTitleEn = post.title_en && post.title_en !== post.title;
+  // Validar título EN: debe existir, ser string, no estar vacío y ser diferente al ES
+  const hasValidTitleEn = post.title_en && 
+                         typeof post.title_en === "string" && 
+                         post.title_en.trim() !== "" && 
+                         post.title_en !== post.title;
+                         
   const displayTitle = (isEn && hasValidTitleEn) ? post.title_en : post.title;
 
-  // Para el cuerpo, comprobamos si body_en existe y tiene contenido diferente
-  // Si no estamos seguros de la diferencia en bloques complejos, al menos comprobamos existencia
-  const displayBody = (isEn && post.body_en && post.body_en.length > 0) ? post.body_en : post.body;
+  // Validar cuerpo EN: debe ser un array (PortableText) y tener contenido
+  // Si es un string pero diferente al cuerpo original (como texto), lo permitimos vía renderContent hardenizado
+  const isBodyEnArray = Array.isArray(post.body_en);
+  const isBodyEnString = typeof post.body_en === "string";
+  
+  const hasValidBodyEn = isEn && (
+    (isBodyEnArray && post.body_en.length > 0) || 
+    (isBodyEnString && post.body_en.trim() !== "" && post.body_en !== post.body)
+  );
+  
+  const displayBody = hasValidBodyEn ? post.body_en : post.body;
 
   const readingTime = calculateReadingTime(displayBody);
   const postUrl = `${BASE_URL}/blog/${slug}`;

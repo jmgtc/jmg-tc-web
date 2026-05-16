@@ -29,7 +29,29 @@ export default async function BlogPage() {
   let fetchError = false;
 
   try {
-    posts = await getPosts();
+    const rawPosts = await getPosts();
+    // Transformamos los posts en el servidor para blindar el renderizado
+    posts = rawPosts.map((post: any) => {
+      // Validar título EN: debe existir, ser string, no estar vacío y ser diferente al ES
+      const hasValidTitleEn = post.title_en && 
+                             typeof post.title_en === "string" && 
+                             post.title_en.trim() !== "" && 
+                             post.title_en !== post.title;
+      
+      // Para el listing, body es texto plano (pt::text). 
+      // Validamos que sea diferente y no esté vacío.
+      const hasValidBodyEn = post.body_en && 
+                            typeof post.body_en === "string" && 
+                            post.body_en.trim() !== "" && 
+                            post.body_en !== post.body;
+
+      return {
+        ...post,
+        // Si no es válido, forzamos null para que BlogGrid use el fallback a ES
+        title_en: hasValidTitleEn ? post.title_en : null,
+        body_en: hasValidBodyEn ? post.body_en : null
+      };
+    });
   } catch (err) {
     console.error("[blog/page] Error fetching posts from Sanity:", err);
     fetchError = true;

@@ -46,10 +46,25 @@ export default function BlogGrid({ posts }: BlogGridProps) {
     <>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {currentPosts.map((post) => {
-          const displayTitle =
-            language === "en" && post.title_en ? post.title_en : post.title;
-          const displayBody =
-            language === "en" && post.body_en ? post.body_en : post.body;
+          const isEn = language === "en";
+          
+          // Validación estricta para el título
+          const hasValidTitleEn = isEn && 
+                                 post.title_en && 
+                                 typeof post.title_en === "string" && 
+                                 post.title_en.trim() !== "" && 
+                                 post.title_en !== post.title;
+          
+          const displayTitle = hasValidTitleEn ? post.title_en : post.title;
+
+          // Validación para el cuerpo (en el grid ya vienen como strings por el query pt::text)
+          const hasValidBodyEn = isEn && 
+                                post.body_en && 
+                                typeof post.body_en === "string" && 
+                                post.body_en.trim() !== "" && 
+                                post.body_en !== post.body;
+                                
+          const displayBody = hasValidBodyEn ? post.body_en : post.body;
 
           return (
             <Link
