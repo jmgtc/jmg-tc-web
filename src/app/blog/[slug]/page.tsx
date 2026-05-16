@@ -33,14 +33,18 @@ function buildPostQuery(slug: string) {
 
 // ─── generateStaticParams ────────────────────────────────────────────────────
 
+// dynamicParams = true: permite generar slugs on-demand aunque no estén en generateStaticParams
+// Esto evita que el build de Vercel falle con 402 al intentar pre-generar todos los posts
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
-  try {
-    const slugs: { slug: string }[] = await client.fetch(slugsQuery);
-    return slugs.map((s) => ({ slug: s.slug }));
-  } catch {
-    // Si Sanity falla en build, no bloqueamos — páginas se generarán on-demand
-    return [];
-  }
+  // Devolvemos [] intencionalmente para que el build NO pre-genere ningún post.
+  // Los slugs se generan on-demand (ISR) en el primer acceso gracias a dynamicParams = true.
+  //
+  // RAZÓN: durante el build de Vercel, @sanity/client usa la API directa (api.sanity.io)
+  // en lugar del CDN (apicdn.sanity.io), lo que consume cuota y puede dar 402.
+  // En runtime, el CDN funciona correctamente y las páginas se sirven sin consumir cuota.
+  return [];
 }
 
 // ─── generateMetadata ────────────────────────────────────────────────────────
@@ -192,13 +196,14 @@ export default async function BlogPostPage({
 
   try {
     post = await client.fetch(buildPostQuery(params.slug));
-  } catch (err) {
+  } catch (err: any) {
     console.error("[blog/[slug]] Error fetching post:", err);
-    // El error.tsx tomará el control
+    // Si es un error de cuota (402) o de red, lanzar para que error.tsx lo maneje
+    // No llamar notFound() en este caso — el post puede existir pero Sanity no responde
     throw err;
   }
 
-  // Post no encontrado → 404 real, no redirect ni spinner
+  // Post genuinamente no encontrado (slug incorrecto) → 404 real
   if (!post) {
     notFound();
   }
