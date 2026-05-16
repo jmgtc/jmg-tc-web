@@ -170,9 +170,10 @@ function renderContent(blocks: any) {
     marks: {
       strong: ({ children }: any) => <strong className="font-bold text-white">{children}</strong>,
       link: ({ children, value }: any) => {
-        const rel = !value.href.startsWith("/") ? "noreferrer noopener" : undefined;
+        const href = value?.href || "";
+        const rel = href && !href.startsWith("/") ? "noreferrer noopener" : undefined;
         return (
-          <a href={value.href} rel={rel} className="text-gold hover:underline transition-all">
+          <a href={href} rel={rel} className="text-gold hover:underline transition-all">
             {children}
           </a>
         );
@@ -199,8 +200,9 @@ export default async function BlogPostPage({
   try {
     post = await client.fetch(buildPostQuery(slug));
   } catch (err: any) {
-    console.error("[blog/[slug]] Error fetching post:", err);
-    throw err;
+    console.error("[blog/[slug]] Error fetching post from Sanity:", err);
+    // Evitamos el 500 devolviendo notFound() si falla la conexión o la cuota
+    notFound();
   }
 
   if (!post) {
@@ -269,7 +271,7 @@ export default async function BlogPostPage({
           {displayTitle}
         </h1>
 
-        {post.mainImage && (
+        {post.mainImage && post.mainImage.asset && (
           <div className="w-full h-auto max-h-[300px] md:max-h-[350px] lg:max-h-[400px] rounded-[2rem] overflow-hidden mb-12 shadow-2xl border border-white/10 group">
             <img
               src={urlFor(post.mainImage).url()}
