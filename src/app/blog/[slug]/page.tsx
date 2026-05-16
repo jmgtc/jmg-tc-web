@@ -122,15 +122,55 @@ function calculateReadingTime(blocks: any): number {
 function renderContent(blocks: any) {
   if (!blocks) return null;
 
-  // Si es un string (posible corrupción o texto plano heredado)
+  // Si es un string, puede ser texto plano o HTML crudo (ej: de Make/DeepL)
   if (typeof blocks === "string") {
-    return (
-      <div className="space-y-4">
-        {blocks.split('\n\n').map((p, i) => (
-          <p key={i} className="text-white/80 leading-relaxed font-light">{p}</p>
-        ))}
-      </div>
-    );
+    // Detectamos si contiene etiquetas HTML para decidir cómo procesar
+    const hasHtml = /<[a-z][\s\S]*>/i.test(blocks);
+
+    if (!hasHtml) {
+      return (
+        <div className="space-y-4">
+          {blocks.split('\n\n').map((p, i) => (
+            <p key={i} className="text-white/80 leading-relaxed font-light">{p}</p>
+          ))}
+        </div>
+      );
+    }
+
+    // Proceso de renderizado seguro de HTML (sin dangerouslySetInnerHTML)
+    // Dividimos por etiquetas básicas para un renderizado React controlado
+    // Esta es una solución quirúrgica para evitar el HTML crudo visible
+    const cleanHtml = (html: string) => {
+      // 1. Reemplazamos br por saltos para split
+      let processed = html.replace(/<br\s*\/?>/gi, '\n');
+      
+      // 2. Extraemos párrafos
+      const paragraphs = processed.split(/<\/?p>/i).filter(p => p.trim() !== "");
+      
+      return paragraphs.map((p, i) => {
+        // Procesamos negritas y títulos dentro de cada "bloque"
+        // Nota: esto es una simplificación segura para los tags reportados
+        const parts = p.split(/(<\/?[a-z0-9]+>)/i);
+        let isStrong = false;
+        let isH3 = false;
+        
+        const content = parts.map((part, j) => {
+          if (part.toLowerCase() === '<strong>') { isStrong = true; return null; }
+          if (part.toLowerCase() === '</strong>') { isStrong = false; return null; }
+          if (part.toLowerCase() === '<h3>') { isH3 = true; return null; }
+          if (part.toLowerCase() === '</h3>') { isH3 = false; return null; }
+          if (part.startsWith('<')) return null; // Ignoramos otros tags no soportados por seguridad
+          
+          if (isStrong) return <strong key={j} className="font-bold text-white">{part}</strong>;
+          if (isH3) return <h3 key={j} className="text-2xl font-bold mt-8 mb-4 text-white/90 block">{part}</h3>;
+          return part;
+        });
+
+        return <p key={i} className="mb-6 text-white/80 leading-relaxed font-light">{content}</p>;
+      });
+    };
+
+    return <div className="blog-content-html">{cleanHtml(blocks)}</div>;
   }
 
   // Si no es un array, PortableText fallará
