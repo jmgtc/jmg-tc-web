@@ -39,12 +39,22 @@ export function LanguageProvider({
   }, [language]);
 
   const setLanguage = (lang: Language) => {
-    setLanguageState(lang);
-    // Persist in cookie for Server Components (365 days)
+    // 1. Persist in cookie IMMEDIATELY and synchronously for Server Components
     document.cookie = `NEXT_LOCALE=${lang}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`;
     
-    // Force refresh of the current route to update Server Components
-    router.refresh();
+    // 2. Update local state
+    setLanguageState(lang);
+    
+    // 3. Handle refresh/reload based on context
+    const isBlogRoute = window.location.pathname.startsWith('/blog');
+    
+    if (isBlogRoute) {
+      // Force a full reload on blog routes to GUARANTEE Server Components re-render with new cookie
+      window.location.reload();
+    } else {
+      // For other routes, a standard router.refresh() is enough and smoother
+      router.refresh();
+    }
   };
 
   const dict = language === "es" ? es : en;
