@@ -7,9 +7,11 @@ import { PortableText } from "@portabletext/react";
 import type { Metadata } from "next";
 import BlogShareButtons from "@/components/blog/BlogShareButtons";
 
-export const revalidate = 3600; // ISR: revalida cada 1h
 
 const BASE_URL = "https://www.jmg-tc.com";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 60; // Revalidar cada minuto
 
 // ─── Queries ────────────────────────────────────────────────────────────────
 
@@ -33,21 +35,6 @@ function buildPostQuery(slug: string) {
 }
 
 // ─── generateStaticParams ────────────────────────────────────────────────────
-
-// dynamicParams = true: permite generar slugs on-demand aunque no estén en generateStaticParams
-// Esto evita que el build de Vercel falle con 402 al intentar pre-generar todos los posts
-export const dynamicParams = true;
-
-export async function generateStaticParams() {
-  // Devolvemos [] intencionalmente para que el build NO pre-genere ningún post.
-  // Los slugs se generan on-demand (ISR) en el primer acceso gracias a dynamicParams = true.
-  //
-  // RAZÓN: durante el build de Vercel, @sanity/client usa la API directa (api.sanity.io)
-  // en lugar del CDN (apicdn.sanity.io), lo que consume cuota y puede dar 402.
-  // En runtime, el CDN funciona correctamente y las páginas se sirven sin consumir cuota.
-  return [];
-}
-
 // ─── generateMetadata ────────────────────────────────────────────────────────
 
 export async function generateMetadata(
