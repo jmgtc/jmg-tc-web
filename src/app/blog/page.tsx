@@ -1,5 +1,6 @@
 // Server Component — fetch ocurre en servidor, posts llegan al HTML inicial
 import { client } from "@/lib/sanity";
+import { cookies } from "next/headers";
 import BlogHeader from "@/components/blog/BlogHeader";
 import BlogGrid from "@/components/blog/BlogGrid";
 
@@ -21,6 +22,9 @@ async function getPosts() {
 }
 
 export default async function BlogPage() {
+  const cookieStore = await cookies();
+  const language = (cookieStore.get("NEXT_LOCALE")?.value || "es") as "es" | "en";
+
   let posts: any[] = [];
   let fetchError = false;
 

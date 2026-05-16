@@ -16,8 +16,32 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState<Language>("es");
+export function LanguageProvider({ 
+  children, 
+  initialLanguage = "es" 
+}: { 
+  children: ReactNode;
+  initialLanguage?: Language;
+}) {
+  const [language, setLanguageState] = useState<Language>(initialLanguage);
+
+  // Sync state with cookie on mount (mostly for client-side navigation or hydration check)
+  React.useEffect(() => {
+    const saved = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("NEXT_LOCALE="))
+      ?.split("=")[1];
+    if (saved && (saved === "en" || saved === "es") && saved !== language) {
+      setLanguageState(saved as Language);
+    }
+  }, [language]);
+
+  const setLanguage = (lang: Language) => {
+    setLanguageState(lang);
+    // Persist in cookie for Server Components (365 days)
+    document.cookie = `NEXT_LOCALE=${lang}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`;
+  };
+
   const dict = language === "es" ? es : en;
 
   const t = (key: string): string => {

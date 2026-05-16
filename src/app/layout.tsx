@@ -7,6 +7,7 @@ import CookieBanner from "@/components/modules/CookieBanner";
 import { ClerkProvider } from "@clerk/nextjs";
 import { LanguageProvider } from "@/components/providers/LanguageProvider";
 import { client, siteSettingsQuery } from "@/lib/sanity";
+import { cookies } from "next/headers";
 import Footer from "@/components/modules/Footer";
 
 const geistSans = Geist({
@@ -92,15 +93,17 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const settings = await client.fetch(siteSettingsQuery);
+  const cookieStore = await cookies();
+  const initialLanguage = (cookieStore.get("NEXT_LOCALE")?.value || "es") as "es" | "en";
 
   return (
-    <html lang="es" suppressHydrationWarning>
+    <html lang={initialLanguage} suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
         <ClerkProvider>
-          <LanguageProvider>
+          <LanguageProvider initialLanguage={initialLanguage}>
             <Header cmsData={settings} />
             <main>{children}</main>
             <Footer cmsData={settings} />

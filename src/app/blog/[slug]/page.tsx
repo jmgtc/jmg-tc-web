@@ -1,5 +1,6 @@
 // Server Component — renderizado en servidor, metadata dinámica por post
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import Link from "next/link";
 import { client, urlFor } from "@/lib/sanity";
 import { PortableText } from "@portabletext/react";
@@ -53,15 +54,21 @@ export async function generateMetadata(
   { params }: { params: Promise<{ slug: string }> }
 ): Promise<Metadata> {
   const { slug } = await params;
+  const cookieStore = await cookies();
+  const language = (cookieStore.get("NEXT_LOCALE")?.value || "es") as "es" | "en";
+  const isEn = language === "en";
+
   try {
     const post = await client.fetch(buildPostQuery(slug));
     if (!post) {
       return { title: "Artículo no encontrado | JMG Tech Consulting" };
     }
 
-    const title = post.title_en
-      ? `${post.title} | JMG Tech Consulting`
-      : `${post.title} | JMG Tech Consulting`;
+    // Lógica de metadatos dinámica por idioma
+    const hasValidTitleEn = post.title_en && post.title_en !== post.title;
+    const displayTitle = (isEn && hasValidTitleEn) ? post.title_en : post.title;
+    
+    const title = `${displayTitle} | JMG Tech Consulting`;
 
     const description = post.excerpt
       ? post.excerpt.replace(/<[^>]*>/g, "").substring(0, 160)
@@ -194,24 +201,33 @@ export default async function BlogPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const cookieStore = await cookies();
+  const language = (cookieStore.get("NEXT_LOCALE")?.value || "es") as "es" | "en";
+
   let post: any = null;
 
   try {
     post = await client.fetch(buildPostQuery(slug));
   } catch (err: any) {
     console.error("[blog/[slug]] Error fetching post:", err);
-    // Si es un error de cuota (402) o de red, lanzar para que error.tsx lo maneje
-    // No llamar notFound() en este caso — el post puede existir pero Sanity no responde
     throw err;
   }
 
-  // Post genuinamente no encontrado (slug incorrecto) → 404 real
   if (!post) {
     notFound();
   }
 
-  const displayTitle = post.title; // ES por defecto en SSR
-  const displayBody = post.body;
+  // Lógica de selección de idioma inteligente
+  const isEn = language === "en";
+  
+  // Usar inglés solo si existe y es diferente del español
+  const hasValidTitleEn = post.title_en && post.title_en !== post.title;
+  const displayTitle = (isEn && hasValidTitleEn) ? post.title_en : post.title;
+
+  // Para el cuerpo, comprobamos si body_en existe y tiene contenido diferente
+  // Si no estamos seguros de la diferencia en bloques complejos, al menos comprobamos existencia
+  const displayBody = (isEn && post.body_en && post.body_en.length > 0) ? post.body_en : post.body;
+
   const readingTime = calculateReadingTime(displayBody);
   const postUrl = `${BASE_URL}/blog/${slug}`;
 

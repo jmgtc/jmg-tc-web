@@ -63,8 +63,15 @@ export async function POST(req: NextRequest) {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-admin-secret',
   };
+
+  // 1. Validar x-admin-secret
+  const adminSecret = req.headers.get('x-admin-secret');
+  if (!adminSecret || adminSecret !== process.env.ADMIN_API_SECRET) {
+    console.warn('[newsflow] Unauthorized request - Invalid or missing secret');
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401, headers: corsHeaders });
+  }
 
   try {
     const bodyData = await req.json();
@@ -76,8 +83,11 @@ export async function POST(req: NextRequest) {
     }
 
     // --- TRADUCCIÓN AUTOMÁTICA (DeepL) ---
-    const titleEn = await translateWithDeepL(title);
-    const bodyEnText = await translateWithDeepL(content, true); // Pasar true para manejar HTML
+    const rawTitleEn = await translateWithDeepL(title);
+    const titleEn = (rawTitleEn && rawTitleEn !== title) ? rawTitleEn : null;
+
+    const rawBodyEnText = await translateWithDeepL(content, true); // Pasar true para manejar HTML
+    const bodyEnText = (rawBodyEnText && rawBodyEnText !== content) ? rawBodyEnText : null;
 
     // --- PARSER DE FORMATO (Markdown a PortableText) ---
     const paragraphs = content.split(/\n\n+/);
@@ -142,12 +152,12 @@ export async function POST(req: NextRequest) {
     const postDoc = {
       _type: 'post',
       title: title,
-      title_en: titleEn || title,
+      title_en: titleEn, // No guardar español si falla
       slug: { _type: 'slug', current: slugValue },
       publishedAt: new Date().toISOString(),
       excerpt: excerpt || '',
       body: bodyBlocks,
-      body_en: bodyEnBlocks,
+      body_en: bodyEnText ? bodyEnBlocks : null, // Solo guardar si hay traducción real
       tags: (Array.isArray(tags) ? tags : [tags]).filter(Boolean).slice(0, 3),
       categories: categoryRefs,
       mainImage: mainImage,
