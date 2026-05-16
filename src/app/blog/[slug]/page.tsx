@@ -122,11 +122,58 @@ function calculateReadingTime(blocks: any): number {
 function renderContent(blocks: any) {
   if (!blocks) return null;
 
-  // Si es un string, puede ser texto plano o HTML crudo (ej: de Make/DeepL)
-  if (typeof blocks === "string") {
-    // Detectamos si contiene etiquetas HTML para decidir cómo procesar
-    const hasHtml = /<[a-z][\s\S]*>/i.test(blocks);
+  // Helper para renderizar HTML de forma segura (sin dangerouslySetInnerHTML)
+  const renderSafeHtml = (html: string) => {
+    // 1. Limpieza básica y normalización
+    let processed = html.replace(/<br\s*\/?>/gi, '\n');
+    
+    // 2. Extraemos párrafos para mantener estructura
+    const paragraphs = processed.split(/<\/?p>/i).filter(p => p.trim() !== "");
+    
+    return paragraphs.map((p, i) => {
+      // Parseo quirúrgico de tags reportados: <strong>, <h3>, <a>
+      const parts = p.split(/(<\/?[a-z0-9]+(?:\s+[^>]+)?>)/i);
+      let isStrong = false;
+      let isH3 = false;
+      let currentLink: string | null = null;
+      
+      const content = parts.map((part, j) => {
+        const lowerPart = part.toLowerCase();
+        if (lowerPart === '<strong>') { isStrong = true; return null; }
+        if (lowerPart === '</strong>') { isStrong = false; return null; }
+        if (lowerPart === '<h3>') { isH3 = true; return null; }
+        if (lowerPart === '</h3>') { isH3 = false; return null; }
+        
+        // Manejo básico de links <a>
+        if (lowerPart.startsWith('<a ')) {
+          const hrefMatch = part.match(/href="([^"]+)"/i);
+          currentLink = hrefMatch ? hrefMatch[1] : "#";
+          return null;
+        }
+        if (lowerPart === '</a>') { currentLink = null; return null; }
+        
+        if (part.startsWith('<')) return null; // Ignorar otros tags
+        
+        let element: any = part;
+        if (isStrong) element = <strong key={`s-${j}`} className="font-bold text-white">{element}</strong>;
+        if (isH3) element = <h3 key={`h-${j}`} className="text-2xl font-bold mt-8 mb-4 text-white/90 block">{element}</h3>;
+        if (currentLink) {
+          element = (
+            <a key={`l-${j}`} href={currentLink} target="_blank" rel="nofollow noreferrer noopener" className="text-gold hover:underline">
+              {element}
+            </a>
+          );
+        }
+        return element;
+      });
 
+      return <p key={`p-${i}`} className="mb-6 text-white/80 leading-relaxed font-light">{content}</p>;
+    });
+  };
+
+  // 1. Caso: El contenido es directamente un string con HTML
+  if (typeof blocks === "string") {
+    const hasHtml = /<[a-z][\s\S]*>/i.test(blocks);
     if (!hasHtml) {
       return (
         <div className="space-y-4">
@@ -136,49 +183,23 @@ function renderContent(blocks: any) {
         </div>
       );
     }
-
-    // Proceso de renderizado seguro de HTML (sin dangerouslySetInnerHTML)
-    // Dividimos por etiquetas básicas para un renderizado React controlado
-    // Esta es una solución quirúrgica para evitar el HTML crudo visible
-    const cleanHtml = (html: string) => {
-      // 1. Reemplazamos br por saltos para split
-      let processed = html.replace(/<br\s*\/?>/gi, '\n');
-      
-      // 2. Extraemos párrafos
-      const paragraphs = processed.split(/<\/?p>/i).filter(p => p.trim() !== "");
-      
-      return paragraphs.map((p, i) => {
-        // Procesamos negritas y títulos dentro de cada "bloque"
-        // Nota: esto es una simplificación segura para los tags reportados
-        const parts = p.split(/(<\/?[a-z0-9]+>)/i);
-        let isStrong = false;
-        let isH3 = false;
-        
-        const content = parts.map((part, j) => {
-          if (part.toLowerCase() === '<strong>') { isStrong = true; return null; }
-          if (part.toLowerCase() === '</strong>') { isStrong = false; return null; }
-          if (part.toLowerCase() === '<h3>') { isH3 = true; return null; }
-          if (part.toLowerCase() === '</h3>') { isH3 = false; return null; }
-          if (part.startsWith('<')) return null; // Ignoramos otros tags no soportados por seguridad
-          
-          if (isStrong) return <strong key={j} className="font-bold text-white">{part}</strong>;
-          if (isH3) return <h3 key={j} className="text-2xl font-bold mt-8 mb-4 text-white/90 block">{part}</h3>;
-          return part;
-        });
-
-        return <p key={i} className="mb-6 text-white/80 leading-relaxed font-light">{content}</p>;
-      });
-    };
-
-    return <div className="blog-content-html">{cleanHtml(blocks)}</div>;
+    return <div className="blog-content-html">{renderSafeHtml(blocks)}</div>;
   }
 
-  // Si no es un array, PortableText fallará
-  if (!Array.isArray(blocks)) {
-    return null;
+  // 2. Caso: PortableText Array
+  if (!Array.isArray(blocks)) return null;
+
+  // Verificamos si los bloques contienen HTML crudo dentro (común en flujos automáticos)
+  const firstBlockText = blocks[0]?.children?.[0]?.text;
+  if (typeof firstBlockText === "string" && /<[a-z][\s\S]*>/i.test(firstBlockText)) {
+    // Si el primer bloque ya parece HTML, procesamos todo como HTML concatenado
+    const fullHtml = blocks
+      .map(b => b.children?.map((c: any) => c.text).join("") || "")
+      .join("\n");
+    return <div className="blog-content-html">{renderSafeHtml(fullHtml)}</div>;
   }
 
-  // Componentes personalizados para PortableText
+  // Componentes normales para PortableText genuino
   const components = {
     block: {
       normal: ({ children }: any) => <p className="mb-6 text-white/80 leading-relaxed font-light">{children}</p>,
