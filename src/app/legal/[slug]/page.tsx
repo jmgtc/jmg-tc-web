@@ -8,7 +8,7 @@ interface LegalPageProps {
   };
 }
 
-export const revalidate = 0;
+export const revalidate = 3600; // cache 1h (textos legales, raramente cambian)
 
 export default async function LegalPage({ params }: LegalPageProps) {
   const { slug } = params;

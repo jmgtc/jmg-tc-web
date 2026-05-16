@@ -6,7 +6,7 @@ const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'mfth4gqi'
 export const client = createClient({
   projectId: projectId,
   dataset: "production",
-  useCdn: false,
+  useCdn: true, // lecturas públicas via CDN (gratis, no consume cuota API)
   apiVersion: "2023-01-01",
 });
 

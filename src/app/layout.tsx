@@ -84,7 +84,7 @@ export const metadata: Metadata = {
   },
 };
 
-export const revalidate = 60;
+export const revalidate = 3600; // siteSettings: cache 1h (raramente cambia)
 
 export default async function RootLayout({
   children,
