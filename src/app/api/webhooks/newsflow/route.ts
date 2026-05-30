@@ -54,7 +54,7 @@ export async function OPTIONS() {
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-admin-secret, x-api-key',
     },
   });
 }
@@ -63,11 +63,24 @@ export async function POST(req: NextRequest) {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-admin-secret',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-admin-secret, x-api-key',
   };
 
-  // 1. Validar x-admin-secret
-  const adminSecret = req.headers.get('x-admin-secret');
+  // 1. Validar x-admin-secret o x-api-key
+  const adminSecret = req.headers.get('x-admin-secret') || req.headers.get('x-api-key');
+  const hasSecret = !!adminSecret;
+  const isCorrect = adminSecret === process.env.ADMIN_API_SECRET;
+
+  console.log('[newsflow] Auth verification:', {
+    endpoint: '/api/webhooks/newsflow',
+    method: 'POST',
+    hasXAdminSecret: !!req.headers.get('x-admin-secret'),
+    hasXApiKey: !!req.headers.get('x-api-key'),
+    hasSecretSent: hasSecret,
+    isEnvSecretConfigured: !!process.env.ADMIN_API_SECRET,
+    isAuthed: isCorrect
+  });
+
   if (!adminSecret || adminSecret !== process.env.ADMIN_API_SECRET) {
     console.warn('[newsflow] Unauthorized request - Invalid or missing secret');
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401, headers: corsHeaders });
