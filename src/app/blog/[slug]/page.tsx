@@ -2,6 +2,7 @@
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
 import Link from "next/link";
+import Image from "next/image";
 import { client, urlFor } from "@/lib/sanity";
 import { PortableText } from "@portabletext/react";
 import type { Metadata } from "next";
@@ -344,12 +345,29 @@ export default async function BlogPostPage({
         </h1>
 
         {post.mainImage && post.mainImage.asset && (
-          <div className="w-full h-auto max-h-[300px] md:max-h-[350px] lg:max-h-[400px] rounded-[2rem] overflow-hidden mb-12 shadow-2xl border border-white/10 group">
-            <img
-              src={urlFor(post.mainImage).url()}
-              alt={displayTitle}
-              className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
-            />
+          <div className="relative w-full h-[300px] md:h-[350px] lg:h-[400px] rounded-[2rem] overflow-hidden mb-12 shadow-2xl border border-white/10 group bg-black/20">
+            {/* Capa inferior (Background): imagen ampliada, desenfocada y oscurecida */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
+              <Image
+                src={urlFor(post.mainImage).url()}
+                alt=""
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 800px"
+                className="object-cover scale-115 blur-3xl opacity-40 transition-transform duration-700 group-hover:scale-120"
+              />
+            </div>
+            {/* Capa superior (Foreground): imagen original completa y centrada */}
+            <div className="relative w-full h-full flex items-center justify-center">
+              <Image
+                src={urlFor(post.mainImage).url()}
+                alt={displayTitle}
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 800px"
+                className="object-contain transition-transform duration-700 group-hover:scale-[1.02]"
+              />
+            </div>
           </div>
         )}
 
