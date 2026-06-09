@@ -8,6 +8,10 @@ export const metadata: Metadata = {
   description: "Desarrollo web a medida enfocado en rendimiento y captación de clientes. Páginas corporativas y plataformas SaaS ultrarrápidas con Next.js.",
   alternates: {
     canonical: "https://www.jmg-tc.com/servicios/desarrollo-web-medida",
+    languages: {
+      'es': "https://www.jmg-tc.com/servicios/desarrollo-web-medida",
+      'en': "https://www.jmg-tc.com/en/services/custom-web-development"
+    }
   }
 };
 

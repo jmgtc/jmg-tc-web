@@ -8,6 +8,10 @@ export const metadata: Metadata = {
   description: "Solicita un diagnóstico tecnológico gratuito para tu negocio en Getxo o Bizkaia. Analizamos tu web, procesos manuales, y potencial de IA para optimizar tu empresa.",
   alternates: {
     canonical: "https://www.jmg-tc.com/diagnostico-tecnologico",
+    languages: {
+      'es': "https://www.jmg-tc.com/diagnostico-tecnologico",
+      'en': "https://www.jmg-tc.com/en/tech-diagnosis"
+    }
   }
 };
 

@@ -8,6 +8,10 @@ export const metadata: Metadata = {
   description: "Implementamos soluciones de Inteligencia Artificial para empresas en Getxo y Bizkaia. Automatiza procesos, reduce costes y escala tu negocio con IA a medida.",
   alternates: {
     canonical: "https://www.jmg-tc.com/servicios/inteligencia-artificial-empresas",
+    languages: {
+      'es': "https://www.jmg-tc.com/servicios/inteligencia-artificial-empresas",
+      'en': "https://www.jmg-tc.com/en/services/ai-for-business"
+    }
   }
 };
 

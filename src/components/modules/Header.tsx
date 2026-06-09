@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Fingerprint, User } from "lucide-react";
 import { SignInButton, UserButton, useAuth } from '@clerk/nextjs';
 
@@ -34,7 +34,29 @@ export default function Header({ cmsData }: { cmsData?: any }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileServiciosOpen, setMobileServiciosOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
   const isMaintenance = pathname === "/maintenance";
+
+  const bilingualRoutes: Record<string, string> = {
+    "/consultoria-tecnologica-getxo": "/en/tech-consulting-getxo",
+    "/diagnostico-tecnologico": "/en/tech-diagnosis",
+    "/servicios/inteligencia-artificial-empresas": "/en/services/ai-for-business",
+    "/servicios/desarrollo-web-medida": "/en/services/custom-web-development",
+    "/servicios/automatizacion-procesos": "/en/services/process-automation",
+    "/servicios/soporte-mac-negocios": "/en/services/mac-support-business",
+  };
+
+  const handleLanguageChange = (lang: "es" | "en") => {
+    setLanguage(lang);
+    if (!pathname) return;
+
+    if (lang === "en" && bilingualRoutes[pathname]) {
+      router.push(bilingualRoutes[pathname]);
+    } else if (lang === "es") {
+      const esRoute = Object.keys(bilingualRoutes).find(key => bilingualRoutes[key] === pathname);
+      if (esRoute) router.push(esRoute);
+    }
+  };
 
   const serviciosDropdown = language === "en" ? [
     { name: "Tech Consulting", href: "/consultoria-tecnologica-getxo" },
@@ -132,12 +154,12 @@ export default function Header({ cmsData }: { cmsData?: any }) {
             {/* Selector de idioma */}
             <div className="flex items-center gap-2 mr-4 text-xs font-bold border-r border-white/10 pr-4">
               <button 
-                onClick={() => setLanguage("es")}
+                onClick={() => handleLanguageChange("es")}
                 className={language === "es" ? "text-gold" : "text-white/40 hover:text-white"}
               >ES</button>
               <span className="text-white/20">|</span>
               <button 
-                onClick={() => setLanguage("en")}
+                onClick={() => handleLanguageChange("en")}
                 className={language === "en" ? "text-gold" : "text-white/40 hover:text-white"}
               >EN</button>
             </div>
@@ -231,12 +253,12 @@ export default function Header({ cmsData }: { cmsData?: any }) {
           
           <div className="flex justify-center gap-4 py-2 border-y border-white/5 my-2">
             <button 
-              onClick={() => setLanguage("es")}
+              onClick={() => handleLanguageChange("es")}
               className={`text-sm font-bold ${language === "es" ? "text-gold" : "text-white/40"}`}
             >Español</button>
             <span className="text-white/20">|</span>
             <button 
-              onClick={() => setLanguage("en")}
+              onClick={() => handleLanguageChange("en")}
               className={`text-sm font-bold ${language === "en" ? "text-gold" : "text-white/40"}`}
             >English</button>
           </div>

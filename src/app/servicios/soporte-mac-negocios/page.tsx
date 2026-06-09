@@ -8,6 +8,10 @@ export const metadata: Metadata = {
   description: "Soporte técnico y gestión IT especializada en ecosistemas Apple (Mac, iPad, iPhone) para empresas en Getxo y Bizkaia. MDM, seguridad, redes y optimización macOS.",
   alternates: {
     canonical: "https://www.jmg-tc.com/servicios/soporte-mac-negocios",
+    languages: {
+      'es': "https://www.jmg-tc.com/servicios/soporte-mac-negocios",
+      'en': "https://www.jmg-tc.com/en/services/mac-support-business"
+    }
   }
 };
 

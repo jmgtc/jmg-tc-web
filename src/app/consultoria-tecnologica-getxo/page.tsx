@@ -8,6 +8,10 @@ export const metadata: Metadata = {
   description: "Servicios de consultoría tecnológica en Getxo. Transformación digital, desarrollo web, IA y soporte IT a medida para negocios locales y pymes en Bizkaia.",
   alternates: {
     canonical: "https://www.jmg-tc.com/consultoria-tecnologica-getxo",
+    languages: {
+      'es': "https://www.jmg-tc.com/consultoria-tecnologica-getxo",
+      'en': "https://www.jmg-tc.com/en/tech-consulting-getxo"
+    }
   }
 };
 
