@@ -102,6 +102,37 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "LocalBusiness",
+              "name": "JMG Tech Consulting",
+              "image": "https://jmg-tc.com/og-image.png",
+              "url": "https://jmg-tc.com",
+              "telephone": "+34639023805",
+              "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Getxo",
+                "addressRegion": "Bizkaia",
+                "addressCountry": "ES"
+              },
+              "geo": {
+                "@type": "GeoCoordinates",
+                "latitude": 43.3444,
+                "longitude": -3.0031
+              },
+              "openingHoursSpecification": {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+                "opens": "09:00",
+                "closes": "18:00"
+              },
+              "priceRange": "$$$"
+            })
+          }}
+        />
         <ClerkProvider>
           <LanguageProvider initialLanguage={initialLanguage}>
             <Header cmsData={settings} />

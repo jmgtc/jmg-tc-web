@@ -32,8 +32,25 @@ export default function Header({ cmsData }: { cmsData?: any }) {
   const { isLoaded, isSignedIn } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileServiciosOpen, setMobileServiciosOpen] = useState(false);
   const pathname = usePathname();
   const isMaintenance = pathname === "/maintenance";
+
+  const serviciosDropdown = language === "en" ? [
+    { name: "Tech Consulting", href: "/consultoria-tecnologica-getxo" },
+    { name: "Artificial Intelligence", href: "/servicios/inteligencia-artificial-empresas" },
+    { name: "Web Development", href: "/servicios/desarrollo-web-medida" },
+    { name: "Automation", href: "/servicios/automatizacion-procesos" },
+    { name: "Mac Support", href: "/servicios/soporte-mac-negocios" },
+    { name: "All services", href: "/servicios" },
+  ] : [
+    { name: "Consultoría tecnológica", href: "/consultoria-tecnologica-getxo" },
+    { name: "Inteligencia Artificial", href: "/servicios/inteligencia-artificial-empresas" },
+    { name: "Desarrollo Web", href: "/servicios/desarrollo-web-medida" },
+    { name: "Automatización", href: "/servicios/automatizacion-procesos" },
+    { name: "Soporte Mac", href: "/servicios/soporte-mac-negocios" },
+    { name: "Todos los servicios", href: "/servicios" },
+  ];
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -84,11 +101,32 @@ export default function Header({ cmsData }: { cmsData?: any }) {
             <Link href="/nosotros" className={`text-sm font-medium transition-colors whitespace-nowrap ${pathname === "/nosotros" ? "text-gold" : "hover:text-gold"}`}>
               {labels.about}
             </Link>
-            <Link href="/servicios" className={`text-sm font-medium transition-colors whitespace-nowrap ${pathname === "/servicios" ? "text-gold" : "hover:text-gold"}`}>
-              {labels.services}
-            </Link>
+
+            {/* Menú Servicios con Desplegable */}
+            <div className="relative group py-4 -my-4">
+              <Link href="/servicios" className={`text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-1 ${pathname?.startsWith("/servicios") || pathname === "/consultoria-tecnologica-getxo" ? "text-gold" : "hover:text-gold"}`}>
+                {labels.services}
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3 h-3 opacity-50 group-hover:rotate-180 transition-transform">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                </svg>
+              </Link>
+              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-0 pt-2 w-[240px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top translate-y-2 group-hover:translate-y-0">
+                <div className="glass bg-black/95 backdrop-blur-xl border border-white/10 rounded-2xl p-2 shadow-2xl flex flex-col gap-1">
+                  {serviciosDropdown.map((s, i) => (
+                    <Link key={i} href={s.href} className="text-sm text-white/70 hover:text-gold hover:bg-white/5 px-4 py-2.5 rounded-xl transition-colors">
+                      {s.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+
             <Link href="/blog" className={`text-sm font-medium transition-colors whitespace-nowrap ${pathname === "/blog" ? "text-gold" : "hover:text-gold"}`}>
               {labels.blog}
+            </Link>
+            
+            <Link href="/diagnostico-tecnologico" className={`text-sm font-medium transition-colors whitespace-nowrap ${pathname === "/diagnostico-tecnologico" ? "text-gold" : "hover:text-gold"}`}>
+              {language === "en" ? "Diagnosis" : "Diagnóstico"}
             </Link>
   
             {/* Selector de idioma */}
@@ -160,11 +198,35 @@ export default function Header({ cmsData }: { cmsData?: any }) {
           <Link href="/nosotros" onClick={() => setMobileOpen(false)} className={`text-sm font-medium ${pathname === "/nosotros" ? "text-gold" : ""}`}>
             {labels.about}
           </Link>
-          <Link href="/servicios" onClick={() => setMobileOpen(false)} className={`text-sm font-medium ${pathname === "/servicios" ? "text-gold" : ""}`}>
-            {labels.services}
-          </Link>
+
+          {/* Menú Servicios Mobile */}
+          <div className="flex flex-col gap-2">
+            <button 
+              onClick={() => setMobileServiciosOpen(!mobileServiciosOpen)} 
+              className={`text-sm font-medium flex justify-between items-center ${pathname?.startsWith("/servicios") || pathname === "/consultoria-tecnologica-getxo" ? "text-gold" : ""}`}
+            >
+              {labels.services}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={`w-4 h-4 transition-transform ${mobileServiciosOpen ? "rotate-180" : ""}`}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+              </svg>
+            </button>
+            {mobileServiciosOpen && (
+              <div className="flex flex-col pl-4 gap-3 py-2 border-l border-white/10 ml-1">
+                {serviciosDropdown.map((s, i) => (
+                  <Link key={i} href={s.href} onClick={() => setMobileOpen(false)} className="text-sm text-white/60 hover:text-gold">
+                    {s.name}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
           <Link href="/blog" onClick={() => setMobileOpen(false)} className={`text-sm font-medium ${pathname === "/blog" ? "text-gold" : ""}`}>
             {labels.blog}
+          </Link>
+
+          <Link href="/diagnostico-tecnologico" onClick={() => setMobileOpen(false)} className={`text-sm font-medium ${pathname === "/diagnostico-tecnologico" ? "text-gold" : ""}`}>
+            {language === "en" ? "Diagnosis" : "Diagnóstico"}
           </Link>
           
           <div className="flex justify-center gap-4 py-2 border-y border-white/5 my-2">

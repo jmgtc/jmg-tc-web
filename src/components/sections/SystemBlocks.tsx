@@ -163,7 +163,7 @@ export default function SystemBlocks({ data }: SystemBlocksProps) {
               {language === "es" ? "Hablamos esta semana." : "Let's talk this week."}
             </p>
             <Link
-              href="/contacto"
+              href="/diagnostico-tecnologico"
               className="px-5 py-2 bg-gold text-black text-xs font-bold rounded-full hover:bg-white transition-all transform group-hover:scale-105"
             >
               {language === "es" ? "Solicitar diagnóstico" : "Request diagnosis"}

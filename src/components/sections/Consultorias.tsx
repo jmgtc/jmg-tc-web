@@ -64,6 +64,7 @@ const PRODUCTS = [
     border: "border-blue-500/20",
     cta: "Solicitar web",
     ctaEn: "Request website",
+    href: "/servicios/desarrollo-web-medida",
   },
   {
     num: "02",
@@ -85,6 +86,7 @@ const PRODUCTS = [
     cta: "Ver demo IA",
     ctaEn: "See AI demo",
     highlight: true,
+    href: "/servicios/inteligencia-artificial-empresas",
   },
   {
     num: "03",
@@ -105,6 +107,7 @@ const PRODUCTS = [
     border: "border-purple-500/20",
     cta: "Consultar proyecto",
     ctaEn: "Consult project",
+    href: "/servicios/desarrollo-web-medida",
   },
   {
     num: "04",
@@ -125,6 +128,7 @@ const PRODUCTS = [
     border: "border-green-500/20",
     cta: "Solicitar auditoría",
     ctaEn: "Request audit",
+    href: "/consultoria-tecnologica-getxo",
   },
 ];
 
@@ -215,7 +219,7 @@ export default function Consultorias({ headerData, services }: ConsultoriasProps
 
               {/* CTA */}
               <Link
-                href="/contacto"
+                href={product.href || "/contacto"}
                 className={`inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold transition-all hover:scale-105 ${
                   product.highlight
                     ? "bg-gold text-black hover:bg-white shadow-[0_0_20px_rgba(242,204,82,0.3)]"
@@ -237,7 +241,7 @@ export default function Consultorias({ headerData, services }: ConsultoriasProps
             {language === "es" ? "¿No estás seguro qué necesitas? Te ayudamos a decidir." : "Not sure what you need? We'll help you decide."}
           </p>
           <Link
-            href="/contacto"
+            href="/diagnostico-tecnologico"
             className="inline-flex items-center gap-2 text-gold text-sm font-semibold hover:text-white transition-colors group"
           >
             {language === "es" ? "Solicitar diagnóstico gratuito →" : "Request free diagnosis →"}

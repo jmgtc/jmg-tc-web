@@ -54,10 +54,11 @@ export default function Footer({ cmsData }: FooterProps) {
       : "Technology partner specialized in digital systems, AI automation and high-performance web development.");
 
   const services = [
-    { es: "Web Profesional", en: "Professional Website", href: "/servicios" },
-    { es: "Sistema con IA", en: "AI System", href: "/servicios" },
-    { es: "Plataforma a medida", en: "Custom Platform", href: "/servicios" },
-    { es: "Consultoría IT", en: "IT Consulting", href: "/servicios" },
+    { es: "Web Profesional", en: "Professional Website", href: "/servicios/desarrollo-web-medida" },
+    { es: "Sistema con IA", en: "AI System", href: "/servicios/inteligencia-artificial-empresas" },
+    { es: "Automatización", en: "Automation", href: "/servicios/automatizacion-procesos" },
+    { es: "Consultoría Local", en: "Local Consulting", href: "/consultoria-tecnologica-getxo" },
+    { es: "Soporte Mac", en: "Mac Support", href: "/servicios/soporte-mac-negocios" },
   ];
 
   const platform = [
