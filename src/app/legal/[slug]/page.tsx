@@ -3,15 +3,15 @@ import { notFound } from "next/navigation";
 import LegalContent from "./LegalContent";
 
 interface LegalPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export const revalidate = 3600; // cache 1h (textos legales, raramente cambian)
 
 export default async function LegalPage({ params }: LegalPageProps) {
-  const { slug } = params;
+  const { slug } = await params;
 
   const query = `
     {
