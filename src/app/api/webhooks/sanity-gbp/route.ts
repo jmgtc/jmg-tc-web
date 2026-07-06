@@ -12,9 +12,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: 'Ignorando documento que no es post' });
     }
 
-    // 2. Ignorar si la bandera no está activa
-    if (!body.publishToGoogleBusiness) {
-      return NextResponse.json({ message: 'El post no tiene publishToGoogleBusiness activado. Saltando.' });
+    // 2. Ignorar si la bandera viene explícitamente en false (Opt-out)
+    // - Creado en Sanity: toggle por defecto a ON (true).
+    // - Creado por app/API externa: se publicará si no manda el campo (undefined) o null.
+    // - Para impedir publicación desde la app/API, enviar explícitamente: publishToGoogleBusiness: false
+    if (body.publishToGoogleBusiness === false) {
+      return NextResponse.json({ message: 'El post tiene publishToGoogleBusiness explícitamente desactivado. Saltando.' });
     }
 
     const post: SanityPost = {

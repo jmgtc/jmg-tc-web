@@ -69,7 +69,7 @@ export default defineType({
       title: 'Publicar en Google Business Profile',
       description: 'Si se activa, creará automáticamente un post de tipo Novedad en Google Business Profile cuando se publique el artículo.',
       type: 'boolean',
-      initialValue: false,
+      initialValue: true,
     }),
   ],
 });
