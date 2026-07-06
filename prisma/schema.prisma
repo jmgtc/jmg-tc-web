@@ -58,3 +58,32 @@ model ContactMessage {
   status    String   @default("pending") // 'pending', 'read', 'contacted'
   createdAt DateTime @default(now())
 }
+
+model GoogleBusinessPost {
+  id              String   @id @default(cuid())
+  articleId       String   @unique // ID del documento de Sanity
+  slug            String
+  title           String
+  url             String
+  featuredImage   String?
+  gbpStatus       String   @default("draft") // 'draft', 'pending_review', 'published', 'failed', 'skipped'
+  gbpPostId       String?  // ID devuelto por la API de Google
+  gbpPublishedAt  DateTime?
+  gbpLastError    String?
+  generatedText   String   @db.Text
+  
+  // Nuevos campos de trazabilidad e imagen
+  featuredImageUrl String?
+  generationSource String   @default("fallback") // 'ai' o 'fallback'
+  generationModel  String?
+  generationError  String?
+  generatedAt      DateTime?
+  
+  // Make Integration Fields
+  makeStatus       String?  // 'sent', 'failed', 'skipped', 'dry_run'
+  makeWebhookSentAt DateTime?
+  lastMakeError    String?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
