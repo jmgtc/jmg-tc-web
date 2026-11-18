@@ -28,7 +28,7 @@ export default function BlogHighlights({ data }: { data?: any }) {
           "excerpt": pt::text(body),
           "excerpt_en": pt::text(body_en),
           mainImage,
-          categories
+          "categories": categories[]->title
         }`;
         const results = await client.fetch(query);
         setPosts(results);
